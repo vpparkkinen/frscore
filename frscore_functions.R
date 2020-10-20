@@ -12,7 +12,7 @@ subCounter <- function(s,p){
 
 frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
   if (typeof(sols) != "character"){
-    stop("sols should be a character vector of CCM solutions, not object of type ", typeof(sols))}
+    stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))}
   if (NA %in% sols){sols <- sols[!is.na(sols)]}
   if (length(sols) == 0){stop("nothing to test")} else 
     if(length(sols) == 1){
@@ -25,9 +25,6 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
       }else{return(out)}
     }else{
       
-      #out <- sols
-      #out <- as.character(out)
-      #if (length(out) == 1) {out <- data.frame(condition = out[order(out$condition),])} else {
       sols <- sols[order(sols)]
       
       mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
@@ -41,8 +38,7 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
           
         }
         out <- data.frame(model = sols, score = out)
-        #names(out) <- sols
-        #if(weigh){out$score <- out$score*out$concov}
+
         if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
         if(verbose){
           elems <- (mf$Freq-1)*2
@@ -72,7 +68,6 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
           sscore[[m]] <- subres
         }
         
-        #sc <- rbind.fill(lapply(sscore, function(y) rbind.fill(y)))
         sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
         
         if(verbose){
@@ -135,15 +130,6 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
         pre.ssc <- pre.ssc[order(pre.ssc$mod),]
         pre.susc <- pre.susc[order(pre.susc$supmod),]
         
-        # if (scoretype == "full") {out$score <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
-        #   (rep(mf$Freq, mf$Freq)-1)*2}
-        # 
-        # if (scoretype == "supermodel") {out$score <- rep(pre.ssc$subsc, mf$Freq)  +
-        #   (rep(mf$Freq, mf$Freq)-1)*2/2}
-        # 
-        # if (scoretype == "submodel") {out$score <- rep(pre.susc$supsc, mf$Freq) +
-        #   (rep(mf$Freq, mf$Freq)-1)*2/2}
-        # 
         if (scoretype == "full") {out <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
           (rep(mf$Freq, mf$Freq)-1)*2}
         
@@ -154,8 +140,7 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
           (rep(mf$Freq, mf$Freq)-1)*2/2}
         
         out <- data.frame(model = sols, score = out)
-        #names(out) <- sols
-        
+  
         
         if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
         if(verbose==TRUE){return(list(out, scsums))}else{
@@ -178,13 +163,13 @@ frscored_cna <- function(x,
                          granularity = 0.05, 
                          output = "csf", 
                          normalize = TRUE, 
-                         verbose = F,
+                         verbose = FALSE,
                          test.model = NULL,
                          ...){
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
-    stop("cna arguments 'con', 'cov', 'con.msc' not applicable")
+    stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
   cl$fit.range <- cl$granularity <- cl$normalize <- cl$verbose <- cl$scoretype <- cl$test.model <- NULL
   cl[[1]] <- as.name("rean_cna")
@@ -197,15 +182,17 @@ frscored_cna <- function(x,
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
+    scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
     #rescomb$frscore <- scored$score
-    return(list(unique(scored), rescomb))
+    return(list(scored, rescomb))
   } else {
     if(any(sapply(rescomb$condition, function(x) identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
     } else {
       scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
     }
-    tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
+    scored[[1]] <- scored[[1]][order(scored[[1]]$score, decreasing = T),]
+    tested <- scored[sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]
     return(list(tested, unique(scored), rescomb))
   }
 }
