@@ -182,7 +182,9 @@ frscored_cna <- function(x,
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
-    scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
+    if (verbose){scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])} else {
+      scored <- unique(scored[order(scored$score, decreasing = T),])
+    }
     #rescomb$frscore <- scored$score
     return(list(scored, rescomb))
   } else {
@@ -191,8 +193,11 @@ frscored_cna <- function(x,
     } else {
       scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
     }
-    scored[[1]] <- scored[[1]][order(scored[[1]]$score, decreasing = T),]
-    tested <- scored[sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]
+    if (verbose) {scored[[1]] <- scored[[1]][order(scored[[1]]$score, decreasing = T),]
+    tested <- scored[sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
+      scored <- scored[order(scored$score, decreasing = T),]
+      tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
+    }
     return(list(tested, unique(scored), rescomb))
   }
 }
