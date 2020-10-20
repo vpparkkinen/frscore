@@ -211,8 +211,11 @@ frscored_cna <- function(x,
 }
 
 
+## rean_cna() performs a reanalysis series based on which fr-scores can be calculated
+## output = "asf" returns asfs, output = "csf" csfs.
+
 rean_cna <- function(..., what = "c", 
-                   attempt = seq(0.95, 0.75, -0.05), ncsf = 20, output = "csf"){
+                   attempt = seq(1, 0.7, -0.05), ncsf = 20, output = "csf"){
   
   cl <- match.call()
   dots <- list(...)
