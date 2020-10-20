@@ -193,12 +193,12 @@ frscored_cna <- function(x,
     } else {
       scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
     }
-    if (verbose) {scored[[1]] <- scored[[1]][order(scored[[1]]$score, decreasing = T),]
-    tested <- scored[sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
-      scored <- scored[order(scored$score, decreasing = T),]
+    if (verbose) {scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
+    tested <- scored[[1]][sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
+      scored <- unique(scored[order(scored$score, decreasing = T),])
       tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
     }
-    return(list(tested, unique(scored), rescomb))
+    return(list(tested, scored, rescomb))
   }
 }
 
