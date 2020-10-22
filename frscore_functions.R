@@ -1,3 +1,6 @@
+library(cna)
+library(dplyr)
+
 ##helper function for frscore()
 
 subCounter <- function(s,p){
