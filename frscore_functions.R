@@ -17,7 +17,8 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full"){
   if (typeof(sols) != "character"){
     stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))}
   if (NA %in% sols){sols <- sols[!is.na(sols)]}
-  if (length(sols) == 0){stop("nothing to test")} else 
+  if (length(sols) == 0){warning('no solutions to test')
+    return(NULL)} else 
     if(length(sols) == 1){
       out <- data.frame(model = sols, score = 0L)
       #names(out) <- sols
@@ -185,6 +186,8 @@ frscored_cna <- function(x,
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
+    if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      return(NULL)}
     if (verbose){scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])} else {
       scored <- unique(scored[order(scored$score, decreasing = T),])
     }
@@ -193,11 +196,16 @@ frscored_cna <- function(x,
   } else {
     if(any(sapply(rescomb$condition, function(x) identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
+      if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      return(NULL)}
     } else {
       scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
+      if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      return(NULL)}
     }
     if (verbose) {scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
     tested <- scored[[1]][sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
+      
       scored <- unique(scored[order(scored$score, decreasing = T),])
       tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
     }
