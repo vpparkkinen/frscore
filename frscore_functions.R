@@ -13,7 +13,11 @@ subCounter <- function(s,p){
 
 ## frscore() calculates the fr-scores for a set of models 
 
-frscore <- function(sols, normalize = F, verbose = F, scoretype = "full", print.all = FALSE){
+frscore <- function(sols, 
+                    normalize = TRUE, 
+                    verbose = FALSE, 
+                    scoretype = c("full", "supermodel", "submodel"), 
+                    print.all = FALSE){
   if (typeof(sols) != "character"){
     stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))}
   if (NA %in% sols){sols <- sols[!is.na(sols)]}
@@ -29,6 +33,7 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full", print.
       }else{return(out)}
     }else{
       
+      scoretype <- match.arg(scoretype)
       sols <- sols[order(sols)]
       
       mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
@@ -143,28 +148,38 @@ frscore <- function(sols, normalize = F, verbose = F, scoretype = "full", print.
         if (scoretype == "submodel") {out <- rep(pre.susc$supsc, mf$Freq) +
           (rep(mf$Freq, mf$Freq)-1)*2/2}
         
-        out <- unique(data.frame(model = sols, score = out))
+        out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
+        out <- out %>% group_by(model) %>% mutate(tokens = n())
+        out <- unique(as.data.frame(out))
         out <- out[order(out$score, decreasing = T),]
         rownames(out) <- 1:nrow(out)
         
         if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
-        if(verbose==TRUE){return(structure(list(models = out, verbose = scsums, print.all = print.all), class = "frscore"))}else{
-          return(structure(list(models = out, verbose = NULL, print.all = print.all), class = "frscore"))}}
+        if(verbose==TRUE){return(structure(list(models = out, verbose = scsums, print.all = print.all, scoretype = scoretype), class = "frscore"))}else{
+          return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))}}
     }
 }
 
 print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all){
-  cat("Model tokens: \n")
+  cat("FRscore, score type:", x$scoretype,  "\n")
+  cat("-------\n \n")
+  cat("Model types: \n")
   cat("\n")
-  print(head(x$models, n = 20L))
-  cat("\n")
-  nr <- nrow(x$models) - 20L
-  if(nr > 0){cat('...there were', nr, 'more model tokens, use print.all = TRUE to print all \n')}
-  cat('\n')
-  
-  if(is.null(verbose)){invisible(x$models)} else {
+  if(print.all){
+    print(x$models)
+  } else {
+    print(head(x$models, n = 20L))
+    cat("\n")
+    nr <- nrow(x$models) - 20L
+    if(nr > 0){cat('...there were', nr, 'more model types, use \'print.all = TRUE\' to print all \n')}
     cat('\n')
-    cat('Score composition by model token: \n')
+    
+  }
+    
+  if(is.null(verbose)){invisible(x)} else {
+    cat('\n')
+    cat('Score composition: \n')
+    cat('----------------- \n \n')
     print(x$verbose)
     invisible(x)
   }
@@ -181,53 +196,113 @@ print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all){
 frscored_cna <- function(x, 
                          fit.range = c(1, 0.7), 
                          granularity = 0.05, 
-                         output = "csf", 
+                         output = c("csf", "asf"),
+                         scoretype = c("full", "supermodel", "submodel"),
                          normalize = TRUE, 
                          verbose = FALSE,
                          test.model = NULL,
+                         print.all = FALSE,
                          ...){
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
     stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
-  cl$fit.range <- cl$granularity <- cl$normalize <- cl$verbose <- cl$scoretype <- cl$test.model <- NULL
+  cl$fit.range <- cl$granularity <- cl$normalize <- cl$verbose <- cl$scoretype <- cl$test.model <- cl$print.all <-  cl$scoretype <- NULL
   cl[[1]] <- as.name("rean_cna")
   attempt <- seq(max(fit.range), min(fit.range), -granularity)
   cl$attempt <- attempt
-  cl$output <- output
+  cl$output <- match.arg(output)
   clres <- eval.parent(cl)
   rescomb <- do.call(rbind, clres)
   rescomb <- rescomb[!is.na(rescomb[,1]),] 
+  rescomb <- rescomb[,-c(which(names(rescomb) %in% c("cnacon", "cnacov")))]
+  rescomb$condition <- as.character(rescomb$condition)
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
+  scoretype <- match.arg(scoretype)
+  #rescomb <- unique(rescomb)
   if (is.null(test.model)){
-    scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
+    scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose, scoretype = scoretype)
     if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
       return(NULL)}
-    if (verbose){scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])} else {
-      scored <- unique(scored[order(scored$score, decreasing = T),])
-    }
+    #if (verbose){scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])} else {
+    #  scored <- unique(scored[order(scored$score, decreasing = T),])
+    #}
     #rescomb$frscore <- scored$score
-    return(list(scored, rescomb))
+    #sc <- scored[[1]]
+    #names(sc)[names(sc) == "model"] <- "condition"
+    #rescombXscored <- left_join(rescomb, sc, by="condition")
+    #return(list(rescombXscored, scored))
   } else {
     if(any(sapply(rescomb$condition, function(x) identical.model(x, test.model)))){
-      scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose)
+      scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose, scoretype = scoretype)
       if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
       return(NULL)}
     } else {
-      scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
-      if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
-      return(NULL)}
+      #scored <- frscore(c(rescomb$condition, test.model), normalize = normalize, verbose = verbose)
+      #if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      #return(NULL)}
+      stop('test.model not found in reanalysis series')
+      }
     }
-    if (verbose) {scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
-    tested <- scored[[1]][sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
+    
+    sc <- scored[[1]]
+    names(sc)[names(sc) == "model"] <- "condition"
+    rescombXscored <- left_join(rescomb, sc, by="condition")
+    rescombXscored <- unique(rescombXscored)
+    if(!is.null(test.model)){
+      tested <- rescombXscored[sapply(rescombXscored$condition, function(x) identical.model(x, test.model)),]
+    } else {
+      tested <- test.model
+    }
+    
+    #if (verbose) {scored[[1]] <- unique(scored[[1]][order(scored[[1]]$score, decreasing = T),])
+    #tested <- scored[[1]][sapply(scored[[1]]$model, function(x) identical.model(x, test.model)),]} else{
       
-      scored <- unique(scored[order(scored$score, decreasing = T),])
-      tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
-    }
-    return(list(tested, scored, rescomb))
-  }
+     # scored <- unique(scored[order(scored$score, decreasing = T),])
+      #tested <- scored[sapply(scored$model, function(x) identical.model(x, test.model)),]
+    #}
+  out <- structure(list(rean_models = rescombXscored, 
+                        tested = tested, 
+                        verbose = scored$verbose, 
+                        print.all = print.all,
+                        fit.range = fit.range,
+                        granularity = granularity,
+                        scoretype = scoretype), 
+                     class = c("frscored_cna", "list"))
+  return(out)
 }
+
+
+print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all){
+  cat('FR-scored reanalysis series with fit range', x$fit.range[1], 'to', x$fit.range[2], 'with granularity', x$granularity, '\n')
+  cat('Score type:', x$scoretype, '\n')
+  cat('---------------------------------- \n \n')
+  if(!is.null(x$tested)){
+    cat('Candidate model tested:', x$tested$condition, '\n \n')
+    print(x$tested)
+    cat('\n \n')
+  }
+  cat('Model types: \n \n')
+  nr <- nrow(x$rean_models) - 20L
+  if (print.all){
+    print(x$rean_models)
+  } else {
+    print(head(x$rean_models, n = 20L))
+    cat('\n')
+    if(nr > 0){
+      cat('...there were', nr, 'more model types found, use \'print.all = TRUE\' to print all')
+    }  
+  }
+  if(!is.null(verbose)){
+    cat('\n')
+    cat('Score composition by model type: \n')
+    print(verbose)
+  }
+  invisible(x)
+}
+
+
 
 
 ## rean_cna() performs a reanalysis series based on which fr-scores can be calculated
