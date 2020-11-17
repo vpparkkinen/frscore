@@ -308,6 +308,7 @@ rean_cna <- function(..., what = "c",
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
     stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
+  output <- match.arg(output)
   cl$attempt <- cl$asf <- cl$ncsf <- cl$csf <- cl$output <- NULL
   cl[[1]] <- as.name("cna")
   ccargs <- as.data.frame(expand.grid(attempt, attempt))
@@ -317,8 +318,8 @@ rean_cna <- function(..., what = "c",
   for (i in 1:length(sols)){
       cl$con <- ccargs[i,"lowfirst"]
       cl$cov <- ccargs[i, "lowsec"]
-    if (output[[1]]=="csf"){sols[[i]] <- csf(eval.parent(cl), n = ncsf)} 
-    if (output[[1]]=="asf"){sols[[i]] <- asf(eval.parent(cl))}
+    if (output=="csf"){sols[[i]] <- csf(eval.parent(cl), n = ncsf)} 
+    if (output=="asf"){sols[[i]] <- asf(eval.parent(cl))}
     dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])), 
                                   cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
