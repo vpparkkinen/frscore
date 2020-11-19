@@ -88,7 +88,7 @@ frscore <- function(sols,
           bs <- sc[, c(1,3,4)]
           colnames(bs)[colnames(bs) == "supsc"] <- "sub.frequency"
           colnames(bs)[colnames(bs) == "mod"] <- "model"
-          bysup <- bs %>% group_split(supmod)
+          bysup <- bs %>% dplyr::group_split(supmod)
           supnames <- unlist(lapply(bysup, function(x) unique(x$supmod)))
           names(bysup) <- supnames
           subspermod <- lapply(bysup, function(x) x[,c(1,3)])
@@ -96,7 +96,7 @@ frscore <- function(sols,
           
           sps <- sc[, c(1,2,3)]
           sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2], mod = sps[,1])
-          bysub <- sps %>% group_split(mod)
+          bysub <- sps %>% dplyr::group_split(mod)
           subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
           names(bysub) <- subnames
           superpermod <- lapply(bysub, function(x) x[,2])
@@ -107,7 +107,7 @@ frscore <- function(sols,
           colnames(mfs)[colnames(mfs) == "sols"] <- "model"
           dups <- lapply(names(robbasis), function(x) mfs[mfs[,1]==x,])
           dupscores <- lapply(dups, function(x) x %>% 
-                                mutate(sub.frequency=Freq-1, sup.frequency = Freq-1, Freq = NULL))
+                                dplyr::mutate(sub.frequency=Freq-1, sup.frequency = Freq-1, Freq = NULL))
           dupscores <- lapply(dupscores, function(x) if(x[,2] == 0){x[-1,]}else{x})
           robbasis <- mapply(rbind, robbasis, dupscores, SIMPLIFY = F)
           robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
@@ -138,8 +138,8 @@ frscore <- function(sols,
         
         
         
-        pre.ssc <- sc[,c(1,2)] %>% group_by(mod) %>% mutate(subsc = sum(subsc)) %>% distinct  
-        pre.susc <- sc[,c(3,4)] %>% group_by(supmod) %>% mutate(supsc = sum(supsc)) %>% distinct  
+        pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(mod) %>% dplyr::mutate(subsc = sum(subsc)) %>% dplyr::distinct()  
+        pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(supmod) %>% dplyr::mutate(supsc = sum(supsc)) %>% dplyr::distinct()  
         pre.ssc <- pre.ssc[order(pre.ssc$mod),]
         pre.susc <- pre.susc[order(pre.susc$supmod),]
         
@@ -153,7 +153,7 @@ frscore <- function(sols,
           (rep(mf$Freq, mf$Freq)-1)*2/2}
         
         out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
-        out <- out %>% group_by(model) %>% mutate(tokens = n())
+        out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
         out <- unique(as.data.frame(out,  stringsAsFactors = F))
         out <- out[order(out$score, decreasing = T),]
         rownames(out) <- 1:nrow(out)
@@ -244,7 +244,7 @@ frscored_cna <- function(x,
     
     sc <- scored[[1]]
     names(sc)[names(sc) == "model"] <- "condition"
-    rescombXscored <- left_join(rescomb, sc, by="condition")
+    rescombXscored <- dplyr::left_join(rescomb, sc, by="condition")
     
     rescombXscored <- unique(rescombXscored)
     rescombXscored <- rescombXscored[order(rescombXscored$score, decreasing = T),]
