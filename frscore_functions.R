@@ -28,10 +28,10 @@ frscore <- function(sols,
       if(verbose){
         scsums <- list(NULL)
         names(scsums) <- sols
-        return(return(structure(list(models = out, 
+        return(structure(list(models = out, 
                                      verbose = scsums, 
                                      print.all = print.all, 
-                                     scoretype = scoretype), class = "frscore")))
+                                     scoretype = scoretype), class = "frscore"))
       }else{
         return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))
         }
@@ -44,27 +44,28 @@ frscore <- function(sols,
         
       if (nrow(mf)==1){
         if(scoretype %in% c("submodel", "supermodel")){
-          out <- rep((mf$Freq-1)*2/2, mf$Freq)
+          sco <- rep((mf$Freq-1)*2/2, mf$Freq)
           
         }else{
-          out <- rep((mf$Freq-1)*2, mf$Freq)
+          sco <- rep((mf$Freq-1)*2, mf$Freq)
           
         }
-        out <- data.frame(model = sols, score = out)
+        out <- data.frame(model = sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
 
         if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
-        if(verbose){
-          elems <- (mf$Freq-1)*2
-          if (scoretype %in% c("supermodel", "submodel")){elems <- elems / 2}
-          names(elems) <- sols[1]
+        
+        elems <- (mf$Freq-1)*2
+        if (scoretype %in% c("supermodel", "submodel")){elems <- elems / 2}
+        names(elems) <- sols[1]
           
-          scsums <- list(elems)
-          names(scsums) <- sols[1]
-          return(list(out, scsums))
+        scsums <- list(elems)
+        names(scsums) <- sols[1]
+        return(structure(list(models = out, 
+                              verbose = if(verbose){scsums}else{NULL}, 
+                              print.all = print.all, 
+                              scoretype = scoretype), class = "frscore"))
+        
         }else{
-          return(out)
-        }
-      }else{
         
         mf <- mf[order(mf[,1]),]
         sscore <- vector("list", nrow(mf))
@@ -153,7 +154,7 @@ frscore <- function(sols,
         
         out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
         out <- out %>% group_by(model) %>% mutate(tokens = n())
-        out <- unique(as.data.frame(out))
+        out <- unique(as.data.frame(out,  stringsAsFactors = F))
         out <- out[order(out$score, decreasing = T),]
         rownames(out) <- 1:nrow(out)
         
@@ -162,6 +163,7 @@ frscore <- function(sols,
           return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))}}
     }
 }
+
 
 # Print method for frscore()
 
@@ -243,7 +245,11 @@ frscored_cna <- function(x,
     sc <- scored[[1]]
     names(sc)[names(sc) == "model"] <- "condition"
     rescombXscored <- left_join(rescomb, sc, by="condition")
+    
     rescombXscored <- unique(rescombXscored)
+    rescombXscored <- rescombXscored[order(rescombXscored$score, decreasing = T),]
+    rownames(rescombXscored) <- 1:nrow(rescombXscored)
+    
     if(!is.null(test.model)){
       tested <- rescombXscored[sapply(rescombXscored$condition, function(x) identical.model(x, test.model)),]
     } else {
