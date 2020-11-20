@@ -126,7 +126,7 @@ frscore <- function(sols,
     if (scoretype == "full") {out <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
       (rep(mf$Freq, mf$Freq)-1)*2}
     
-    if (scoretype == "supermodel") {out <- rep(pre.ssc$subsc, mf$Freq)  +
+    if (scoretype == "supermodel") {out <- rep(pre.ssc$subsc, mf$Freq) +
       (rep(mf$Freq, mf$Freq)-1)*2/2}
     
     if (scoretype == "submodel") {out <- rep(pre.susc$supsc, mf$Freq) +
@@ -139,11 +139,7 @@ frscore <- function(sols,
     rownames(out) <- 1:nrow(out)
     
   }
-      
-        
-        # if(verbose==TRUE){return(structure(list(models = out, verbose = scsums, print.all = print.all, scoretype = scoretype), class = "frscore"))}else{
-        #   return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))}
-      
+
   if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
   return(structure(list(models = out,
                         verbose = if(verbose){scsums}else{NULL},
@@ -237,6 +233,7 @@ frscored_cna <- function(x,
     rescombXscored <- dplyr::left_join(rescomb, sc, by="condition")
     
     rescombXscored <- unique(rescombXscored)
+    rescombXscored <- rescombXscored[order(rescombXscored$complexity, decreasing = T),]
     rescombXscored <- rescombXscored[order(rescombXscored$score, decreasing = T),]
     rownames(rescombXscored) <- 1:nrow(rescombXscored)
     
