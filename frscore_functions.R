@@ -19,150 +19,140 @@ frscore <- function(sols,
                     scoretype = c("full", "supermodel", "submodel"), 
                     print.all = FALSE){
   if (typeof(sols) != "character"){
-    stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))}
-  if (NA %in% sols){sols <- sols[!is.na(sols)]}
-  if (length(sols) == 0){warning('no solutions to test')
-    return(NULL)} else 
-    if(length(sols) == 1){
-      out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
-      if(verbose){
-        scsums <- list(NULL)
-        names(scsums) <- sols
-        return(structure(list(models = out, 
-                                     verbose = scsums, 
-                                     print.all = print.all, 
-                                     scoretype = scoretype), class = "frscore"))
-      }else{
-        return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))
-        }
-    }else{
-      
-      scoretype <- match.arg(scoretype)
-      sols <- sols[order(sols)]
-      
-      mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
-        
-      if (nrow(mf)==1){
-        if(scoretype %in% c("submodel", "supermodel")){
-          sco <- rep((mf$Freq-1)*2/2, mf$Freq)
-          
-        }else{
-          sco <- rep((mf$Freq-1)*2, mf$Freq)
-          
-        }
-        out <- data.frame(model = sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
-
-        if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
-        
-        elems <- (mf$Freq-1)*2
-        if (scoretype %in% c("supermodel", "submodel")){elems <- elems / 2}
-        names(elems) <- sols[1]
-          
-        scsums <- list(elems)
-        names(scsums) <- sols[1]
-        return(structure(list(models = out, 
-                              verbose = if(verbose){scsums}else{NULL}, 
-                              print.all = print.all, 
-                              scoretype = scoretype), class = "frscore"))
-        
-        }else{
-        
-        mf <- mf[order(mf[,1]),]
-        sscore <- vector("list", nrow(mf))
-        
-        for (m in 1:nrow(mf)){
-          subres <- vector("list", nrow(mf[-m,]))
-          for(mo in 1:nrow(mf[-m,])){
-            subres[[mo]] <- if (nchar(mf[,1][m]) > nchar(mf[-m,][,1][mo])){
-              data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
-            }else{
-              subCounter(mf[m,], mf[-m,][mo,])
-            }  
-          } 
-          sscore[[m]] <- subres
-        }
-        
-        sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
-        
-        if(verbose){
-          bs <- sc[, c(1,3,4)]
-          colnames(bs)[colnames(bs) == "supsc"] <- "sub.frequency"
-          colnames(bs)[colnames(bs) == "mod"] <- "model"
-          bysup <- bs %>% dplyr::group_split(supmod)
-          supnames <- unlist(lapply(bysup, function(x) unique(x$supmod)))
-          names(bysup) <- supnames
-          subspermod <- lapply(bysup, function(x) x[,c(1,3)])
-          subspermod <- lapply(subspermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
-          
-          sps <- sc[, c(1,2,3)]
-          sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2], mod = sps[,1])
-          bysub <- sps %>% dplyr::group_split(mod)
-          subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
-          names(bysub) <- subnames
-          superpermod <- lapply(bysub, function(x) x[,2])
-          superpermod <- lapply(superpermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
-          
-          robbasis <- mapply(cbind, subspermod, superpermod, SIMPLIFY = F)
-          mfs <- mf
-          colnames(mfs)[colnames(mfs) == "sols"] <- "model"
-          dups <- lapply(names(robbasis), function(x) mfs[mfs[,1]==x,])
-          dupscores <- lapply(dups, function(x) x %>% 
-                                dplyr::mutate(sub.frequency=Freq-1, sup.frequency = Freq-1, Freq = NULL))
-          dupscores <- lapply(dupscores, function(x) if(x[,2] == 0){x[-1,]}else{x})
-          robbasis <- mapply(rbind, robbasis, dupscores, SIMPLIFY = F)
-          robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
-          
-          if (scoretype == "full") {
-            scsums <- lapply(robred, function(x) 
-              if(nrow(x) == 0){x<-NULL}else{apply(x[,c(2,3)], 1, sum)})
-          }
-          
-          if (scoretype == "supermodel") {
-            scsums <- lapply(robred, function(x) 
-              if(nrow(x) == 0){x<-NULL}else{x[,3]})
-          }
-          
-          if (scoretype == "submodel") {
-            scsums <- lapply(robred, function(x) 
-              if(nrow(x) == 0){x<-NULL}else{x[,2]})
-          }
-          
-          
-          for (i in 1:length(scsums)){
-            if(!is.null(scsums[[i]])){names(scsums[[i]]) <- robred[[i]][,1]}
-          }
-          
-          scsums <- lapply(scsums, function(x) x[x>0])
-          scsums <- lapply(scsums, function(x) if (length(x)<1){NULL}else{x})
-        }
-        
-        
-        
-        pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(mod) %>% dplyr::mutate(subsc = sum(subsc)) %>% dplyr::distinct()  
-        pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(supmod) %>% dplyr::mutate(supsc = sum(supsc)) %>% dplyr::distinct()  
-        pre.ssc <- pre.ssc[order(pre.ssc$mod),]
-        pre.susc <- pre.susc[order(pre.susc$supmod),]
-        
-        if (scoretype == "full") {out <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
-          (rep(mf$Freq, mf$Freq)-1)*2}
-        
-        if (scoretype == "supermodel") {out <- rep(pre.ssc$subsc, mf$Freq)  +
-          (rep(mf$Freq, mf$Freq)-1)*2/2}
-        
-        if (scoretype == "submodel") {out <- rep(pre.susc$supsc, mf$Freq) +
-          (rep(mf$Freq, mf$Freq)-1)*2/2}
-        
-        out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
-        out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
-        out <- unique(as.data.frame(out,  stringsAsFactors = F))
-        out <- out[order(out$score, decreasing = T),]
-        rownames(out) <- 1:nrow(out)
-        
-        if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
-        if(verbose==TRUE){return(structure(list(models = out, verbose = scsums, print.all = print.all, scoretype = scoretype), class = "frscore"))}else{
-          return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))}}
+    stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))
+  }
+  if (length(sols) == 0){
+    warning('no solutions to test') 
+    return(NULL)
+  }
+  if (NA %in% sols){
+    sols <- sols[!is.na(sols)]
     }
-}
+
+  scoretype <- match.arg(scoretype)
+  sols <- sols[order(sols)]
+  mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
+  
+  if(length(sols) == 1){
+    out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
+    scsums <- list(NULL)
+    names(scsums) <- sols 
+  } else if (nrow(mf) == 1){
+    if(scoretype %in% c("submodel", "supermodel")){
+      sco <- rep((mf$Freq-1)*2/2, mf$Freq)
+    } else {
+      sco <- rep((mf$Freq-1)*2, mf$Freq)
+    }
+    
+    out <- data.frame(model = sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    #if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
+    elems <- (mf$Freq-1)*2
+    if (scoretype %in% c("supermodel", "submodel")){elems <- elems / 2}
+    names(elems) <- sols[1]
+    scsums <- list(elems)
+    names(scsums) <- sols[1]
+    
+  } else {
+    mf <- mf[order(mf[,1]),]
+    sscore <- vector("list", nrow(mf))
+    
+    for (m in 1:nrow(mf)){
+      subres <- vector("list", nrow(mf[-m,]))
+      for(mo in 1:nrow(mf[-m,])){
+        subres[[mo]] <- if (nchar(mf[,1][m]) > nchar(mf[-m,][,1][mo])){
+          data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
+        }else{
+          subCounter(mf[m,], mf[-m,][mo,])
+        }  
+      } 
+      sscore[[m]] <- subres
+    }
+    
+    sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
+    
+    if(verbose){
+      bs <- sc[, c(1,3,4)]
+      colnames(bs)[colnames(bs) == "supsc"] <- "sub.frequency"
+      colnames(bs)[colnames(bs) == "mod"] <- "model"
+      bysup <- bs %>% dplyr::group_split(supmod)
+      supnames <- unlist(lapply(bysup, function(x) unique(x$supmod)))
+      names(bysup) <- supnames
+      subspermod <- lapply(bysup, function(x) x[,c(1,3)])
+      subspermod <- lapply(subspermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
+      
+      sps <- sc[, c(1,2,3)]
+      sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2], mod = sps[,1])
+      bysub <- sps %>% dplyr::group_split(mod)
+      subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
+      names(bysub) <- subnames
+      superpermod <- lapply(bysub, function(x) x[,2])
+      superpermod <- lapply(superpermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
+      
+      robbasis <- mapply(cbind, subspermod, superpermod, SIMPLIFY = F)
+      mfs <- mf
+      colnames(mfs)[colnames(mfs) == "sols"] <- "model"
+      dups <- lapply(names(robbasis), function(x) mfs[mfs[,1]==x,])
+      dupscores <- lapply(dups, function(x) x %>% 
+                            dplyr::mutate(sub.frequency=Freq-1, sup.frequency = Freq-1, Freq = NULL))
+      dupscores <- lapply(dupscores, function(x) if(x[,2] == 0){x[-1,]}else{x})
+      robbasis <- mapply(rbind, robbasis, dupscores, SIMPLIFY = F)
+      robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
+      
+      if (scoretype == "full") {
+        scsums <- lapply(robred, function(x) 
+          if(nrow(x) == 0){x<-NULL}else{apply(x[,c(2,3)], 1, sum)})
+      }
+      if (scoretype == "supermodel") {
+        scsums <- lapply(robred, function(x) 
+          if(nrow(x) == 0){x<-NULL}else{x[,3]})
+      }
+      if (scoretype == "submodel") {
+        scsums <- lapply(robred, function(x) 
+          if(nrow(x) == 0){x<-NULL}else{x[,2]})
+      }
+      for (i in 1:length(scsums)){
+        if(!is.null(scsums[[i]])){names(scsums[[i]]) <- robred[[i]][,1]}
+      }
+      
+      scsums <- lapply(scsums, function(x) x[x>0])
+      scsums <- lapply(scsums, function(x) if (length(x)<1){NULL}else{x})
+    } 
+    
+    pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(mod) %>% dplyr::mutate(subsc = sum(subsc)) %>% dplyr::distinct()  
+    pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(supmod) %>% dplyr::mutate(supsc = sum(supsc)) %>% dplyr::distinct()  
+    pre.ssc <- pre.ssc[order(pre.ssc$mod),]
+    pre.susc <- pre.susc[order(pre.susc$supmod),]
+    
+    if (scoretype == "full") {out <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
+      (rep(mf$Freq, mf$Freq)-1)*2}
+    
+    if (scoretype == "supermodel") {out <- rep(pre.ssc$subsc, mf$Freq)  +
+      (rep(mf$Freq, mf$Freq)-1)*2/2}
+    
+    if (scoretype == "submodel") {out <- rep(pre.susc$supsc, mf$Freq) +
+      (rep(mf$Freq, mf$Freq)-1)*2/2}
+    
+    out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
+    out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
+    out <- unique(as.data.frame(out,  stringsAsFactors = F))
+    out <- out[order(out$score, decreasing = T),]
+    rownames(out) <- 1:nrow(out)
+    
+  }
+      
+        
+        # if(verbose==TRUE){return(structure(list(models = out, verbose = scsums, print.all = print.all, scoretype = scoretype), class = "frscore"))}else{
+        #   return(structure(list(models = out, verbose = NULL, print.all = print.all, scoretype = scoretype), class = "frscore"))}
+      
+  if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
+  return(structure(list(models = out,
+                        verbose = if(verbose){scsums}else{NULL},
+                        print.all = print.all,
+                        scoretype = scoretype), class = "frscore"))
+  
+  }
+
+
 
 
 # Print method for frscore()
