@@ -240,7 +240,7 @@ frscored_cna <- function(x,
                          granularity = 0.1, 
                          output = c("csf", "asf"),
                          scoretype = c("full", "supermodel", "submodel"),
-                         normalize = TRUE, 
+                         normalize = c("truemax", "idealmax", "none"), 
                          verbose = FALSE,
                          test.model = NULL,
                          print.all = FALSE,
@@ -263,6 +263,7 @@ frscored_cna <- function(x,
   rescomb$condition <- as.character(rescomb$condition)
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
   scoretype <- match.arg(scoretype)
+  normalize <- match.arg(normalize)
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose, scoretype = scoretype)
     if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
@@ -299,6 +300,7 @@ frscored_cna <- function(x,
                         fit.range = fit.range,
                         granularity = granularity,
                         scoretype = scoretype,
+                        normal = normalize,
                         rean.results = rescombtemp), 
                      class = c("frscored_cna", "list"))
   return(out)
@@ -308,7 +310,7 @@ frscored_cna <- function(x,
 
 print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all){
   cat('FR-scored reanalysis series with fit range', x$fit.range[1], 'to', x$fit.range[2], 'with granularity', x$granularity, '\n')
-  cat('Score type:', x$scoretype, '\n')
+  cat('Score type:', x$scoretype, '||', 'score normalization:', x$normal, '\n')
   cat('----- \n \n')
   if(!is.null(x$tested)){
     cat('Candidate model tested:', x$tested$condition, '\n \n')
