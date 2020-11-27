@@ -14,7 +14,8 @@ subCounter <- function(s,p){
 ## frscore() calculates the fr-scores for a set of models 
 
 frscore <- function(sols, 
-                    normalize = TRUE, 
+                    #normalize = TRUE, 
+                    normalize = c("truemax", "idealmax", "none"), 
                     verbose = FALSE, 
                     scoretype = c("full", "supermodel", "submodel"), 
                     print.all = FALSE){
@@ -30,6 +31,7 @@ frscore <- function(sols,
     }
 
   scoretype <- match.arg(scoretype)
+  normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   
@@ -140,11 +142,58 @@ frscore <- function(sols,
     
   }
 
-  if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
+  if(normalize == "truemax"){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
+  
+  if(normalize == "idealmax"){
+    compx <- cna:::getComplexity(sols)
+    cfreqtab <- as.data.frame(table(compx))
+    cfreqtab$compx <- as.integer(cfreqtab$compx)
+    cfreqtab <- cfreqtab[order(cfreqtab$compx, decreasing = T),]
+    
+    cfreqtab$selfscore <- if(scoretype == "full"){
+      (cfreqtab$Freq - 1) * 2
+    } else {
+      cfreqtab$Freq - 1
+    }
+    
+    otherscore <- vector("integer", nrow(cfreqtab))
+    
+    if (scoretype == "supermodel"){
+      
+      for (i in seq_along(1:nrow(cfreqtab))) {
+        tt <- cfreqtab[cfreqtab$compx > cfreqtab[i,]$compx,]
+        otherscore[i] <- sum(tt$Freq) 
+      }
+    }
+    
+    
+    if (scoretype == "submodel"){
+      
+      for (i in seq_along(1:nrow(cfreqtab))) {
+        tt <- cfreqtab[cfreqtab$compx < cfreqtab[i,]$compx,]
+        otherscore[i] <- sum(tt$Freq) 
+      }
+    }
+    
+    if (scoretype == "full"){
+      for (i in seq_along(1:nrow(cfreqtab))) {
+        otherscore[i] <- sum(cfreqtab[-i,]$Freq)
+      }
+    }
+    
+    cfreqtab$otherscore <- otherscore
+    
+    idealmaxscore <- max(cfreqtab$selfscore + cfreqtab$otherscore)
+    
+    if (max(out$score>=1)){out$score <- out$score / idealmaxscore}
+    
+  }
+  
   return(structure(list(models = out,
                         verbose = if(verbose){scsums}else{NULL},
                         print.all = print.all,
-                        scoretype = scoretype), class = "frscore"))
+                        scoretype = scoretype,
+                        normal = normalize), class = "frscore"))
   
   }
 
@@ -154,7 +203,7 @@ frscore <- function(sols,
 # Print method for frscore()
 
 print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all){
-  cat("FRscore, score type:", x$scoretype,  "\n")
+  cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n")
   cat("-----\n \n")
   cat("Model types: \n")
   cat("\n")
