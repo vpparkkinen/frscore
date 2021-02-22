@@ -17,7 +17,8 @@ frscore <- function(sols,
                     #normalize = TRUE, 
                     normalize = c("truemax", "idealmax", "none"), 
                     verbose = FALSE, 
-                    scoretype = c("full", "supermodel", "submodel"), 
+                    scoretype = c("full", "supermodel", "submodel"),
+                    maxsols = 50,
                     print.all = FALSE){
   if (typeof(sols) != "character"){
     stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))
@@ -56,6 +57,31 @@ frscore <- function(sols,
     
   } else {
     mf <- mf[order(mf[,1]),]
+    if (nrow(mf) > maxsols){
+      mf$cx <- cna:::getComplexity(mf[,1])
+      mf$cxfr <- mf$Freq*mf$cx 
+      mf <- mf[order(mf[,4], decreasing = T), ]
+     #  compsplit <- mf %>% group_split(cx)
+     #  sizes <- sapply(compsplit, nrow)
+     #  ngroups <- length(compsplit)
+     #  n_pick <- as.integer((maxsols / ngroups) + 1)
+     #  # if_else(sizes < n_pick ~ 0, 
+     #  #           sizes >= n_pick ~ sizes - n_pick)
+     #  # 
+     #  oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
+     #  picks <- vector("integer", ngroups)
+     #  picks[1] <- n_pick 
+     #  #r <- if_else(sizes[1] > n_pick, 0L, n_pick - sizes[1])
+     #  for (i in 2:length(sizes)){ 
+     #    r <- if_else(sizes[i-1] > picks[i-1], 0L, picks[i-1] - sizes[i-1])#r <- if_else(sizes[i-1] > n_pick, 0L, n_pick - sizes[i-1])
+     #    #r <- 
+     #    #picks[i] <- if_else(sizes[i-1] > n_pick, n_pick, 2L*n_pick - sizes[i-1])
+     #    picks[i] <- r + n_pick
+     #    
+     #  }
+     # temppicks <- sizes - picks
+     # if_else(temppicks < 0, )
+    }
     sscore <- vector("list", nrow(mf))
     
     for (m in 1:nrow(mf)){
@@ -368,7 +394,7 @@ rean_cna <- function(..., what = "c",
                                   cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
   }
-  return(sols)
+  return(structure(sols, class = c("rean_cna", "list")))
 }
 
 
