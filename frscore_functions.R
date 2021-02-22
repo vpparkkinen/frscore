@@ -61,6 +61,9 @@ frscore <- function(sols,
       mf$cx <- cna:::getComplexity(mf[,1])
       mf$cxfr <- mf$Freq*mf$cx 
       mf <- mf[order(mf[,4], decreasing = T), ]
+      #mf <- mf[1:maxsols, c(1,2)]
+      mf <- mf[1:maxsols, ]
+      mf <- mf[order(mf[,1]), ]
      #  compsplit <- mf %>% group_split(cx)
      #  sizes <- sapply(compsplit, nrow)
      #  ngroups <- length(compsplit)
@@ -117,7 +120,7 @@ frscore <- function(sols,
       superpermod <- lapply(superpermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
       
       robbasis <- mapply(cbind, subspermod, superpermod, SIMPLIFY = F)
-      mfs <- mf
+      mfs <- mf[,c(1,2)]
       colnames(mfs)[colnames(mfs) == "sols"] <- "model"
       dups <- lapply(names(robbasis), function(x) mfs[mfs[,1]==x,])
       dupscores <- lapply(dups, function(x) x %>% 
@@ -151,18 +154,31 @@ frscore <- function(sols,
     pre.ssc <- pre.ssc[order(pre.ssc$mod),]
     pre.susc <- pre.susc[order(pre.susc$supmod),]
     
-    if (scoretype == "full") {out <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
-      (rep(mf$Freq, mf$Freq)-1)*2}
+    # if (scoretype == "full") {preout <- rep(pre.ssc$subsc, mf$Freq) + rep(pre.susc$supsc, mf$Freq) +
+    #   (rep(mf$Freq, mf$Freq)-1)*2}
+    # 
+    if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
+      (mf$Freq-1)*2}
     
-    if (scoretype == "supermodel") {out <- rep(pre.ssc$subsc, mf$Freq) +
-      (rep(mf$Freq, mf$Freq)-1)*2/2}
+    # if (scoretype == "supermodel") {preout <- rep(pre.ssc$subsc, mf$Freq) +
+    #   (rep(mf$Freq, mf$Freq)-1)*2/2}
+    # 
+    if (scoretype == "supermodel") {preout <- pre.ssc$subsc +
+      (mf$Freq-1)*2/2}
     
-    if (scoretype == "submodel") {out <- rep(pre.susc$supsc, mf$Freq) +
-      (rep(mf$Freq, mf$Freq)-1)*2/2}
     
-    out <- data.frame(model = sols, score = out, stringsAsFactors = FALSE)
-    out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
-    out <- unique(as.data.frame(out,  stringsAsFactors = F))
+    # if (scoretype == "submodel") {preout <- rep(pre.susc$supsc, mf$Freq) +
+    #   (rep(mf$Freq, mf$Freq)-1)*2/2}
+    # 
+    if (scoretype == "submodel") {preout <- pre.susc$supsc +
+      (mf$Freq-1)*2/2}
+    
+    
+    #out <- data.frame(model = sols[1:length(preout)], score = preout, stringsAsFactors = FALSE)
+    out <- data.frame(model = mf$sols, score = preout, tokens = mf$Freq, stringsAsFactors = FALSE)
+    #out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
+    
+    #out <- unique(as.data.frame(out,  stringsAsFactors = F))
     out <- out[order(out$score, decreasing = T),]
     rownames(out) <- 1:nrow(out)
     
@@ -171,9 +187,10 @@ frscore <- function(sols,
   if(normalize == "truemax"){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
   
   if(normalize == "idealmax"){
-    compx <- cna:::getComplexity(sols)
+    #compx <- cna:::getComplexity(sols)
+    compx <- rep(mf$cx, mf$Freq)
     cfreqtab <- as.data.frame(table(compx))
-    cfreqtab$compx <- as.integer(cfreqtab$compx)
+    cfreqtab$compx <- as.integer(as.character(cfreqtab$compx))
     cfreqtab <- cfreqtab[order(cfreqtab$compx, decreasing = T),]
     
     cfreqtab$selfscore <- if(scoretype == "full"){
