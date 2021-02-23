@@ -59,7 +59,8 @@ frscore <- function(sols,
     mf <- mf[order(mf[,1]),]
     if (nrow(mf) > maxsols){
       mf$cx <- cna:::getComplexity(mf[,1])
-      mf$cxfr <- mf$Freq*mf$cx 
+      #mf$cxfr <- mf$Freq*mf$cx 
+      mf <- mf %>% dplyr::mutate(cxfr = Freq * (1 + log(cx))) 
       mf <- mf[order(mf[,4], decreasing = T), ]
       #mf <- mf[1:maxsols, c(1,2)]
       mf <- mf[1:maxsols, ]
