@@ -63,7 +63,7 @@ frscore <- function(sols,
       #mf <- mf[order(mf[,4], decreasing = T), ]
       #mf <- mf[1:maxsols, c(1,2)]
       #mf <- mf[1:maxsols, ]
-      mf <- mf[sample(1:nrow(mf), maxsols), ]
+      mf <- mf[sample(1:nrow(mf), maxsols, replace = FALSE), ]
       mf <- mf[order(mf[,1]), ]
      #  compsplit <- mf %>% group_split(cx)
      #  sizes <- sapply(compsplit, nrow)
