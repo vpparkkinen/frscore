@@ -89,7 +89,8 @@ frscore <- function(sols,
        chosen[[i]] <- compsplit[[i]][1:nr,]
      }
      mf <- as.data.frame(do.call(rbind, chosen))
-     mf <- mf[1:maxsols, ]
+     if (nrow(mf) > maxsols){
+       mf <- mf[1:maxsols, ]}
      
      # if_else(temppicks < 0, )
     }
