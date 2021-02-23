@@ -58,11 +58,12 @@ frscore <- function(sols,
   } else {
     mf <- mf[order(mf[,1]),]
     if (nrow(mf) > maxsols){
-      mf$cx <- cna:::getComplexity(mf[,1])
-      mf$cxfr <- mf$Freq*mf$cx 
-      mf <- mf[order(mf[,4], decreasing = T), ]
+      #mf$cx <- cna:::getComplexity(mf[,1])
+      #mf$cxfr <- mf$Freq*mf$cx 
+      #mf <- mf[order(mf[,4], decreasing = T), ]
       #mf <- mf[1:maxsols, c(1,2)]
-      mf <- mf[1:maxsols, ]
+      #mf <- mf[1:maxsols, ]
+      mf <- mf[sample(1:nrow(mf), maxsols), ]
       mf <- mf[order(mf[,1]), ]
      #  compsplit <- mf %>% group_split(cx)
      #  sizes <- sapply(compsplit, nrow)
