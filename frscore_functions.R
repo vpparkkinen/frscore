@@ -65,33 +65,36 @@ frscore <- function(sols,
       #mf <- mf[1:maxsols, ]
       #mf <- mf[order(mf[,1]), ]
       compsplit <- mf %>% group_split(cx)
-      sizes <- sapply(compsplit, nrow)
       ngroups <- length(compsplit)
-      n_pick <- as.integer((maxsols / ngroups) + 1)
-      # if_else(sizes < n_pick ~ 0,
-      #           sizes >= n_pick ~ sizes - n_pick)
-      #
-      #oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
-      picks <- vector("integer", ngroups)
-      picks[1] <- n_pick
+      if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
+        sizes <- sapply(compsplit, nrow)
+        n_pick <- as.integer((maxsols / ngroups) + 1)
+        # if_else(sizes < n_pick ~ 0,
+        #           sizes >= n_pick ~ sizes - n_pick)
+        #
+        #oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
+        picks <- vector("integer", ngroups)
+        picks[1] <- n_pick
       #r <- if_else(sizes[1] > n_pick, 0L, n_pick - sizes[1])
-      for (i in 2:length(sizes)){
-        r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])#r <- if_else(sizes[i-1] > n_pick, 0L, n_pick - sizes[i-1])
-        #r <-
-        #picks[i] <- if_else(sizes[i-1] > n_pick, n_pick, 2L*n_pick - sizes[i-1])
-        picks[i] <- r + n_pick
+        for (i in 2:length(sizes)){
+          r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])#r <- if_else(sizes[i-1] > n_pick, 0L, n_pick - sizes[i-1])
+          #r <-
+          #picks[i] <- if_else(sizes[i-1] > n_pick, n_pick, 2L*n_pick - sizes[i-1])
+          picks[i] <- r + n_pick
 
-      }
-     chosen <- vector("list", ngroups)
-     for (i in seq_along(chosen)){
-       nr <- ifelse(nrow(compsplit[[i]]) < picks[i], 
+        }
+      chosen <- vector("list", ngroups)
+      for (i in seq_along(chosen)){
+         nr <- ifelse(nrow(compsplit[[i]]) < picks[i], 
                      nrow(compsplit[[i]]), picks[i])
-       chosen[[i]] <- compsplit[[i]][1:nr,]
-     }
-     mf <- as.data.frame(do.call(rbind, chosen))
-     if (nrow(mf) > maxsols){
-       mf <- mf[1:maxsols, ]}
-     
+        chosen[[i]] <- compsplit[[i]][1:nr,]
+      }
+      mf <- as.data.frame(do.call(rbind, chosen))
+      if (nrow(mf) > maxsols){
+         mf <- mf[1:maxsols, ]}
+      }
+      
+      mf <- mf[order(mf[,1]),]
      # if_else(temppicks < 0, )
     }
     sscore <- vector("list", nrow(mf))
