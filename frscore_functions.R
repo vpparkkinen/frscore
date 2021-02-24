@@ -65,6 +65,7 @@ frscore <- function(sols,
       #mf <- mf[1:maxsols, ]
       #mf <- mf[order(mf[,1]), ]
       compsplit <- mf %>% group_split(cx)
+      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
