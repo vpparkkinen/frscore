@@ -65,7 +65,7 @@ frscore <- function(sols,
       #mf <- mf[1:maxsols, ]
       #mf <- mf[order(mf[,1]), ]
       compsplit <- mf %>% group_split(cx)
-      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
+      #compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
@@ -73,7 +73,8 @@ frscore <- function(sols,
         # if_else(sizes < n_pick ~ 0,
         #           sizes >= n_pick ~ sizes - n_pick)
         #
-        #oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
+        oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
+        ifelse()
         picks <- vector("integer", ngroups)
         picks[1] <- n_pick
       #r <- if_else(sizes[1] > n_pick, 0L, n_pick - sizes[1])
@@ -103,7 +104,7 @@ frscore <- function(sols,
     for (m in 1:nrow(mf)){
       subres <- vector("list", nrow(mf[-m,]))
       for(mo in 1:nrow(mf[-m,])){
-        subres[[mo]] <- if (nchar(mf[,1][m]) > nchar(mf[-m,][,1][mo])){
+        subres[[mo]] <- if (nchar(mf[,1][m]) >= nchar(mf[-m,][,1][mo])){
           data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
         }else{
           subCounter(mf[m,], mf[-m,][mo,])
