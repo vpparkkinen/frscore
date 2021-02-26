@@ -103,7 +103,7 @@ frscore <- function(sols,
     for (m in 1:nrow(mf)){
       subres <- vector("list", nrow(mf[-m,]))
       for(mo in 1:nrow(mf[-m,])){
-        subres[[mo]] <- if (nchar(mf[,1][m]) > nchar(mf[-m,][,1][mo])){
+        subres[[mo]] <- if (nchar(mf[,1][m]) >= nchar(mf[-m,][,1][mo])){
           data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
         }else{
           subCounter(mf[m,], mf[-m,][mo,])
