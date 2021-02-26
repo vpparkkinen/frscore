@@ -42,12 +42,12 @@ frscore <- function(sols,
     names(scsums) <- sols 
   } else if (nrow(mf) == 1){
     if(scoretype %in% c("submodel", "supermodel")){
-      sco <- rep((mf$Freq-1)*2/2, mf$Freq)
+      sco <- (mf$Freq-1)*2/2
     } else {
-      sco <- rep((mf$Freq-1)*2, mf$Freq)
+      sco <- (mf$Freq-1)*2
     }
     
-    out <- data.frame(model = sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
     #if(normalize){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
     elems <- (mf$Freq-1)*2
     if (scoretype %in% c("supermodel", "submodel")){elems <- elems / 2}
