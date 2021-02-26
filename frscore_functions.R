@@ -1,5 +1,6 @@
 library(cna)
 library(dplyr)
+library(Rfast)
 
 ##helper function for frscore()
 
@@ -10,7 +11,10 @@ subCounter <- function(s,p){
     return(data.frame(mod=s[,1][[1]], subsc=0, supmod=p[,1][[1]], supsc=0, stringsAsFactors=FALSE))
   }
 
-
+subAdd <- function(x, y){
+  re <- is.submodel(x,y)
+  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA)))
+}
 
 
 
@@ -68,7 +72,7 @@ frscore <- function(sols,
       #mf <- mf[1:maxsols, ]
       #mf <- mf[order(mf[,1]), ]
       compsplit <- mf %>% group_split(cx)
-      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
+      compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
@@ -98,7 +102,7 @@ frscore <- function(sols,
          mf <- mf[1:maxsols, ]}
       }
       
-      mf <- mf[order(mf[,3]),]
+      mf <- mf[order(mf[,3], decreasing = T),]
      # if_else(temppicks < 0, )
     }
     #sscore <- vector("list", nrow(mf))
@@ -124,14 +128,29 @@ frscore <- function(sols,
           subres <- sapply(1:nrow(compsplit[[m]]), function(p) lapply(1:nrow(compsplit[[m+1]]), 
                         function(x) subCounter(compsplit[[m]][p,], compsplit[[m+1]][x,])))
           sscore[[m]] <- do.call(rbind, subres)
-          }
+      }
     
-    scrs <- Reduce(function(x,y) full_join(x,y, by = c("supmod" = "mod")), sscore)
-    scrs_noempty <- scrs %>% filter(subsc > 0 & supsc > 0)
-        
-    smt <- t(as.matrix(scrs))
+    tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
     
-    connected <- data.frame(from = row(smt)[which(smt)], to = col(smt)[which(smt)])
+    for (m in 1:(length(compsplit)-1)){
+      #subres <- vector("list", nrow(compsplit[[m]]))
+      subres <- sapply(1:nrow(compsplit[[m]]), function(p) lapply(1:nrow(compsplit[[m+1]]),
+                                                                  function(x) subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])))
+      sscore[[m]] <- do.call(rbind, subres)
+    }
+    scs <- do.call(rbind, sscore)
+    
+    #for (i in 1:nrow(tmat)){tmat[i,i] <- TRUE}
+    for (i in 1:nrow(tmat)){tmat[i,i] <- 1}
+    # scrs <- Reduce(function(x,y) full_join(x,y, by = c("supmod" = "mod")), sscore)
+    # scrs_noempty <- scrs %>% filter(subsc > 0 & supsc > 0)
+    #     
+    
+    for (i in 1:nrow(scs)){
+      tmat[which(rownames(tmat) == scs[i,1]), which(rownames(tmat) == scs[i,2])] <- scs[i,3]
+    }
+    
+    subm_paths <- floyd(tmat)
     
     sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
     
