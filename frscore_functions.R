@@ -5,10 +5,13 @@ library(dplyr)
 
 subCounter <- function(s,p){
   if (is.submodel(s[,1],p[,1])){
-    return(data.frame(mod=s[,1], subsc=p[,2], supmod=p[,1], supsc=s[,2], stringsAsFactors=FALSE))
+    return(data.frame(mod=s[,1][[1]], subsc=p[,2][[1]], supmod=p[,1][[1]], supsc=s[,2][[1]], stringsAsFactors=FALSE))
   } else
-    return(data.frame(mod=s[,1], subsc=0, supmod=p[,1], supsc=0, stringsAsFactors=FALSE))
+    return(data.frame(mod=s[,1][[1]], subsc=0, supmod=p[,1][[1]], supsc=0, stringsAsFactors=FALSE))
   }
+
+
+
 
 
 ## frscore() calculates the fr-scores for a set of models 
@@ -95,22 +98,40 @@ frscore <- function(sols,
          mf <- mf[1:maxsols, ]}
       }
       
-      mf <- mf[order(mf[,1]),]
+      mf <- mf[order(mf[,3]),]
      # if_else(temppicks < 0, )
     }
-    sscore <- vector("list", nrow(mf))
+    #sscore <- vector("list", nrow(mf))
+    sscore <- vector("list", length(compsplit)-1)
+    # for (m in 1:nrow(mf)){
+    #   subres <- vector("list", nrow(mf[-m,]))
+    #   for(mo in 1:nrow(mf[-m,])){
+    #     subres[[mo]] <- if (nchar(mf[,1][m]) >= nchar(mf[-m,][,1][mo])){
+    #       data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
+    #     }else{
+    #       subCounter(mf[m,], mf[-m,][mo,])
+    #     }
+    #   }
+    #   sscore[[m]] <- do.call(rbind, subres)
+    # scx <- function(a, b){
+    #   if
+    # }
     
-    for (m in 1:nrow(mf)){
-      subres <- vector("list", nrow(mf[-m,]))
-      for(mo in 1:nrow(mf[-m,])){
-        subres[[mo]] <- if (nchar(mf[,1][m]) > nchar(mf[-m,][,1][mo])){
-          data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
-        }else{
-          subCounter(mf[m,], mf[-m,][mo,])
-        }  
-      } 
-      sscore[[m]] <- subres
-    }
+    
+    
+      for (m in 1:(length(compsplit)-1)){
+        #subres <- vector("list", nrow(compsplit[[m]]))
+          subres <- sapply(1:nrow(compsplit[[m]]), function(p) lapply(1:nrow(compsplit[[m+1]]), 
+                        function(x) subCounter(compsplit[[m]][p,], compsplit[[m+1]][x,])))
+          sscore[[m]] <- do.call(rbind, subres)
+          }
+    
+    scrs <- Reduce(function(x,y) full_join(x,y, by = c("supmod" = "mod")), sscore)
+    scrs_noempty <- scrs %>% filter(subsc > 0 & supsc > 0)
+        
+    smt <- t(as.matrix(scrs))
+    
+    connected <- data.frame(from = row(smt)[which(smt)], to = col(smt)[which(smt)])
     
     sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
     
