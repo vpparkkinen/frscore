@@ -13,7 +13,7 @@ subCounter <- function(s,p){
 
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
-  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA)))
+  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA), checked = 1))
 }
 
 
@@ -131,6 +131,7 @@ frscore <- function(sols,
       }
     
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
+    for (i in 1:nrow(tmat_btab)){tmat_btab[i,i] <- 1}
     
     for (m in 1:(length(compsplit)-1)){
       #subres <- vector("list", nrow(compsplit[[m]]))
@@ -145,14 +146,26 @@ frscore <- function(sols,
     # scrs <- Reduce(function(x,y) full_join(x,y, by = c("supmod" = "mod")), sscore)
     # scrs_noempty <- scrs %>% filter(subsc > 0 & supsc > 0)
     #     
+    tmat_b <- tmat
     
     for (i in 1:nrow(scs)){
-      tmat[which(rownames(tmat) == scs[i,1]), which(rownames(tmat) == scs[i,2])] <- scs[i,3]
+      tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
+      tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
     }
     
+    #lapply(compsplit, function(x))
+    
     subm_paths <- floyd(tmat)
+    s_closures <- !apply(subm_paths, 2, is.na)
+    
+    tmat[s_closures] <- 1
+    
+    floyd(tmat)
     
     sc <- do.call(rbind, lapply(sscore, function(y) do.call(rbind, y)))
+    
+    
+    
     
     if(verbose){
       bs <- sc[, c(1,3,4)]
