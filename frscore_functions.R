@@ -43,6 +43,7 @@ frscore <- function(sols,
   normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
+  mf$cx <- cna:::getComplexity(mf[,1])
   
   if(length(sols) == 1){
     out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
@@ -64,8 +65,17 @@ frscore <- function(sols,
     names(scsums) <- sols[1]
     
     
+  } else if (length(unique(mf$cx)) == 1){
+    if(scoretype %in% c("submodel", "supermodel")){
+      sco <- (mf$Freq-1)*2/2
+    } else {
+      sco <- (mf$Freq-1)*2
+    }
+    out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    cat("no submodel tests were required, argument 'maxsols' is ignored \n\n")
+    maxsols <- "ignored"
   } else {
-    mf$cx <- cna:::getComplexity(mf[,1])
+    
 
     compsplit <- mf %>% group_split(cx)
     compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
@@ -359,7 +369,7 @@ frscore <- function(sols,
                         verbose = if(verbose){scsums}else{NULL},
                         print.all = print.all,
                         scoretype = scoretype,
-                        normal = normalize), class = "frscore"))
+                        normal = normalize, maxsols = maxsols), class = "frscore"))
   
   }
 
@@ -368,7 +378,7 @@ frscore <- function(sols,
 
 # Print method for frscore()
 
-print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all){
+print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all, maxsols = x$maxsols){
   cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n")
   cat("-----\n \n")
   cat("Model types: \n")
