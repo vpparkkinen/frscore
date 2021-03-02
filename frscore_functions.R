@@ -121,7 +121,7 @@ frscore <- function(sols,
     }
     mf <- mf[order(mf[,3], decreasing = T),]
     #sscore <- vector("list", nrow(mf))
-    #sscore <- vector("list", length(compsplit)-1)
+    sscore <- vector("list", length(compsplit)-1)
     # for (m in 1:nrow(mf)){
     #   subres <- vector("list", nrow(mf[-m,]))
     #   for(mo in 1:nrow(mf[-m,])){
