@@ -76,7 +76,7 @@ frscore <- function(sols,
     maxsols <- "ignored"
   } else {
     
-
+    mf <- mf[order(mf[,3], decreasing = T),]
     compsplit <- mf %>% group_split(cx)
     compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
     
@@ -117,10 +117,10 @@ frscore <- function(sols,
          mf <- mf[1:maxsols, ]}
       }
       
-     # if_else(temppicks < 0, )
-    }
     mf <- mf[order(mf[,3], decreasing = T),]
     compsplit <- mf %>% group_split(cx)
+     # if_else(temppicks < 0, )
+    }
     #sscore <- vector("list", nrow(mf))
     sscore <- vector("list", length(compsplit)-1)
     # for (m in 1:nrow(mf)){
@@ -213,18 +213,24 @@ frscore <- function(sols,
     hits <- apply(tmat, 2, function(x) x == 1)
     nohits <- apply(tmat, 2, is.na)
     
-    prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
-                          subsc = 0,
-                          supmod = colnames(tmat)[col(tmat)[which(hits)]],
-                          supsc = 0)
+    if(all(is.na(hits))){prescore <- data.frame(mod = character(),
+                                                subsc = integer(),
+                                                supmod = character(),
+                                                supsc = integer())} else {
     
-    prescore <- prescore %>% filter(mod != supmod)
+      prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
+                            subsc = 0,
+                            supmod = colnames(tmat)[col(tmat)[which(hits)]],
+                            supsc = 0)
     
-    prescore <- prescore %>% left_join(mf[,1:2], by = c("mod" = "sols")) %>% 
-      mutate(supsc = Freq) %>% select(-Freq)
+      prescore <- prescore %>% filter(mod != supmod)
     
-    prescore <- prescore %>% left_join(mf[,1:2], by = c("supmod" = "sols")) %>% 
-      mutate(subsc = Freq) %>% select(-Freq)
+      prescore <- prescore %>% left_join(mf[,1:2], by = c("mod" = "sols")) %>% 
+        mutate(supsc = Freq) %>% select(-Freq)
+    
+      prescore <- prescore %>% left_join(mf[,1:2], by = c("supmod" = "sols")) %>% 
+        mutate(subsc = Freq) %>% select(-Freq)
+                                                }
     
     prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
                            subsc = 0,
