@@ -76,35 +76,22 @@ frscore <- function(sols,
     maxsols <- "ignored"
   } else {
     
-    mf <- mf[order(mf[,3], decreasing = T),]
     compsplit <- mf %>% group_split(cx)
-    compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
+    #compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
+    compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
     
-    
-    #mf <- mf[order(mf[,1]),]
+
     if (nrow(mf) > maxsols){
-    #  mf$cxfr <- mf$Freq*mf$cx 
-     # mf <- mf[order(mf[,4], decreasing = T), ]
-      #mf <- mf[1:maxsols, c(1,2)]
-      #mf <- mf[1:maxsols, ]
-      #mf <- mf[order(mf[,1]), ]
+
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
-        sizes <- sapply(compsplit, nrow)
-        n_pick <- as.integer((maxsols / ngroups) + 1)
-        # if_else(sizes < n_pick ~ 0,
-        #           sizes >= n_pick ~ sizes - n_pick)
-        #
-        #oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
-        picks <- vector("integer", ngroups)
-        picks[1] <- n_pick
-      #r <- if_else(sizes[1] > n_pick, 0L, n_pick - sizes[1])
-        for (i in 2:length(sizes)){
-          r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])#r <- if_else(sizes[i-1] > n_pick, 0L, n_pick - sizes[i-1])
-          #r <-
-          #picks[i] <- if_else(sizes[i-1] > n_pick, n_pick, 2L*n_pick - sizes[i-1])
-          picks[i] <- r + n_pick
-
+          sizes <- sapply(compsplit, nrow)
+          n_pick <- as.integer((maxsols / ngroups) + 1)
+          picks <- vector("integer", ngroups)
+          picks[1] <- n_pick
+          for (i in 2:length(sizes)){
+            r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])
+            picks[i] <- r + n_pick
         }
       chosen <- vector("list", ngroups)
       for (i in seq_along(chosen)){
@@ -119,52 +106,26 @@ frscore <- function(sols,
       
     mf <- mf[order(mf[,3], decreasing = T),]
     compsplit <- mf %>% group_split(cx)
-     # if_else(temppicks < 0, )
     }
-    #sscore <- vector("list", nrow(mf))
+    
+    mf <- mf[order(mf[,3], decreasing = T),]
     sscore <- vector("list", length(compsplit)-1)
-    # for (m in 1:nrow(mf)){
-    #   subres <- vector("list", nrow(mf[-m,]))
-    #   for(mo in 1:nrow(mf[-m,])){
-    #     subres[[mo]] <- if (nchar(mf[,1][m]) >= nchar(mf[-m,][,1][mo])){
-    #       data.frame(mod=mf[,1][m], subsc=0, supmod=mf[-m,][,1][mo], supsc=0, stringsAsFactors=FALSE)
-    #     }else{
-    #       subCounter(mf[m,], mf[-m,][mo,])
-    #     }
-    #   }
-    #   sscore[[m]] <- do.call(rbind, subres)
-    # scx <- function(a, b){
-    #   if
-    # }
-    
-    
-    
-      # for (m in 1:(length(compsplit)-1)){
-      #   #subres <- vector("list", nrow(compsplit[[m]]))
-      #     subres <- sapply(1:nrow(compsplit[[m]]), function(p) lapply(1:nrow(compsplit[[m+1]]), 
-      #                   function(x) subCounter(compsplit[[m]][p,], compsplit[[m+1]][x,])))
-      #     sscore[[m]] <- do.call(rbind, subres)
-      # }
-      # 
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
-    #for (i in 1:nrow(tmat_btab)){tmat_btab[i,i] <- 1}
+    
     
     for (m in 1:(length(compsplit)-1)){
-      #subres <- vector("list", nrow(compsplit[[m]]))
-      subres <- sapply(1:nrow(compsplit[[m]]), function(p) lapply(1:nrow(compsplit[[m+1]]),
-                                                                  function(x) subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])))
+    
+      subres <- sapply(1:nrow(compsplit[[m]]), function(p) 
+        lapply(1:nrow(compsplit[[m+1]]),
+                                    function(x) subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])))
       sscore[[m]] <- do.call(rbind, subres)
     }
     scs <- do.call(rbind, sscore)
     
-    #for (i in 1:nrow(tmat)){tmat[i,i] <- TRUE}
+    
     for (i in 1:nrow(tmat)){tmat[i,i] <- NA}
-    # scrs <- Reduce(function(x,y) full_join(x,y, by = c("supmod" = "mod")), sscore)
-    # scrs_noempty <- scrs %>% filter(subsc > 0 & supsc > 0)
-    #     
+    
     tmat_b <- tmat
-    #for (i in 1:nrow(tmat_b)){tmat_b[i,i] <- 1}
-    #sapply(1:(ncol(tmat_b)-1), function(x) {tmat_b[x, (x+1):ncol(tmat_b)] <- 1; return(tmat_b)})
     
     for(x in 1:(ncol(tmat_b)-1)){
       tmat_b[x, (x+1):ncol(tmat_b)] <- 1
@@ -180,16 +141,9 @@ frscore <- function(sols,
       tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
     }
     
-    
-    
-    #lapply(compsplit, function(x))
-    
     subm_paths <- floyd(tmat)
     s_closures <- !apply(subm_paths, 2, is.na)
-    
     tmat_b[s_closures] <- tmat[s_closures] <- 1
-    
-    #floyd(tmat)
     nci <- apply(tmat_b, 2, is.na)
     
     if(any(is.na(tmat_b))){
@@ -216,21 +170,19 @@ frscore <- function(sols,
     if(all(is.na(hits))){prescore <- data.frame(mod = character(),
                                                 subsc = integer(),
                                                 supmod = character(),
-                                                supsc = integer())} else {
-    
+                                                supsc = integer())
+    } else {
       prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
                             subsc = 0,
                             supmod = colnames(tmat)[col(tmat)[which(hits)]],
                             supsc = 0)
     
       prescore <- prescore %>% filter(mod != supmod)
-    
       prescore <- prescore %>% left_join(mf[,1:2], by = c("mod" = "sols")) %>% 
         mutate(supsc = Freq) %>% select(-Freq)
-    
       prescore <- prescore %>% left_join(mf[,1:2], by = c("supmod" = "sols")) %>% 
         mutate(subsc = Freq) %>% select(-Freq)
-                                                }
+      }
     
     prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
                            subsc = 0,
