@@ -78,11 +78,11 @@ frscore <- function(sols,
     
     compsplit <- mf %>% group_split(cx)
     #compsplit <- lapply(compsplit, function(x) x[order(x[,3], decreasing = T),])
-    compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
     
 
     if (nrow(mf) > maxsols){
 
+      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
           sizes <- sapply(compsplit, nrow)
@@ -109,6 +109,7 @@ frscore <- function(sols,
     }
     
     mf <- mf[order(mf[,3], decreasing = T),]
+    
     sscore <- vector("list", length(compsplit)-1)
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
     
@@ -147,17 +148,83 @@ frscore <- function(sols,
     nci <- apply(tmat_b, 2, is.na)
     
     if(any(is.na(tmat_b))){
-      not_chk <- data.frame(sub = rownames(tmat)[row(tmat)[which(nci)]],
-                            super = colnames(tmat)[col(tmat)[which(nci)]])
-      
+      # not_chk <- data.frame(sub = rownames(tmat)[row(tmat)[which(nci)]],
+      #                       super = colnames(tmat)[col(tmat)[which(nci)]])
+      # 
+      # not_chk$cxs <- cna:::getComplexity(not_chk$sub)
+      # not_chk <- not_chk[order(not_chk$cxs, decreasing = T),]
+      # 
+      tmat <- t(tmat)
+      tmat_b <- t(tmat_b)
       counter <- 1
       while(any(is.na(tmat_b))){
-        test <- subAdd(not_chk[counter, 1], not_chk[counter, 2])
-        tmat[which(rownames(tmat) == test[,1]), which(colnames(tmat) == test[,2])] <- test[,3]
-        tmat_b[which(rownames(tmat_b) == test[,1]), which(colnames(tmat_b) == test[,2])] <- test[,4]
-        subm_paths <- floyd(tmat)
-        s_closures <- !apply(subm_paths, 2, is.na)
-        tmat_b[s_closures] <- tmat[s_closures] <- 1
+        #test <- subAdd(not_chk[counter, 1], not_chk[counter, 2])
+        # id <- min(which(is.na(tmat_b)))
+        # test <- subAdd(rownames(tmat)[row(tmat)[id]], 
+        #                colnames(tmat)[col(tmat)[id]])
+        # 
+        # 
+        # tmat[which(rownames(tmat) == test[,1]), which(colnames(tmat) == test[,2])] <- test[,3]
+        # tmat_b[which(rownames(tmat_b) == test[,1]), which(colnames(tmat_b) == test[,2])] <- test[,4]
+        # subm_paths <- floyd(tmat)
+        # s_closures <- !apply(subm_paths, 2, is.na)
+        # tmat_b[s_closures] <- tmat[s_closures] <- 1
+        
+        #narows <- which(apply(tmat_b, 2, is.na))
+        #nacols <- col(tmat)[which(apply(tmat_b, 2, is.na))]
+        
+        nas <- which(apply(tmat_b, 2, is.na))
+        nacol_rles <- rle(col(tmat)[nas])
+        #nacols <- col(tmat)[nas]
+      #  allids <- lapply(nacols, function(x) tmat[,x])
+        
+        
+        # ids <- mapply(function(a,b) nas[a:b], 
+        #              (css - nacol_rles$lengths) +1, css, SIMPLIFY = F)
+        # 
+        
+        ids <- nas[1:nacol_rles$lengths[1]] 
+      
+        chks <- lapply(ids, function(x)
+          subAdd(colnames(tmat)[col(tmat)[x]], 
+                 rownames(tmat)[row(tmat)[x]]))
+        for(n in seq_along(chks)){
+          tmat[ids[n]] <- chks[[n]][,3]
+          tmat_b[ids[n]] <- chks[[n]][,4]
+        }
+        
+        hits <- unlist(sapply(chks, "[", 3))
+          
+        
+        
+        # id <- min(which(is.na(tmat_b)))
+        # test <- subAdd(colnames(tmat)[col(tmat)[id]], 
+        #                rownames(tmat)[row(tmat)[id]])
+        # tmat[id] <- test[,3] 
+        # tmat_b[id] <- test[,4]
+        # 
+        # cumsum(nacol_rles$lengths)
+        ###########
+        # id <- min(which(is.na(tmat_b)))
+        # test <- subAdd(colnames(tmat)[col(tmat)[id]], 
+        #                rownames(tmat)[row(tmat)[id]])
+        # 
+        # 
+        # #tmat[which(rownames(tmat) == test[,1]), which(colnames(tmat) == test[,2])] <- test[,3]
+        # #tmat_b[which(colnames(tmat_b) == test[,1]), which(rownames(tmat_b) == test[,2])] <- test[,4]
+        # tmat[id] <- test[,3] 
+        # tmat_b[id] <- test[,4]
+        # if (!is.na(test[,3])){  
+        #   subm_paths <- floyd(tmat)
+        #   s_closures <- !apply(subm_paths, 2, is.na)
+        #   tmat_b[s_closures] <- tmat[s_closures] <- 1
+        # ###########
+        if (any(!is.na(hits))){  
+          subm_paths <- floyd(tmat)
+          s_closures <- !apply(subm_paths, 2, is.na)
+          tmat_b[s_closures] <- tmat[s_closures] <- 1  
+          
+        }
         counter <- counter + 1 
       }  
     }
