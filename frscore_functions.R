@@ -156,8 +156,7 @@ frscore <- function(sols,
       # 
       tmat <- t(tmat)
       tmat_b <- t(tmat_b)
-      counter <- 1
-      while(any(is.na(tmat_b))){
+      while(anyNA(tmat_b)){
         #test <- subAdd(not_chk[counter, 1], not_chk[counter, 2])
         # id <- min(which(is.na(tmat_b)))
         # test <- subAdd(rownames(tmat)[row(tmat)[id]], 
@@ -193,7 +192,7 @@ frscore <- function(sols,
           tmat_b[ids[n]] <- chks[[n]][,4]
         }
         
-        hits <- unlist(sapply(chks, "[", 3))
+        ress <- unlist(sapply(chks, "[", 3))
           
         
         
@@ -219,14 +218,13 @@ frscore <- function(sols,
         #   s_closures <- !apply(subm_paths, 2, is.na)
         #   tmat_b[s_closures] <- tmat[s_closures] <- 1
         # ###########
-        if (any(!is.na(hits))){  
+        if (any(!is.na(ress))){  
           subm_paths <- floyd(tmat)
           s_closures <- !apply(subm_paths, 2, is.na)
           tmat_b[s_closures] <- tmat[s_closures] <- 1  
           
         }
-        counter <- counter + 1 
-      }  
+      }
     }
     
     for (i in 1:nrow(tmat)){tmat[i,i] <- NA}
