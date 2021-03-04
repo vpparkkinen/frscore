@@ -44,6 +44,7 @@ frscore <- function(sols,
   sols <- sols[order(sols)]
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna:::getComplexity(mf[,1])
+  excluded_sols <- 0
   
   if(length(sols) == 1){
     out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
@@ -72,7 +73,7 @@ frscore <- function(sols,
       sco <- (mf$Freq-1)*2
     }
     out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
-    cat("no submodel tests were required, argument 'maxsols' is ignored \n\n")
+    #cat("no submodel tests were required, argument 'maxsols' is ignored \n\n")
     maxsols <- "ignored"
   } else {
     
@@ -81,7 +82,7 @@ frscore <- function(sols,
     
 
     if (nrow(mf) > maxsols){
-
+      excluded_sols <- nrow(mf) - maxsols
       compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
@@ -393,7 +394,9 @@ frscore <- function(sols,
                         verbose = if(verbose){scsums}else{NULL},
                         print.all = print.all,
                         scoretype = scoretype,
-                        normal = normalize, maxsols = maxsols), class = "frscore"))
+                        normal = normalize, 
+                        maxsols = list(maxsols = maxsols, excluded = excluded_sols)
+                        ), class = "frscore"))
   
   }
 
@@ -403,7 +406,12 @@ frscore <- function(sols,
 # Print method for frscore()
 
 print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all, maxsols = x$maxsols){
-  cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n")
+  cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n\n")
+  if(maxsols$maxsols == "ignored"){
+    cat("no submodel checks were needed, argument 'maxsols' ignored \n")
+  } else {
+    cat("maxsols set to", maxsols$maxsols, "--", maxsols$excluded, "solution types excluded from scoring \n\n")
+  }
   cat("-----\n \n")
   cat("Model types: \n")
   cat("\n")
