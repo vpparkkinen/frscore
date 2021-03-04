@@ -59,21 +59,14 @@ frscore <- function(sols,
     mf <- mf[order(mf[,1]),]
     if (nrow(mf) > maxsols){
       mf$cx <- cna:::getComplexity(mf[,1])
-    #  mf$cxfr <- mf$Freq*mf$cx 
-     # mf <- mf[order(mf[,4], decreasing = T), ]
-      #mf <- mf[1:maxsols, c(1,2)]
-      #mf <- mf[1:maxsols, ]
-      #mf <- mf[order(mf[,1]), ]
+
       compsplit <- mf %>% group_split(cx)
       compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
         n_pick <- as.integer((maxsols / ngroups) + 1)
-        # if_else(sizes < n_pick ~ 0,
-        #           sizes >= n_pick ~ sizes - n_pick)
-        #
-        #oflow <- if_else(sizes > n_pick, 0L, n_pick - sizes)
+
         picks <- vector("integer", ngroups)
         picks[1] <- n_pick
       #r <- if_else(sizes[1] > n_pick, 0L, n_pick - sizes[1])
