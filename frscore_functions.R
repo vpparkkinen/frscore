@@ -5,12 +5,7 @@ library(tidyr)
 
 ##helper function for frscore()
 
-subCounter <- function(s,p){
-  if (is.submodel(s[,1],p[,1])){
-    return(data.frame(mod=s[,1][[1]], subsc=p[,2][[1]], supmod=p[,1][[1]], supsc=s[,2][[1]], stringsAsFactors=FALSE))
-  } else
-    return(data.frame(mod=s[,1][[1]], subsc=0, supmod=p[,1][[1]], supsc=0, stringsAsFactors=FALSE))
-  }
+
 
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
@@ -72,7 +67,17 @@ frscore <- function(sols,
     } else {
       sco <- (mf$Freq-1)*2
     }
+    
     out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    scsums <- (mf$Freq-1)*2
+    if (scoretype %in% c("supermodel", "submodel")){scsums <- scsums / 2}
+    scsums <- as.list(scsums)
+    for (i in seq_along(scsums)){names(scsums[[i]]) <- unique(sols)[i]}
+    
+    names(scsums) <- unique(sols)
+    zeroid <- unlist(lapply(scsums, function(x) x[[1]] < 1))
+    scsums[zeroid] <- list(NULL)
+    
     #cat("no submodel tests were required, argument 'maxsols' is ignored \n\n")
     maxsols <- "ignored"
   } else {
@@ -452,13 +457,17 @@ frscored_cna <- function(x,
                          verbose = FALSE,
                          test.model = NULL,
                          print.all = FALSE,
+                         maxsols = 50,
                          ...){
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
     stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
-  cl$fit.range <- cl$granularity <- cl$normalize <- cl$verbose <- cl$scoretype <- cl$test.model <- cl$print.all <-  cl$scoretype <- NULL
+  cl$fit.range <- cl$granularity <- cl$normalize <- 
+    cl$verbose <- cl$scoretype <- 
+    cl$test.model <- cl$print.all <-  
+    cl$scoretype <- cl$maxsols <- NULL
   cl[[1]] <- as.name("rean_cna")
   attempt <- seq(max(fit.range), min(fit.range), -granularity)
   cl$attempt <- attempt
@@ -473,13 +482,17 @@ frscored_cna <- function(x,
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   if (is.null(test.model)){
-    scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose, scoretype = scoretype)
-    if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+    scored <- frscore(rescomb$condition, normalize = normalize,
+                      verbose = verbose, scoretype = scoretype,
+                      maxsols = maxsols)
+    if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
       return(NULL)}
   } else {
     if(any(sapply(rescomb$condition, function(x) identical.model(x, test.model)))){
-      scored <- frscore(rescomb$condition, normalize = normalize, verbose = verbose, scoretype = scoretype)
-      if(is.null(scored)){cat('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      scored <- frscore(rescomb$condition, normalize = normalize, 
+                        verbose = verbose, scoretype = scoretype,
+                        maxsols = maxsols)
+      if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
       return(NULL)}
     } else {
       stop('test.model not found in reanalysis series')
@@ -488,7 +501,8 @@ frscored_cna <- function(x,
     
     sc <- scored[[1]]
     names(sc)[names(sc) == "model"] <- "condition"
-    rescombXscored <- dplyr::left_join(rescomb, sc, by="condition")
+    rescombXscored <- dplyr::left_join(rescomb, sc, by="condition") %>% 
+      filter(!is.na(score))
     
     rescombXscored <- unique(rescombXscored)
     rescombXscored <- rescombXscored[order(rescombXscored$complexity, decreasing = T),]
@@ -509,16 +523,22 @@ frscored_cna <- function(x,
                         granularity = granularity,
                         scoretype = scoretype,
                         normal = normalize,
-                        rean.results = rescombtemp), 
+                        rean.results = rescombtemp,
+                        maxsols = scored$maxsols), 
                      class = c("frscored_cna", "list"))
   return(out)
 }
 
 # Print method for frscored_cna()
 
-print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all){
+print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, maxsols = x$maxsols){
   cat('FR-scored reanalysis series with fit range', x$fit.range[1], 'to', x$fit.range[2], 'with granularity', x$granularity, '\n')
   cat('Score type:', x$scoretype, '||', 'score normalization:', x$normal, '\n')
+  if(maxsols$maxsols == "ignored"){
+    cat("no submodel checks were needed, argument 'maxsols' ignored \n")
+  } else {
+    cat("maxsols set to", maxsols$maxsols, "--", maxsols$excluded, "solution types excluded from scoring \n\n")
+  }
   cat('----- \n \n')
   if(!is.null(x$tested)){
     cat('Candidate model tested:', x$tested$condition, '\n \n')
@@ -533,7 +553,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all){
     print(head(x$rean_models, n = 20L))
     cat('\n')
     if(nr > 0){
-      cat('...there were', nr, 'more model types found, use \'print.all = TRUE\' to print all \n')
+      cat('...there were', nr, 'more scored model types, use \'print.all = TRUE\' to print all \n')
     }  
   }
   if(!is.null(verbose)){
