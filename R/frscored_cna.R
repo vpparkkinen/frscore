@@ -232,8 +232,8 @@ rean_cna <- function(...,
   for (i in 1:length(sols)){
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
-    if (output=="csf"){sols[[i]] <- csf(eval.parent(cl), n.init = ncsf)}
-    if (output=="asf"){sols[[i]] <- asf(eval.parent(cl))}
+    if (output=="csf"){sols[[i]] <- csf(eval(cl), n.init = ncsf)}
+    if (output=="asf"){sols[[i]] <- asf(eval(cl))}
     dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
                      cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
