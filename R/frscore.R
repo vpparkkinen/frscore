@@ -440,7 +440,9 @@ frscore <- function(sols,
   }
   out <- out[order(out$score, decreasing = T),]
   rownames(out) <- 1:nrow(out)
-  scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
+  if(verbose) {
+    scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
+  }
   return(structure(list(models = out,
                         verbose = if(verbose){scsums}else{NULL},
                         print.all = print.all,
