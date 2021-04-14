@@ -325,23 +325,32 @@ frscore <- function(sols,
       robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
 
       if (scoretype == "full") {
-        scsums <- lapply(robred, function(x)
-          if(nrow(x) == 0){x<-NULL}else{apply(x[,c(2,3)], 1, sum)})
+        scsums <- lapply(robred, function(x){
+          if(nrow(x) == 0){x<-NULL}else{x$score <- apply(x[,c(2,3)], 1, sum);return(x[,c(1,4)])}
+            })
       }
       if (scoretype == "supermodel") {
-        scsums <- lapply(robred, function(x)
-          if(nrow(x) == 0){x<-NULL}else{x[,3]})
+        scsums <- lapply(robred, function(x){
+          if(nrow(x) == 0){x<-NULL}else{x$score <- x[,2];return(x[,c(1,4)])}
+          })
       }
       if (scoretype == "submodel") {
-        scsums <- lapply(robred, function(x)
-          if(nrow(x) == 0){x<-NULL}else{x[,2]})
-      }
-      for (i in 1:length(scsums)){
-        if(!is.null(scsums[[i]])){names(scsums[[i]]) <- robred[[i]][,1]}
+        scsums <- lapply(robred, function(x){
+          if(nrow(x) == 0){x<-NULL}else{x$score <-  x[,3];return(x[,c(1,4)])}
+          })
       }
 
-      scsums <- lapply(scsums, function(x) x[x>0])
-      scsums <- lapply(scsums, function(x) if (length(x)<1){NULL}else{x})
+      scsums <- lapply(scsums, function(x) x[x[,2] > 0,])
+
+      # for (i in 1:length(scsums)){
+      #   #if(!is.null(scsums[[i]])){names(scsums[[i]]) <- robred[[i]][,1]}
+      #   #if(!is.null(scsums[[i]])){scsums[[i]]}
+      #   if(!is.null(scsums[[i]])){scsums[[i]] <-
+      #     data.frame(model = robred[[i]][,1], tokens = scsums[[i]])}
+      # }
+
+      #scsums <- lapply(scsums, function(x) x[x>0])
+      #scsums <- lapply(scsums, function(x) if (length(x)<1){NULL}else{x})
     }
 
     pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
@@ -377,8 +386,8 @@ frscore <- function(sols,
     #out <- out %>% dplyr::group_by(model) %>% dplyr::mutate(tokens = dplyr::n())
 
     #out <- unique(as.data.frame(out,  stringsAsFactors = F))
-    out <- out[order(out$score, decreasing = T),]
-    rownames(out) <- 1:nrow(out)
+    # out <- out[order(out$score, decreasing = T),]
+    # rownames(out) <- 1:nrow(out)
 
   }
 
@@ -399,7 +408,7 @@ frscore <- function(sols,
 
     otherscore <- vector("integer", nrow(cfreqtab))
 
-    if (scoretype == "supermodel"){
+    if (scoretype == "submodel"){
 
       for (i in seq_along(1:nrow(cfreqtab))) {
         tt <- cfreqtab[cfreqtab$compx > cfreqtab[i,]$compx,]
@@ -408,7 +417,7 @@ frscore <- function(sols,
     }
 
 
-    if (scoretype == "submodel"){
+    if (scoretype == "supermodel"){
 
       for (i in seq_along(1:nrow(cfreqtab))) {
         tt <- cfreqtab[cfreqtab$compx < cfreqtab[i,]$compx,]
@@ -429,7 +438,9 @@ frscore <- function(sols,
     if (max(out$score>=1)){out$score <- out$score / idealmaxscore}
 
   }
-
+  out <- out[order(out$score, decreasing = T),]
+  rownames(out) <- 1:nrow(out)
+  scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
   return(structure(list(models = out,
                         verbose = if(verbose){scsums}else{NULL},
                         print.all = print.all,
