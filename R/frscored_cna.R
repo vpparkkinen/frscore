@@ -23,7 +23,8 @@
 #'   normalizes by a theoretical maximum score calculated by assuming that
 #'   all solutions of equal complexity are identical, and for every solution
 #'   of a given complexity, all solutions with lower complexity are its
-#'   submodels.
+#'   submodels
+#'   .
 #' @param verbose Logical; if \code{TRUE}, calculate and print additional
 #'   information about submodel relations among the unique solutions types found
 #'   in \code{sols}. Defaults to \code{FALSE}, which makes execution slightly
@@ -85,7 +86,7 @@ frscored_cna <- function(x,
   attempt <- seq(max(fit.range), min(fit.range), -granularity)
   cl$attempt <- attempt
   cl$output <- match.arg(output)
-  clres <- eval(cl)
+  clres <- eval.parent(cl)
   rescomb <- do.call(rbind, clres)
   rescomb <- rescomb[!is.na(rescomb[,1]),]
   rescombtemp <- rescomb
@@ -213,7 +214,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, 
 
 #' @export
 #' @import cna
-rean_cna <- function(...,
+rean_cna <- function(x, ...,
                      attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf")){
 
   cl <- match.call()
@@ -232,8 +233,8 @@ rean_cna <- function(...,
   for (i in 1:length(sols)){
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
-    if (output=="csf"){sols[[i]] <- csf(eval(cl), n.init = ncsf)}
-    if (output=="asf"){sols[[i]] <- asf(eval(cl))}
+    if (output=="csf"){sols[[i]] <- csf(eval.parent(cl), n.init = ncsf)}
+    if (output=="asf"){sols[[i]] <- asf(eval.parent(cl))}
     dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
                      cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
