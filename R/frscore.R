@@ -299,14 +299,14 @@ frscore <- function(sols,
 
     otherscore <- vector("integer", nrow(cfreqtab))
 
-    if (scoretype == "submodel"){
+    if (scoretype == "supermodel"){
       for (i in seq_along(1:nrow(cfreqtab))) {
         tt <- cfreqtab[cfreqtab$compx > cfreqtab[i,]$compx,]
         otherscore[i] <- sum(tt$Freq)
       }
     }
 
-    if (scoretype == "supermodel"){
+    if (scoretype == "submodel"){
       for (i in seq_along(1:nrow(cfreqtab))) {
         tt <- cfreqtab[cfreqtab$compx < cfreqtab[i,]$compx,]
         otherscore[i] <- sum(tt$Freq)
