@@ -119,6 +119,7 @@ frscored_cna <- function(x,
 
   sc <- scored[[1]]
   names(sc)[names(sc) == "model"] <- "condition"
+  rescomb$condition <- as.character(rescomb$condition)
   rescombXscored <- dplyr::left_join(rescomb, sc, by="condition") %>%
     dplyr::filter(!is.na(.data$score))
 

@@ -64,7 +64,7 @@ frscore <- function(sols,
   if (NA %in% sols){
     sols <- sols[!is.na(sols)]
   }
-
+  sols <- as.character(sols)
   sols <- noblanks(sols)
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
