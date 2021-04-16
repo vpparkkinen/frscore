@@ -70,6 +70,9 @@ frscored_cna <- function(x,
                          test.model = NULL,
                          print.all = FALSE,
                          ...){
+  if(!inherits(x, c("configTable", "data.frame","truthTab"))){
+    stop("invalid argument x")
+    }
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
@@ -91,8 +94,9 @@ frscored_cna <- function(x,
   rescomb <- rescomb[!is.na(rescomb[,1]),]
   rescombtemp <- rescomb
   rescomb <- rescomb[,-c(which(names(rescomb) %in% c("cnacon", "cnacov")))]
-  rescomb$condition <- as.character(rescomb$condition)
-  rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
+  #rescomb$condition <- as.character(rescomb$condition)
+  #rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
+  rescomb$condition <- gsub("\\),\\(", "\\)*\\(", rescomb$condition)
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   if (is.null(test.model)){
@@ -151,7 +155,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, 
   if(maxsols$maxsols == "ignored"){
     cat("no submodel checks were needed, argument 'maxsols' ignored \n")
   } else {
-    cat("maxsols set to", maxsols$maxsols, "--", maxsols$excluded, "solution types excluded from scoring \n\n")
+    cat("maxsols set to", maxsols$maxsols, "--", maxsols$excluded, "model types excluded from scoring \n\n")
   }
   cat('----- \n \n')
   if(!is.null(x$tested)){
@@ -214,9 +218,14 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, 
 
 #' @export
 #' @import cna
-rean_cna <- function(x, ...,
-                     attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf")){
-
+rean_cna <- function(x,
+                     attempt = seq(1, 0.7, -0.1),
+                     ncsf = 20,
+                     output = c("csf", "asf"),
+                     ...){
+  if(!inherits(x, c("configTable", "data.frame","truthTab"))){
+    stop("invalid argument x")
+  }
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
