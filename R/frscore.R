@@ -403,9 +403,9 @@ verbosify <- function(sc, mf, scoretype){
 }
 
 
-# noblanks <- function(x){
-#   gsub("[[:space:]]", "", as.character(x))
-# }
+noblanks <- function(x){
+  gsub("[[:space:]]", "", as.character(x))
+}
 #
 # getComplexity <- function(cond){
 #   if (length(cond) == 0)
