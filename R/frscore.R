@@ -55,8 +55,8 @@ frscore <- function(sols,
                     maxsols = 50,
                     verbose = FALSE,
                     print.all = FALSE){
-  if (typeof(sols) != "character"){
-    stop("sols should be a character vector of CNA solutions, not object of type ", typeof(sols))
+  if (!inherits(sols, c("stdAtomic", "stdComplex"))){
+    stop("sols should be a vector of CNA solution objects of class \"stdAtomic\" or \"stdComplex\"")
   }
   if (length(sols) == 0){
     warning('no solutions to test')
@@ -66,12 +66,21 @@ frscore <- function(sols,
     sols <- sols[!is.na(sols)]
   }
 
+  sols <- noblanks(sols)
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna:::getComplexity(mf[,1])
   excluded_sols <- 0
+
+  #compsplit <- mf %>% dplyr::group_split(.data$cx)
+  # lapply(complsplit, function(x)
+  #   if(nrow(x) > 1){
+  #     for(i in 1:nrow(x)){
+  #       if(identical.model(x[]))
+  #     }
+
 
   if(length(sols) == 1){
     out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
@@ -395,6 +404,9 @@ verbosify <- function(sc, mf, scoretype){
 }
 
 
+noblanks <- function(x){
+  gsub("[[:space:]]", "", as.character(x))
+}
 
 
 
