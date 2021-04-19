@@ -43,7 +43,8 @@ such that the highest scoring solution types get score 1. "idealmax"
 normalizes by a theoretical maximum score calculated by assuming that
 all solutions of equal complexity are identical, and for every solution
 of a given complexity, all solutions with lower complexity are its
-submodels.}
+submodels
+.}
 
 \item{verbose}{Logical; if \code{TRUE}, calculate and print additional
 information about submodel relations among the unique solutions types found

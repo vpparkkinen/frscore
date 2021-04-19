@@ -4,14 +4,15 @@
 \alias{rean_cna}
 \title{rean_cna}
 \usage{
-rean_cna(..., attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf"))
+rean_cna(
+  x,
+  attempt = seq(1, 0.7, -0.1),
+  ncsf = 20,
+  output = c("csf", "asf"),
+  ...
+)
 }
 \arguments{
-\item{...}{Any arguments to \code{cna} except \code{con}, \code{cov} or
-\code{con.msc}, at a minimum the arxument \code{x}, a \code{data.frame} or
-a \code{configTable}. The effect of argument \code{what} will be overriden
-by \code{output}.}
-
 \item{attempt}{Numeric vector that contains the values from which
 combinations of consistency and coverage thresholds are formed, to be used
 in the analyses.}
@@ -21,6 +22,11 @@ in a each \code{cna} analysis, if \code{output = "csf"}. Defaults to 20.}
 
 \item{output}{Character vector that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs \code{"asf"} asfs.}
+
+\item{...}{Any arguments to \code{cna} except \code{con}, \code{cov} or
+\code{con.msc}, at a minimum the arxument \code{x}, a \code{data.frame} or
+a \code{configTable}. The effect of argument \code{what} will be overriden
+by \code{output}.}
 }
 \value{
 A list, where each element is a data frame containing the results of
