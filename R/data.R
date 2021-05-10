@@ -5,4 +5,4 @@
 #' A + B*C <-> E except for one case, 'c16',
 #' which simulates measurement error in that case,
 #' and including one irrelevant factor "D".
-"m_error"
+"d.error"

@@ -65,7 +65,7 @@ frscore <- function(sols,
     sols <- sols[!is.na(sols)]
   }
   sols <- as.character(sols)
-  sols <- noblanks(sols)
+  sols <- cna:::noblanks(sols)
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
@@ -403,68 +403,35 @@ verbosify <- function(sc, mf, scoretype){
 }
 
 
-noblanks <- function(x){
-  gsub("[[:space:]]", "", as.character(x))
+condType <- function(cond, x){
+  cna:::getCondType(cond, cna:::ctInfo(configTable(x)))
+  # out <- cna:::getCondType(cond, cna:::ctInfo(configTable(x)))
+  # as.vector(out)
+  }
+
+
+
+stxstd <- function(sols){
+  asfs <- cna:::extract_asf(sols)
+  ocs <- lapply(asfs, cna:::rhs)
+  ocheck <- unlist(lapply(ocs, function(x) any(grepl("[^[:alnum:]]", x))))
+  if (any(ocheck)){
+    stop("Invalid model syntax: ", sols[ocheck])
+  }
+  ocsordered <- lapply(ocs, order)
+  dnfs <- lapply(asfs, cna:::lhs)
+  dnfs <- mapply(function(x, y) x[y], dnfs, ocsordered)
+  dnfs <- lapply(dnfs, cna:::stdCond)
+  ocs <- mapply(function(x, y) x[y], ocs, ocsordered)
+  preasf <- lapply(dnfs, function(x) paste0(x, "<->"))
+  stdasfs <- mapply(function(x, y) paste0(x, y), preasf, ocs)
+  out <- lapply(stdasfs, function(x) {if(length(x) > 1){
+    x <- paste0(paste0("(", x, ")"), collapse = "*")
+    } else {x <- x}; return(x)
+  })
+  return(unlist(out))
 }
-#
-# getComplexity <- function(cond){
-#   if (length(cond) == 0)
-#     return(integer(0))
-#   lhsides <- lapply(extract_asf(cond), lhs)
-#   ll <- lengths(strsplit(unlist(lhsides), "[\\+\\*]"))
-#   vapply(C_relist_Int(ll, lengths(lhsides)), sum, integer(1))
-# }
-#
-# lhs <- function (x) sub("([^<]+)<*->.+", "\\1", x)
-#
-# extract_asf <- function (x){
-#   noPar <- !grepl("^\\(", x)
-#   if (any(noPar)) {
-#     x[noPar] <- paste0("(", x[noPar], ")")
-#   }
-#   hstrsplit(gsub("^\\(|\\)$", "", x), "\\)[\\*,]\\(",
-#             fixed = FALSE, split.attr = FALSE)
-# }
-#
-# hstrsplit <- function (x, split, fixed = TRUE, relist = TRUE, split.attr = TRUE,
-#           lengths.attr = !relist)
-# {
-#   if (xList <- is.list(x)) {
-#     u <- unlist(x, recursive = FALSE, use.names = FALSE)
-#   }
-#   else {
-#     u <- x
-#   }
-#   s <- strsplit(u, split[1], fixed = fixed[[1]])
-#   ll <- lengths(s)
-#   if (length(split) > 1) {
-#     if (length(fixed) > 1)
-#       fixed <- fixed[-1]
-#     s <- hstrsplit(s, split[-1], fixed = fixed, relist = relist,
-#                    split.attr = split.attr)
-#   }
-#   if (!relist) {
-#     s <- unlist(s, recursive = TRUE, use.names = FALSE)
-#     if (lengths.attr) {
-#       attr(s, "lengths") <- c(list(ll), attr(s, "lengths"))
-#     }
-#     return(s)
-#   }
-#   if (xList) {
-#     s <- C_relist_List(s, lengths(x))
-#   }
-#   if (split.attr)
-#     attr(s, "split") <- split
-#   s
-# }
-#
-# C_relist_List <- function (x, l){
-#   .Call(`_cna_C_relist_List`, x, l)
-# }
-#
-# C_relist_Int <- function (x, l){
-#   .Call(`_cna_C_relist_Int`, x, l)
-# }
+
 
 
 # Print method for frscore()
