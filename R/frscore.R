@@ -62,10 +62,10 @@ frscore <- function(sols,
     sols <- sols[!is.na(sols)]
   }
 
-  sols <- as.character(sols)
+  #sols <- as.character(sols)
 
   if (inherits(sols, c("stdAtomic", "stdComplex"))){
-    sols <- sols
+    sols <- as.character(sols)
     } else {
     sols <- stxstd(sols)
     }
@@ -438,8 +438,19 @@ stxstd <- function(sols){
   mods <- cna:::noblanks(sols)
   asfs <- cna:::extract_asf(mods)
   #asfvc <- unlist(asfs)
-  pattern <- "^([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*)+)*(\\+([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*))*)*(->|<->)([A-Za-z]+[A-Za-z0-9]*)$"
-
+  cspattern <- "^([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*)+)*(\\+([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*))*)*(->|<->)([A-Za-z]+[A-Za-z0-9]*)$"
+  mvpattern <- "^([A-Za-z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Za-z]+[A-Za-z0-9]*=[0-9]+)+)*(\\+([A-Za-z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Za-z]+[A-Za-z0-9]*=[0-9]+))*)*(<->|->)([A-Za-z]+[A-Za-z0-9]*=[0-9]+)$"
+  maybemv <- grepl("=[0-9]+", mods)
+  allmv <- all(maybemv)
+  if(any(maybemv) & !allmv){
+    stop("Inconsistent model types: sols appears to include both multi-valued
+         and binary models")
+  }
+  if(allmv){
+    pattern <- mvpattern
+  } else {
+    pattern <- cspattern
+  }
   #notok <- lapply(asfs, function(x) any(!grepl("<->[[:alnum:]]+$", x)))
   notok <- lapply(asfs, function(x) any(!grepl(pattern, x)))
   notok <- unlist(notok)
