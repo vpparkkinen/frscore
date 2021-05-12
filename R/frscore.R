@@ -54,9 +54,6 @@ frscore <- function(sols,
                     maxsols = 50,
                     verbose = FALSE,
                     print.all = FALSE){
-  if (!inherits(sols, c("stdAtomic", "stdComplex"))){
-    stop("sols should be a vector of CNA solution objects of class \"stdAtomic\" or \"stdComplex\"")
-  }
   if (length(sols) == 0){
     warning('no solutions to test')
     return(NULL)
@@ -64,11 +61,19 @@ frscore <- function(sols,
   if (NA %in% sols){
     sols <- sols[!is.na(sols)]
   }
+
   sols <- as.character(sols)
-  sols <- cna:::noblanks(sols)
+
+  if (inherits(sols, c("stdAtomic", "stdComplex"))){
+    sols <- sols
+    } else {
+    sols <- stxstd(sols)
+    }
+
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
+  #mods <- mods[order(mods)]
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna:::getComplexity(mf[,1])
   excluded_sols <- 0
@@ -403,33 +408,72 @@ verbosify <- function(sc, mf, scoretype){
 }
 
 
-condType <- function(cond, x){
-  cna:::getCondType(cond, cna:::ctInfo(configTable(x)))
-  # out <- cna:::getCondType(cond, cna:::ctInfo(configTable(x)))
-  # as.vector(out)
-  }
-
-
+# condType <- function(cond, x){
+#   cti <- cna:::ctInfo(configTable(x,
+#                                   rm.dup.factors = F,
+#                                   rm.const.factors = F))
+#   out <- cna:::getCondType(cond, cti)
+#   out <- as.vector(out)
+#   out <- out %in% c("invalidValues", "invalidSyntax")
+#   return(out)
+#   }
+#
+# stxchk <- function(mods){
+#   #sols <- cna:::noblanks(sols)
+#   #mods <- cna:::noblanks(sols)
+#   modl <- strsplit(mods, "[^[:alnum:]]")
+#   # modl <- lapply(modl, toupper)
+#   mu <- toupper(unlist(modl))
+#   # modl <- lapply(modl, unique)
+#   mu <- unique(mu)
+#   mu <- mu[sapply(mu, nzchar)]
+#   ct <- data.frame(setNames(rep(list(c(0,1)), length(mu)), mu))
+#   # longmod <- lapply(modl, function(x) sum(nchar(x)))
+#   # ct <- full.ct(max(unlist(longmod)))
+#   out <- suppressMessages(condType(mods, x = ct))
+#   return(out)
+#   }
 
 stxstd <- function(sols){
-  asfs <- cna:::extract_asf(sols)
-  ocs <- lapply(asfs, cna:::rhs)
-  ocheck <- unlist(lapply(ocs, function(x) any(grepl("[^[:alnum:]]", x))))
-  if (any(ocheck)){
-    stop("Invalid model syntax: ", sols[ocheck])
+  mods <- cna:::noblanks(sols)
+  asfs <- cna:::extract_asf(mods)
+  #asfvc <- unlist(asfs)
+  pattern <- "^([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*)+)*(\\+([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*))*)*(->|<->)([A-Za-z]+[A-Za-z0-9]*)$"
+
+  #notok <- lapply(asfs, function(x) any(!grepl("<->[[:alnum:]]+$", x)))
+  notok <- lapply(asfs, function(x) any(!grepl(pattern, x)))
+  notok <- unlist(notok)
+  #notok[!notok] <- stxchk(mods[!notok])
+  #ocs <- lapply(asfs, cna:::rhs)
+  #notok[!notok] <- unlist(lapply(ocs[!notok], function(x) any(grepl("^[A-z][[:alnum:]]+", x))))
+
+  if (any(notok)){
+    cat("\nThe following models have invalid syntax:\n\n")
+    print(sols[notok])
+    stop("Invalid syntax")
   }
+  ocs <- lapply(asfs, cna:::rhs)
   ocsordered <- lapply(ocs, order)
   dnfs <- lapply(asfs, cna:::lhs)
   dnfs <- mapply(function(x, y) x[y], dnfs, ocsordered)
   dnfs <- lapply(dnfs, cna:::stdCond)
   ocs <- mapply(function(x, y) x[y], ocs, ocsordered)
-  preasf <- lapply(dnfs, function(x) paste0(x, "<->"))
+  #preasf <- lapply(dnfs, function(x) paste0(x, "<->"))
+
+  preasf <- mapply(function(x, y) mapply(function(p, q){
+    if(grepl("<->", p)){paste0(q, "<->")
+    } else {
+        paste0(q, "->")
+      }
+    }, x, y), asfs, dnfs, SIMPLIFY = F)
+
   stdasfs <- mapply(function(x, y) paste0(x, y), preasf, ocs)
   out <- lapply(stdasfs, function(x) {if(length(x) > 1){
     x <- paste0(paste0("(", x, ")"), collapse = "*")
     } else {x <- x}; return(x)
   })
-  return(unlist(out))
+  out <- unlist(out)
+  return(out)
 }
 
 
