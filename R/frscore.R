@@ -439,7 +439,7 @@ stxstd <- function(sols){
   asfs <- cna:::extract_asf(mods)
   #asfvc <- unlist(asfs)
   cspattern <- "^([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*)+)*(\\+([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*))*)*(->|<->)([A-Za-z]+[A-Za-z0-9]*)$"
-  mvpattern <- "^([A-Za-z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Za-z]+[A-Za-z0-9]*=[0-9]+)+)*(\\+([A-Za-z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Za-z]+[A-Za-z0-9]*=[0-9]+))*)*(<->|->)([A-Za-z]+[A-Za-z0-9]*=[0-9]+)$"
+  mvpattern <- "^([A-Z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Z]+[A-Za-z0-9]*=[0-9]+)+)*(\\+([A-Z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Z]+[A-Za-z0-9]*=[0-9]+))*)*(<->|->)([A-Z]+[A-Za-z0-9]*=[0-9]+)$"
   maybemv <- grepl("=[0-9]+", mods)
   allmv <- all(maybemv)
   if(any(maybemv) & !allmv){
@@ -466,9 +466,9 @@ stxstd <- function(sols){
   ocs <- lapply(asfs, cna:::rhs)
   ocsordered <- lapply(ocs, order)
   dnfs <- lapply(asfs, cna:::lhs)
-  dnfs <- mapply(function(x, y) x[y], dnfs, ocsordered)
+  dnfs <- mapply(function(x, y) x[y], dnfs, ocsordered, SIMPLIFY = F)
   dnfs <- lapply(dnfs, cna:::stdCond)
-  ocs <- mapply(function(x, y) x[y], ocs, ocsordered)
+  ocs <- mapply(function(x, y) x[y], ocs, ocsordered, SIMPLIFY = F)
   #preasf <- lapply(dnfs, function(x) paste0(x, "<->"))
 
   preasf <- mapply(function(x, y) mapply(function(p, q){
@@ -478,7 +478,7 @@ stxstd <- function(sols){
       }
     }, x, y), asfs, dnfs, SIMPLIFY = F)
 
-  stdasfs <- mapply(function(x, y) paste0(x, y), preasf, ocs)
+  stdasfs <- mapply(function(x, y) paste0(x, y), preasf, ocs, SIMPLIFY = F)
   out <- lapply(stdasfs, function(x) {if(length(x) > 1){
     x <- paste0(paste0("(", x, ")"), collapse = "*")
     } else {x <- x}; return(x)
