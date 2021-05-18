@@ -67,7 +67,8 @@ frscore <- function(sols,
   if (inherits(sols, c("stdAtomic", "stdComplex"))){
     sols <- as.character(sols)
     } else {
-    sols <- stxstd(sols)
+      sols <- as.character(sols)
+      sols <- stxstd(sols)
     }
 
   scoretype <- match.arg(scoretype)
