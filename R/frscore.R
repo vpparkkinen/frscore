@@ -435,6 +435,7 @@ verbosify <- function(sc, mf, scoretype){
 #   return(out)
 #   }
 
+#' @importFrom rlang abort
 stxstd <- function(sols){
   mods <- cna:::noblanks(sols)
   asfs <- cna:::extract_asf(mods)
@@ -444,7 +445,7 @@ stxstd <- function(sols){
   maybemv <- grepl("=[0-9]+", mods)
   allmv <- all(maybemv)
   if(any(maybemv) & !allmv){
-    stop("Inconsistent model types: sols appears to include both multi-valued
+    abort("Inconsistent model types: `sols` appears to include both multi-valued
          and binary models")
   }
   if(allmv){
@@ -460,9 +461,10 @@ stxstd <- function(sols){
   #notok[!notok] <- unlist(lapply(ocs[!notok], function(x) any(grepl("^[A-z][[:alnum:]]+", x))))
 
   if (any(notok)){
-    cat("\nThe following models have invalid syntax:\n\n")
-    print(sols[notok])
-    stop("Invalid syntax")
+    # cat("\nThe following models have invalid syntax:\n\n")
+    # print(sols[notok])
+    # stop("Invalid syntax")
+    abort(paste0("Invalid model syntax: ", sols[notok]))
   }
   ocs <- lapply(asfs, cna:::rhs)
   ocsordered <- lapply(ocs, order)

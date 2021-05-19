@@ -120,11 +120,12 @@ frscored_cna <- function(x,
   sc <- scored[[1]]
   names(sc)[names(sc) == "model"] <- "condition"
   rescomb$condition <- as.character(rescomb$condition)
-  rescombXscored <- dplyr::left_join(rescomb, sc, by="condition") %>%
+  rescombXscored <- dplyr::right_join(rescomb, sc, by="condition") %>%
     dplyr::filter(!is.na(.data$score))
 
   rescombXscored <- unique(rescombXscored)
-  rescombXscored <- rescombXscored[order(rescombXscored$complexity, decreasing = T),]
+  #rescombXscored <- rescombXscored[order(rescombXscored$complexity, decreasing = T),]
+  rescombXscored <- rescombXscored[order(rescombXscored$condition),]
   rescombXscored <- rescombXscored[order(rescombXscored$score, decreasing = T),]
   rownames(rescombXscored) <- 1:nrow(rescombXscored)
 
@@ -225,7 +226,7 @@ rean_cna <- function(x,
                      output = c("csf", "asf"),
                      ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
-    stop("invalid argument x")
+    abort(paste0("`x` should be a data frame or configTable, not an object of type ", typeof(x)))
   }
   cl <- match.call()
   dots <- list(...)
