@@ -43,7 +43,7 @@
 #'
 
 
-#' @import cna
+
 #' @importFrom Rfast floyd
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data

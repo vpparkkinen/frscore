@@ -57,7 +57,7 @@
 #' res <- frscored_cna(dat)
 #' res
 
-#' @import cna
+
 #' @export
 frscored_cna <- function(x,
                          fit.range = c(1, 0.7),
@@ -219,7 +219,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, 
 #'   csfs.
 
 #' @export
-#' @import cna
+
 rean_cna <- function(x,
                      attempt = seq(1, 0.7, -0.1),
                      ncsf = 20,
@@ -231,7 +231,7 @@ rean_cna <- function(x,
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
-    stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
+    abort("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
   output <- match.arg(output)
   cl$attempt <- cl$asf <- cl$ncsf <- cl$csf <- cl$output <- NULL
