@@ -10,8 +10,8 @@ d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
           class = "data.frame")
 
 test_that("frscored_cna works", {
-  expect_known_hash(frscored_cna(d), hash = "9c2369e02a")
+  expect_known_hash(frscored_cna(d), hash = "ced41193da")
   expect_known_hash(frscored_cna(d, test.model = "(b+c<->A)*(e<->D)"),
-                    hash = "32e83a1b66")
+                    hash = "bc36dd53d7")
   expect_error(frscored_cna(d, test.model = "(A<->D)"))
 })

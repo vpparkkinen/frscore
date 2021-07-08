@@ -15,8 +15,8 @@ test_that("Raw scores are correct for cs models",{
 
 
 
-mv_all <- readRDS(system.file("tests", "testthat","frscore_mvcortest_all.RDS",
-                              package = "frscore"))
+
+mv_all <- readRDS(testthat::test_path("frscore_mvcortest_all.RDS"))
 
 mv_res <- lapply(mv_all, '[[', 2)
 
