@@ -62,7 +62,7 @@ frscore <- function(sols,
     sols <- sols[!is.na(sols)]
   }
 
-  #sols <- as.character(sols)
+
 
   if (inherits(sols, c("stdAtomic", "stdComplex"))){
     sols <- as.character(sols)
@@ -74,17 +74,10 @@ frscore <- function(sols,
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   sols <- sols[order(sols)]
-  #mods <- mods[order(mods)]
-  mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
-  mf$cx <- cna:::getComplexity(mf[,1])
-  excluded_sols <- 0
 
-  #compsplit <- mf %>% dplyr::group_split(.data$cx)
-  # lapply(complsplit, function(x)
-  #   if(nrow(x) > 1){
-  #     for(i in 1:nrow(x)){
-  #       if(identical.model(x[]))
-  #     }
+  mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
+  mf$cx <- cna::getComplexity(mf[,1])
+  excluded_sols <- 0
 
 
   if(length(sols) == 1){
@@ -99,7 +92,6 @@ frscore <- function(sols,
     }
 
     out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
-    #elems <- (mf$Freq-1)*2
     elems <- mf[,c(1,2)]
     elems$Freq <- (elems$Freq-1)*2
 
@@ -107,7 +99,6 @@ frscore <- function(sols,
       elems$Freq <- elems$Freq / 2
       }
     colnames(elems) <- c("model", "score")
-    #names(elems) <- sols[1]
     scsums <- list(elems)
     names(scsums) <- sols[1]
 
@@ -119,36 +110,29 @@ frscore <- function(sols,
       sco <- (mf$Freq-1)*2
     }
 
-    out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    out <- data.frame(model = mf$sols,
+                      score = sco,
+                      tokens = mf$Freq,
+                      stringsAsFactors = FALSE)
 
     elems <- mf[,c(1,2)]
-
     elems$Freq <- (elems$Freq-1)*2
 
-    #if (scoretype %in% c("supermodel", "submodel")){scsums <- scsums / 2}
     if (scoretype %in% c("supermodel", "submodel")){elems$Freq <- elems$Freq / 2}
     colnames(elems) <- c("model", "score")
-    #elems %>% dplyr::group_split(.data$model)
     scsums <- split(elems, elems$model)
-    #scsums <- as.list(scsums)
     scsums <- lapply(scsums,
                      function(x) {if(x$score == 0){
                        x <- data.frame(model = character(),
                                        score = numeric())} else {
                                          x <- x
                                          };return(x)})
-
-    #for (i in seq_along(scsums)){names(scsums[[i]]) <- unique(sols)[i]}
-
     names(scsums) <- unique(sols)
     zeroid <- unlist(lapply(scsums, function(x) x[[1]] < 1))
     scsums[zeroid] <- list(NULL)
     maxsols <- "ignored"
-
     } else {
-
     compsplit <- mf %>% dplyr::group_split(.data$cx)
-
     if (nrow(mf) > maxsols){
       excluded_sols <- nrow(mf) - maxsols
       compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
@@ -172,19 +156,14 @@ frscore <- function(sols,
         if (nrow(mf) > maxsols){
           mf <- mf[1:maxsols, ]}
       }
-
       mf <- mf[order(mf[,3], decreasing = T),]
       compsplit <- mf %>% dplyr::group_split(.data$cx)
     }
-
     mf <- mf[order(mf[,3], decreasing = T),]
-
     sscore <- vector("list", length(compsplit)-1)
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
 
-
     for (m in 1:(length(compsplit)-1)){
-
       subres <- sapply(1:nrow(compsplit[[m]]), function(p)
         lapply(1:nrow(compsplit[[m+1]]),
                function(x) subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])))
@@ -192,8 +171,9 @@ frscore <- function(sols,
     }
     scs <- do.call(rbind, sscore)
 
-
-    for (i in 1:nrow(tmat)){tmat[i,i] <- NA}
+    for (i in 1:nrow(tmat)){
+      tmat[i,i] <- NA
+      }
 
     tmat_b <- tmat
 
@@ -244,7 +224,9 @@ frscore <- function(sols,
       }
     }
 
-    for (i in 1:nrow(tmat)){tmat[i,i] <- NA}
+    for (i in 1:nrow(tmat)){
+      tmat[i,i] <- NA
+      }
 
     hits <- apply(tmat, 2, function(x) x == 1)
     nohits <- apply(tmat, 2, is.na)
@@ -295,10 +277,15 @@ frscore <- function(sols,
     if (scoretype == "supermodel") {preout <- pre.susc$supsc +
       (mf$Freq-1)*2/2}
 
-    out <- data.frame(model = mf$sols, score = preout, tokens = mf$Freq, stringsAsFactors = FALSE)
+    out <- data.frame(model = mf$sols,
+                      score = preout,
+                      tokens = mf$Freq,
+                      stringsAsFactors = FALSE)
   }
 
-  if(normalize == "truemax"){if (max(out$score>=1)){out$score <- out$score / max(out$score)}}
+  if(normalize == "truemax"){
+    if (max(out$score>=1)){out$score <- out$score / max(out$score)}
+    }
 
   if(normalize == "idealmax"){
     compx <- rep(mf$cx, mf$Freq)
@@ -353,7 +340,7 @@ frscore <- function(sols,
 
 }
 
-
+#' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
   return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA), checked = 1))
@@ -409,37 +396,10 @@ verbosify <- function(sc, mf, scoretype){
 }
 
 
-# condType <- function(cond, x){
-#   cti <- cna:::ctInfo(configTable(x,
-#                                   rm.dup.factors = F,
-#                                   rm.const.factors = F))
-#   out <- cna:::getCondType(cond, cti)
-#   out <- as.vector(out)
-#   out <- out %in% c("invalidValues", "invalidSyntax")
-#   return(out)
-#   }
-#
-# stxchk <- function(mods){
-#   #sols <- cna:::noblanks(sols)
-#   #mods <- cna:::noblanks(sols)
-#   modl <- strsplit(mods, "[^[:alnum:]]")
-#   # modl <- lapply(modl, toupper)
-#   mu <- toupper(unlist(modl))
-#   # modl <- lapply(modl, unique)
-#   mu <- unique(mu)
-#   mu <- mu[sapply(mu, nzchar)]
-#   ct <- data.frame(setNames(rep(list(c(0,1)), length(mu)), mu))
-#   # longmod <- lapply(modl, function(x) sum(nchar(x)))
-#   # ct <- full.ct(max(unlist(longmod)))
-#   out <- suppressMessages(condType(mods, x = ct))
-#   return(out)
-#   }
-
 #' @importFrom rlang abort
 stxstd <- function(sols){
-  mods <- cna:::noblanks(sols)
-  asfs <- cna:::extract_asf(mods)
-  #asfvc <- unlist(asfs)
+  mods <- cna::noblanks(sols)
+  asfs <- cna::extract_asf(mods)
   cspattern <- "^([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*)+)*(\\+([A-Za-z]+[A-Za-z0-9]*)(\\*([A-Za-z]+[A-Za-z0-9]*))*)*(->|<->)([A-Za-z]+[A-Za-z0-9]*)$"
   mvpattern <- "^([A-Z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Z]+[A-Za-z0-9]*=[0-9]+)+)*(\\+([A-Z]+[A-Za-z0-9]*=[0-9]+)(\\*([A-Z]+[A-Za-z0-9]*=[0-9]+))*)*(<->|->)([A-Z]+[A-Za-z0-9]*=[0-9]+)$"
   maybemv <- grepl("=[0-9]+", mods)
@@ -453,34 +413,24 @@ stxstd <- function(sols){
   } else {
     pattern <- cspattern
   }
-  #notok <- lapply(asfs, function(x) any(!grepl("<->[[:alnum:]]+$", x)))
   notok <- lapply(asfs, function(x) any(!grepl(pattern, x)))
   notok <- unlist(notok)
-  #notok[!notok] <- stxchk(mods[!notok])
-  #ocs <- lapply(asfs, cna:::rhs)
-  #notok[!notok] <- unlist(lapply(ocs[!notok], function(x) any(grepl("^[A-z][[:alnum:]]+", x))))
 
   if (any(notok)){
-    # cat("\nThe following models have invalid syntax:\n\n")
-    # print(sols[notok])
-    # stop("Invalid syntax")
     abort(paste0("Invalid model syntax: ", sols[notok]))
   }
-  ocs <- lapply(asfs, cna:::rhs)
+  ocs <- lapply(asfs, cna::rhs)
   ocsordered <- lapply(ocs, order)
-  dnfs <- lapply(asfs, cna:::lhs)
+  dnfs <- lapply(asfs, cna::lhs)
   dnfs <- mapply(function(x, y) x[y], dnfs, ocsordered, SIMPLIFY = F)
-  dnfs <- lapply(dnfs, cna:::stdCond)
+  dnfs <- lapply(dnfs, cna::stdCond)
   ocs <- mapply(function(x, y) x[y], ocs, ocsordered, SIMPLIFY = F)
-  #preasf <- lapply(dnfs, function(x) paste0(x, "<->"))
-
   preasf <- mapply(function(x, y) mapply(function(p, q){
     if(grepl("<->", p)){paste0(q, "<->")
     } else {
         paste0(q, "->")
       }
     }, x, y), asfs, dnfs, SIMPLIFY = F)
-
   stdasfs <- mapply(function(x, y) paste0(x, y), preasf, ocs, SIMPLIFY = F)
   out <- lapply(stdasfs, function(x) {if(length(x) > 1){
     x <- paste0(paste0("(", x, ")"), collapse = "*")

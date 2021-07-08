@@ -57,7 +57,7 @@
 #' res <- frscored_cna(dat)
 #' res
 
-
+#' @importFrom rlang abort
 #' @export
 frscored_cna <- function(x,
                          fit.range = c(1, 0.7),
@@ -76,7 +76,7 @@ frscored_cna <- function(x,
   cl <- match.call()
   dots <- list(...)
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
-    stop("cna arguments 'con', 'cov', 'con.msc' not meaningful")
+    abort("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
   cl$fit.range <- cl$granularity <- cl$normalize <-
     cl$verbose <- cl$scoretype <-
@@ -94,8 +94,6 @@ frscored_cna <- function(x,
   rescomb <- rescomb[!is.na(rescomb[,1]),]
   rescombtemp <- rescomb
   rescomb <- rescomb[,-c(which(names(rescomb) %in% c("cnacon", "cnacov")))]
-  #rescomb$condition <- as.character(rescomb$condition)
-  #rescomb$condition <- gsub("\\),\\(", "\\)*\\(", as.character(rescomb$condition))
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", rescomb$condition)
   scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
@@ -103,17 +101,17 @@ frscored_cna <- function(x,
     scored <- frscore(rescomb$condition, normalize = normalize,
                       verbose = verbose, scoretype = scoretype,
                       maxsols = maxsols)
-    if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+    if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
       return(NULL)}
   } else {
-    if(any(sapply(rescomb$condition, function(x) identical.model(x, test.model)))){
+    if(any(sapply(rescomb$condition, function(x) cna::identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize,
                         verbose = verbose, scoretype = scoretype,
                         maxsols = maxsols)
-      if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider lower fit range \n \n')
+      if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
         return(NULL)}
     } else {
-      stop('test.model not found in reanalysis series')
+      abort('`test.model` not found in reanalysis series')
     }
   }
 
@@ -124,13 +122,13 @@ frscored_cna <- function(x,
     dplyr::filter(!is.na(.data$score))
 
   rescombXscored <- unique(rescombXscored)
-  #rescombXscored <- rescombXscored[order(rescombXscored$complexity, decreasing = T),]
   rescombXscored <- rescombXscored[order(rescombXscored$condition),]
   rescombXscored <- rescombXscored[order(rescombXscored$score, decreasing = T),]
   rownames(rescombXscored) <- 1:nrow(rescombXscored)
 
   if(!is.null(test.model)){
-    tested <- rescombXscored[sapply(rescombXscored$condition, function(x) identical.model(x, test.model)),]
+    tested <- rescombXscored[sapply(rescombXscored$condition,
+                                    function(x) cna::identical.model(x, test.model)),]
   } else {
     tested <- test.model
   }
@@ -226,7 +224,7 @@ rean_cna <- function(x,
                      output = c("csf", "asf"),
                      ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
-    abort(paste0("`x` should be a data frame or configTable, not an object of type ", typeof(x)))
+    # abort(paste0("`x` should be a data frame or configuration table, not an object of type ", typeof(x)))
   }
   cl <- match.call()
   dots <- list(...)
@@ -244,8 +242,8 @@ rean_cna <- function(x,
   for (i in 1:length(sols)){
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
-    if (output=="csf"){sols[[i]] <- csf(eval.parent(cl), n.init = ncsf)}
-    if (output=="asf"){sols[[i]] <- asf(eval.parent(cl))}
+    if (output=="csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = ncsf)}
+    if (output=="asf"){sols[[i]] <- cna::asf(eval.parent(cl))}
     dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
                      cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
