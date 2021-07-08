@@ -5,7 +5,7 @@
 rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf"), ...)
 }
 \arguments{
-\item{x}{A \code{data.frame} or \code{configTable} to be analyzed with \code{\link[cna]{cna()}}. In case of multi-value or fuzzy-set data, the data type must be indicated by \code{type = "mv"} and \code{type = "fs"}, respectively.}
+\item{x}{A \code{data.frame} or \code{configTable} to be analyzed with \code{\link[cna:cna]{cna()}}. In case of multi-value or fuzzy-set data, the data type must be indicated by \code{type = "mv"} and \code{type = "fs"}, respectively.}
 
 \item{attempt}{Numeric vector that contains the values from which
 combinations of consistency and coverage thresholds are formed, to be used
@@ -17,7 +17,7 @@ in a each \code{cna()} analysis, if \code{output = "csf"}. Defaults to 20.}
 \item{output}{Character vector that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
 
-\item{...}{Any arguments to be passed to \code{\link[cna]{cna()}} except \code{con}, \code{cov} or
+\item{...}{Any arguments to be passed to \code{\link[cna:cna]{cna()}} except \code{con}, \code{cov} or
 \code{con.msc}. The effect of argument \code{what} is overriden
 by \code{output}.}
 }
@@ -28,34 +28,34 @@ different combination of consistency and coverage threshold values. These
 values are added to the output as extra columns 'cnacon' and 'cnacov'.
 }
 \description{
-Perform a reanalysis series on a data set with \code{\link[cna]{cna()}} using
+Perform a reanalysis series on a data set with \code{\link[cna:cna]{cna()}} using
 all combinations of consistency and coverage threshold values in a given
 range of values
 }
 \details{
-\code{rean_cna()} performs a reanalysis series of a data set \code{x}, which constitutes the first 
-computational phase of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). The  series consists of \code{\link[cna]{cna()}} calls at all combinatorially possible consistency and coverage settings drawn from the vector \code{attempt}. If the \code{output} argument is set to its default value \code{"csf"}, \code{rean_cna()} returns complex solutions formulas (csf), in case of \code{"asf"} only atomic solution formulas ("asf") are built, which is faster. The argument \code{ncsf} allows for controlling the number of csf to be built, if \code{output = "csf"}.
+\code{rean_cna()} performs a reanalysis series of a data set \code{x}, which constitutes the first
+computational phase of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). The  series consists of \code{\link[cna:cna]{cna()}} calls at all combinatorially possible consistency and coverage settings drawn from the vector \code{attempt}. If the \code{output} argument is set to its default value \code{"csf"}, \code{rean_cna()} returns complex solutions formulas (csf), in case of \code{"asf"} only atomic solution formulas ("asf") are built, which is faster. The argument \code{ncsf} allows for controlling the number of csf to be built, if \code{output = "csf"}.
 }
 \references{
 V.P. Parkkinen and M. Baumgartner (2021), \dQuote{Robustness and Model Selection in Configurational Causal Modeling,} \emph{Sociological Methods and Research}, doi:10.1177/0049124120986200.
 
 }
-\seealso{\code{\link{frscore}}, \code{\link[cna]{cna}}} 
+\seealso{\code{\link{frscore}}, \code{\link[cna:cna]{cna}}}
 
 \examples{
 # Crisp-set data
-sols1 <- rean_cna(d.error, attempt = seq(1, 0.8, -0.1))  
+sols1 <- rean_cna(d.error, attempt = seq(1, 0.8, -0.1))
 sols1 <- do.call(rbind, sols1)
 sols1
 
 # Multi-value data
-sols2 <- rean_cna(d.pban, type = "mv", attempt = seq(0.9, 0.7, -0.1), 
-                  ordering = list("T", "PB"), strict = TRUE) 
+sols2 <- rean_cna(d.pban, type = "mv", attempt = seq(0.9, 0.7, -0.1),
+                  ordering = list("T", "PB"), strict = TRUE)
 sols2 <- do.call(rbind, sols2)
 sols2
 
 # Fuzzy-set data
-\donttest{sols3 <- rean_cna(d.jobsecurity, type = "fs", attempt = seq(0.9, 0.6, -0.05), 
+\donttest{sols3 <- rean_cna(d.jobsecurity, type = "fs", attempt = seq(0.9, 0.6, -0.05),
                   ordering = list("JSR"), strict = TRUE) # execution takes a couple of seconds
 sols3 <- do.call(rbind, sols2)
 sols3}
