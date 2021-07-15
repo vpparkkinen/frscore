@@ -1,5 +1,5 @@
 Package: frscore
-Title: Functions for Calculating Fit-Robustness of CNA-solutions
+Title: Functions for Calculating Fit-Robustness of CNA-Solutions
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Veli-Pekka",
