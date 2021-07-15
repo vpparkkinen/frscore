@@ -10,7 +10,7 @@ Authors@R: c(
                      email = "michael.baumgartner@uib.no"),
     person("Mathias", "Ambuehl", role = "ctb")
     )
-Description: This package provides functions for automatically performing 
+Description: Functions for automatically performing 
              a reanalysis series
              on a data set using CNA, and for calculating the fit-robustness
              of the resulting models, as described in 
@@ -29,5 +29,7 @@ Depends:
     R (>= 3.5),
     cna (>= 3.2.0)
 Suggests: 
+    spelling,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Language: en-US
