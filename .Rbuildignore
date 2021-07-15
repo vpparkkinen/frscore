@@ -3,3 +3,4 @@
 ^LICENSE\.md$
 ^notes\.R$
 ^\.github$
+^cran-comments\.md$
