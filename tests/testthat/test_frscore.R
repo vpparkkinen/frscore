@@ -1,19 +1,6 @@
 
 local_edition(2)
 
-inputmodels <- readRDS(testthat::test_path("frscore_cortest_input.RDS"))
-
-
-test_that("Raw scores are correct for cs models",{
-  rawscores <- lapply(inputmodels,
-                      function(x) frscore(x,
-                                          normalize = 'none',
-                                          maxsols = Inf))
-  expect_known_hash(rawscores, "32a7fcb72b")
-
-})
-
-
 
 
 mv_all <- readRDS(testthat::test_path("frscore_mvcortest_all.RDS"))
@@ -26,15 +13,6 @@ test_that("Scores are correct for mv models",{
  expect_equal(scores_mv, mv_res)
 })
 
-test_that("normalization methods work",{
- expect_known_hash(frscore(inputmodels[[30]],
-                           normalize = "idealmax",
-                           maxsols = Inf), hash = "9f00210680")
- expect_known_hash(frscore(inputmodels[[30]],
-                           normalize = "truemax",
-                           maxsols = Inf), hash = "ac2f7b6deb")
- })
-
 
 ss <- structure(c("A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E", "A+B*C<->E",
                   "A+B<->E", "A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E", "A+B*C<->E",
@@ -45,8 +23,11 @@ ss <- structure(c("A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E", "A+B*C<->E",
                   "(E<->A)*(B+C*D<->E)"), class = "character")
 
 
+vcor <- readRDS(testthat::test_path("verb_cor.RDS"))
+
+vtest <- frscore(ss, verbose = T)
 test_that("verbose output is correct",{
-  expect_known_hash(frscore(ss, verbose = T), hash = "e10c2bfabc")
+  expect_equal(vtest, vcor)
 })
 
 

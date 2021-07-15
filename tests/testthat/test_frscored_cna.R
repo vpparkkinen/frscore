@@ -9,9 +9,11 @@ d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
           row.names = c("10", "13", "15", "18", "19", "22", "23", "27"),
           class = "data.frame")
 
+exp <- readRDS(testthat::test_path("cor_frscored_cna.RDS"))
+
+
 test_that("frscored_cna works", {
-  expect_known_hash(frscored_cna(d), hash = "ced41193da")
-  expect_known_hash(frscored_cna(d, test.model = "(b+c<->A)*(e<->D)"),
-                    hash = "bc36dd53d7")
+  test <- frscored_cna(d)
+  expect_equal(test, exp)
   expect_error(frscored_cna(d, test.model = "(A<->D)"))
 })
