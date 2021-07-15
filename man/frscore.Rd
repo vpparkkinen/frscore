@@ -79,6 +79,7 @@ sols1 <- do.call(rbind, sols1)
 frscore(sols1$condition)
 
 # Real fuzzy-set data from Basurto (2013)
+\donttest{
 sols2 <- rean_cna(d.autonomy, type="fs", ordering = list("EM", "SP"),
          strict = TRUE, maxstep = c(3,3,9))
 sols2 <- do.call(rbind, sols2)$condition  # there are 217 solutions
@@ -97,5 +98,6 @@ frscore(sols2, scoretype = "supermodel")
 frscore(sols2, scoretype = "submodel")
 
 frscore(sols2, maxsols = 20, verbose = TRUE)
+}
 
 }

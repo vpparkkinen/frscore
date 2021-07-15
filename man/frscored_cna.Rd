@@ -106,6 +106,7 @@ frscored_cna(d.error, fit.range = c(1, 0.75), granularity = 0.05,
                   scoretype = "submodel", ordering = list("JSR"), strict = TRUE)}
 
 # Simulated data
+\donttest{
 set.seed(6)
 dat.full <- full.ct(5)
 dat <- ct2df(selectCases(randomCsf(dat.full), dat.full))
@@ -113,4 +114,5 @@ frscored_cna(dat)
 frscored_cna(dat, output = "asf")
 frscored_cna(dat, maxsols = 10)
 frscored_cna(dat, test.model = "(b*e+A*E<->D)*(B<->A)")
+}
 }
