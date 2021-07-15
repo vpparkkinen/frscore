@@ -23,14 +23,6 @@ ss <- structure(c("A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E", "A+B*C<->E",
                   "(E<->A)*(B+C*D<->E)"), class = "character")
 
 
-vcor <- readRDS(testthat::test_path("verb_cor.RDS"))
-
-vtest <- frscore(ss, verbose = T)
-test_that("verbose output is correct",{
-  expect_equal(vtest, vcor)
-})
-
-
 syntx <- c("z1p * cUe + EUF <-> 7Lv", "fqE * BqT + yq2 <-> M\\M", "1c * bJi + Hin <-> 2x",
            "l]C * NKT + H4M <-> TA0", "QXj * qfC + aHn <-> EdE", "mOb * gCy + 8f0 <-> w3l",
            "N0_ * YCj + 7`] <-> VK`", "ot7 * cGS + r9G <-> DLH", "HrW * SIY + F8L <-> 6rz",
