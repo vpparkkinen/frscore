@@ -1,4 +1,8 @@
 # frscore
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/vpparkkinen/frscore/workflows/R-CMD-check/badge.svg)](https://github.com/vpparkkinen/frscore/actions)
+  <!-- badges: end -->
+
 Functions for automating repeated CNA analyses of a data set using varying consistency and coverage settings, and calculating
 the fit-robustness -scores of the resulting models.
 
