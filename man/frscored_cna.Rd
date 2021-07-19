@@ -60,6 +60,15 @@ solutions/models are printed.}
 \code{con.msc}. The effect of argument \code{what} is overriden
 by \code{output}.}
 }
+
+\value{
+A list whose first element is a data frame that contains the model types
+returned from a reanalysis series of the input data, their details
+such as consistency and coverage, together with the fit-robustness score
+of each model type, shown in column 'score'. The other elements
+contain additional details about how the function was called.
+}
+
 \description{
 Perform a reanalysis series on a data set and calculate the
 fit-robustness scores of the resulting solutions/models
