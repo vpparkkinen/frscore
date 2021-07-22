@@ -152,7 +152,7 @@ frscore <- function(sols,
                        nrow(compsplit[[i]]), picks[i])
           chosen[[i]] <- compsplit[[i]][1:nr,]
         }
-        mf <- as.data.frame(do.call(rbind, chosen))
+        mf <- as.data.frame(do.call(rbind, chosen), stringsAsFactors = FALSE)
         if (nrow(mf) > maxsols){
           mf <- mf[1:maxsols, ]}
       }
@@ -239,7 +239,7 @@ frscore <- function(sols,
       prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
                              subsc = 0,
                              supmod = colnames(tmat)[col(tmat)[which(hits)]],
-                             supsc = 0)
+                             supsc = 0, stringsAsFactors = FALSE)
 
       prescore <- prescore %>% dplyr::filter(.data$mod != .data$supmod)
       prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("mod" = "sols")) %>%
@@ -251,7 +251,7 @@ frscore <- function(sols,
     prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
                                subsc = 0,
                                supmod = colnames(tmat)[col(tmat)[which(nohits)]],
-                               supsc = 0)
+                               supsc = 0, stringsAsFactors = FALSE)
 
     sc <- rbind(prescore, prescore_neg)
     mf <- mf[order(mf$sols),]
@@ -289,7 +289,7 @@ frscore <- function(sols,
 
   if(normalize == "idealmax"){
     compx <- rep(mf$cx, mf$Freq)
-    cfreqtab <- as.data.frame(table(compx))
+    cfreqtab <- as.data.frame(table(compx), stringsAsFactors = FALSE)
     cfreqtab$compx <- as.integer(as.character(cfreqtab$compx))
     cfreqtab <- cfreqtab[order(cfreqtab$compx, decreasing = T),]
     cfreqtab$selfscore <- if(scoretype == "full"){
@@ -343,7 +343,8 @@ frscore <- function(sols,
 #' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
-  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA), checked = 1))
+  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA), checked = 1,
+                    stringsAsFactors = FALSE))
 }
 
 verbosify <- function(sc, mf, scoretype){
@@ -358,7 +359,9 @@ verbosify <- function(sc, mf, scoretype){
   subspermod <- lapply(subspermod, function(x) x[order(x$model),])
 
   sps <- sc[, c(1,2,3)]
-  sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2], mod = sps[,1])
+  sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2],
+                    mod = sps[,1],
+                    stringsAsFactors = FALSE)
   bysub <- sps %>% dplyr::group_split(.data$mod)
   subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
   names(bysub) <- subnames
