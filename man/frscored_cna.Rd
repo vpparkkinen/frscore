@@ -114,11 +114,13 @@ frscored_cna(d.error, fit.range = c(1, 0.75), granularity = 0.05,
 \donttest{frscored_cna(d.jobsecurity, type = "fs", fit.range = c(0.9, 0.6), granularity = 0.05,
                   scoretype = "submodel", ordering = list("JSR"), strict = TRUE)}
 
-# Simulated data
-\donttest{
-set.seed(6)
-dat.full <- full.ct(5)
-dat <- ct2df(selectCases(randomCsf(dat.full), dat.full))
+# Artificial data
+\donttest{dat <- data.frame(
+  A = c(1,1,0,0,0,0,1,1),
+  B = c(0,1,0,0,0,0,1,1),
+  C = c(1,0,1,0,1,0,1,0),
+  D = c(1,1,0,0,1,1,0,0),
+  E = c(1,1,1,1,0,0,0,0))
 frscored_cna(dat)
 frscored_cna(dat, output = "asf")
 frscored_cna(dat, maxsols = 10)
