@@ -132,7 +132,6 @@ frscore <- function(sols,
     scsums[zeroid] <- list(NULL)
     maxsols <- "ignored"
     } else {
-    #compsplit <- mf %>% dplyr::group_split(.data$cx)
     compsplit <- split(mf, mf$cx)
     if (nrow(mf) > maxsols){
       excluded_sols <- nrow(mf) - maxsols
@@ -158,7 +157,6 @@ frscore <- function(sols,
           mf <- mf[1:maxsols, ]}
       }
       mf <- mf[order(mf[,3], decreasing = T),]
-      #compsplit <- mf %>% dplyr::group_split(.data$cx)
       compsplit <- split(mf, mf$cx)
     }
     mf <- mf[order(mf[,3], decreasing = T),]
