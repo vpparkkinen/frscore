@@ -9,7 +9,7 @@
 Functions for automatically performing a reanalysis series
 on a data set using CNA, and for calculating the fit-robustness
 of the resulting models, as described in 
-Parkkinen and Baumgartner (2021) <doi:10.1177/0049124120986200>
+Parkkinen and Baumgartner (2021): https://journals.sagepub.com/doi/full/10.1177/0049124120986200.
 
 In the most common use case, one wants to obtain a set of models and their respective fit-robustness scores given a range of consistency and coverage values that determine a reanalysis series of the data set of interest. The function `frscored_cna()` runs the reanalysis series on a data set and calculates the fit-robustness scores of the recovered models in one go. If one only wishes to repeatedly analyze a data set with different consistency and coverage thresholds in a given range, `rean_cna()` automates this. If one wishes to calculate the fit-robustness scores
 for an existing set of models, `frscore()` does this.
