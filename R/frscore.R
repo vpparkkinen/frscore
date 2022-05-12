@@ -284,7 +284,8 @@ frscore <- function(sols,
   }
 
   if(normalize == "truemax"){
-    if (max(out$score>=1)){out$score <- out$score / max(out$score)}
+    #if (max(out$score>=1)){out$score <- out$score / max(out$score)}
+    if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)}
     }
 
   if(normalize == "idealmax"){
@@ -322,7 +323,7 @@ frscore <- function(sols,
 
     cfreqtab$otherscore <- otherscore
     idealmaxscore <- max(cfreqtab$selfscore + cfreqtab$otherscore)
-    if (max(out$score>=1)){out$score <- out$score / idealmaxscore}
+    if (max(out$score>=1)){out$norm.score <- out$score / idealmaxscore}
 
   }
   out <- out[order(out$score, decreasing = T),]
@@ -332,7 +333,8 @@ frscore <- function(sols,
   }
   return(structure(list(models = out,
                         #verbose = if(verbose){scsums}else{NULL},
-                        verbose = scsums,
+                        verbose = verbose,
+                        verbout = scsums,
                         print.all = print.all,
                         scoretype = scoretype,
                         normal = normalize,
@@ -449,7 +451,7 @@ stxstd <- function(sols){
 # Print method for frscore()
 #' @export
 #' @importFrom utils head
-print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all, maxsols = x$maxsols, ...){
+print.frscore <- function(x, verbose = x$verbose, verbout = x$verbout, print.all = x$print.all, maxsols = x$maxsols, ...){
   cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n\n")
   if(maxsols$maxsols == "ignored"){
     cat("no submodel checks were needed, argument 'maxsols' ignored \n")
@@ -470,12 +472,12 @@ print.frscore <- function(x, verbose = x$verbose, print.all = x$print.all, maxso
 
   }
 
-  if(is.null(verbose)){invisible(x)} else {
+  if(verbose){
     cat('\n')
     cat('Score composition: \n')
     cat('----- \n \n')
-    print(x$verbose)
+    print(verbout)
     invisible(x)
-  }
+  } else {invisible(x)}
 }
 

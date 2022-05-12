@@ -136,6 +136,7 @@ frscored_cna <- function(x,
   out <- structure(list(rean_models = rescombXscored,
                         tested = tested,
                         verbose = scored$verbose,
+                        verbout = scored$verbout,
                         print.all = print.all,
                         fit.range = fit.range,
                         granularity = granularity,
@@ -149,7 +150,7 @@ frscored_cna <- function(x,
 
 # Print method for frscored_cna()
 #' @export
-print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, maxsols = x$maxsols, ...){
+print.frscored_cna <- function(x, verbose = x$verbose, verbout = x$verbout, print.all = x$print.all, maxsols = x$maxsols, ...){
   cat('FR-scored reanalysis series with fit range', x$fit.range[1], 'to', x$fit.range[2], 'with granularity', x$granularity, '\n')
   cat('Score type:', x$scoretype, '||', 'score normalization:', x$normal, '\n')
   if(maxsols$maxsols == "ignored"){
@@ -174,12 +175,12 @@ print.frscored_cna <- function(x, verbose = x$verbose, print.all = x$print.all, 
       cat('...there were', nr, 'more scored model types, use \'print.all = TRUE\' to print all \n')
     }
   }
-  if(!is.null(verbose)){
+  if(verbose){
     cat('\n')
     cat('Score composition: \n')
     cat('----- \n')
 
-    print(verbose)
+    print(verbout)
   }
   invisible(x)
 }
