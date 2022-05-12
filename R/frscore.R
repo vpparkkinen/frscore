@@ -256,9 +256,9 @@ frscore <- function(sols,
     sc <- rbind(prescore, prescore_neg)
     mf <- mf[order(mf$sols),]
 
-    if(verbose){
+    #if(verbose){
       scsums <- verbosify(sc, mf, scoretype)
-    }
+    #}
 
     pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
       dplyr::mutate(subsc = sum(.data$subsc)) %>%
@@ -331,7 +331,8 @@ frscore <- function(sols,
     scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
   }
   return(structure(list(models = out,
-                        verbose = if(verbose){scsums}else{NULL},
+                        #verbose = if(verbose){scsums}else{NULL},
+                        verbose = scsums,
                         print.all = print.all,
                         scoretype = scoretype,
                         normal = normalize,
