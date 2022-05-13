@@ -63,8 +63,9 @@ by \code{output}.}
 \value{
 A list whose first element is a data frame that contains the model types
 returned from a reanalysis series of the input data, their details
-such as consistency and coverage, together with the fit-robustness score
-of each model type, shown in column 'score'. The other elements
+such as consistency and coverage, together with the unadjusted fit-robustness score
+of each model type shown in column 'score', and a normalized score in column
+'norm.score' in case \code{verbose = "truemax"} or \code{verbose = "idealmax"}. The other elements
 contain additional information about the submodel relations among
 the unique solution types and about how
 the function was called.

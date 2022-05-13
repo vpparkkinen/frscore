@@ -25,10 +25,9 @@
 #'   of a given complexity, all solutions with lower complexity are its
 #'   submodels
 #'   .
-#' @param verbose Logical; if \code{TRUE}, calculate and print additional
-#'   information about submodel relations among the unique solutions types found
-#'   in \code{sols}. Defaults to \code{FALSE}, which makes execution slightly
-#'   faster.
+#' @param verbose Logical; if \code{TRUE}, print additional
+#'   information about submodel relations among the unique solution types found
+#'   in \code{sols}. Defaults to \code{FALSE}.
 #' @param maxsols Integer determining the maximum number of unique solution
 #'   types found in \code{sols} to be included in the scoring.
 #' @param test.model Character vector that specifies a single candidate
