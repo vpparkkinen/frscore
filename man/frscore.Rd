@@ -28,8 +28,7 @@ types found in \code{sols} to be included in the scoring (see Details).}
 
 \item{verbose}{Logical; if \code{TRUE}, additional
 information about submodel relations among the unique solution types found
-in \code{sols} are calculated and printed. Defaults to \code{FALSE}, which makes execution slightly
-faster.}
+in \code{sols} is printed. Defaults to \code{FALSE}.}
 
 \item{print.all}{Logical, controls the number of entries printed when
 printing the results. If \code{TRUE}, results are printed as when using the defaults of
@@ -40,7 +39,7 @@ solutions/models are printed.}
 A named list where the first element is a data frame containing
 the unique solution/model types and their scores. Rest of the elements
 contain additional information about the submodel relations among
-the unique solutions types (if \code{verbose = TRUE}) and about how
+the unique solutions types and about how
 the function was called.
 }
 \description{
@@ -60,7 +59,7 @@ submodels and all more complex elements of \code{sols} are its supermodels.
 
 If the size of the consistency and coverage interval scanned in the reanalysis series generating \code{sols} is large or there are many model ambiguities, \code{sols} may contain so many different types of solutions/models that robustness cannot be calculated for all of them in reasonable time. In that case, the argument \code{maxsols} allows for capping the number of solution types to be included in the scoring (defaults to 50). \code{frscore()} then selects the most frequent solutions/models in \code{sols} of each complexity level until  \code{maxsols} is reached and only scores the thus selected elements of \code{sols}.
 
-If the argument \code{verbose} is set to \code{TRUE}, \code{frscore()} not only returns an ordered score table but also a list indicating for each \code{sols[i]} how many raw score points it receives from which elements of \code{sols}. The verbose list is ordered with decreasing fit robustness scores.
+If the argument \code{verbose} is set to \code{TRUE}, \code{frscore()} also prints a list indicating for each \code{sols[i]} how many raw score points it receives from which elements of \code{sols}. The verbose list is ordered with decreasing fit robustness scores.
 
 }
 \references{

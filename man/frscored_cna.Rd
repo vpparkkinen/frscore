@@ -41,8 +41,7 @@ normalizes by a theoretical maximum score (see Details). }
 
 \item{verbose}{Logical; if \code{TRUE}, additional
 information about submodel relations among the unique solution types found
-in \code{sols} are calculated and printed. Defaults to \code{FALSE}, which makes execution slightly
-faster.}
+in \code{sols} is printed. Defaults to \code{FALSE}.}
 
 \item{maxsols}{Integer determining the maximum number of unique solution
 types found in the reanalysis series to be included in the scoring (see Details).}
@@ -66,7 +65,9 @@ A list whose first element is a data frame that contains the model types
 returned from a reanalysis series of the input data, their details
 such as consistency and coverage, together with the fit-robustness score
 of each model type, shown in column 'score'. The other elements
-contain additional details about how the function was called.
+contain additional information about the submodel relations among
+the unique solution types and about how
+the function was called.
 }
 
 \description{
@@ -83,7 +84,8 @@ When the argument \code{scoretype} is set to its default value \code{"full"}, th
 The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each solution/model is divided by the maximum score obtained by an element of \strong{M}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal complexity in \strong{M} are identical and that for every model of a given complexity, all less complex elements of \strong{M} are its
 submodels and all more complex elements of \strong{M} are its supermodels.
 
-If the argument \code{verbose} is set to \code{TRUE}, \code{frscored_cna()} not only returns an ordered score table but also a list indicating for each solution/model how many raw score points it receives from which elements of \strong{M}. The verbose list is ordered with decreasing fit robustness scores.
+If the argument \code{verbose} is set to \code{TRUE}, \code{frscored_cna()} also
+prints a list indicating for each solution/model how many raw score points it receives from which elements of \strong{M}. The verbose list is ordered with decreasing fit robustness scores.
 
 If the size of the consistency and coverage range scanned in the reanalysis series generating \strong{M} is large or there are many model ambiguities, \strong{M} may contain so many different types of solutions that robustness cannot be calculated for all of them in reasonable time. In that case, the argument \code{maxsols} allows for capping the number of solution types to be included in the scoring (defaults to 50). \code{frscored_cna()} then selects the most frequent solutions in \strong{M} of each complexity level until \code{maxsols} is reached and only scores the thus selected elements of \strong{M}.
 
