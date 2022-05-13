@@ -62,8 +62,6 @@ frscore <- function(sols,
     sols <- sols[!is.na(sols)]
   }
 
-
-
   if (inherits(sols, c("stdAtomic", "stdComplex"))){
     sols <- as.character(sols)
     } else {
@@ -79,7 +77,6 @@ frscore <- function(sols,
   mf$cx <- cna::getComplexity(mf[,1])
   excluded_sols <- 0
 
-
   if(length(sols) == 1){
     out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
     scsums <- list(data.frame(model = character(), score=numeric()))
@@ -91,7 +88,10 @@ frscore <- function(sols,
       sco <- (mf$Freq-1)*2
     }
 
-    out <- data.frame(model = mf$sols, score = sco, tokens = mf$Freq, stringsAsFactors = FALSE)
+    out <- data.frame(model = mf$sols,
+                      score = sco,
+                      tokens = mf$Freq,
+                      stringsAsFactors = FALSE)
     elems <- mf[,c(1,2)]
     elems$Freq <- (elems$Freq-1)*2
 
@@ -118,7 +118,9 @@ frscore <- function(sols,
     elems <- mf[,c(1,2)]
     elems$Freq <- (elems$Freq-1)*2
 
-    if (scoretype %in% c("supermodel", "submodel")){elems$Freq <- elems$Freq / 2}
+    if (scoretype %in% c("supermodel", "submodel")){
+      elems$Freq <- elems$Freq / 2
+      }
     colnames(elems) <- c("model", "score")
     scsums <- split(elems, elems$model)
     scsums <- lapply(scsums,
@@ -284,7 +286,6 @@ frscore <- function(sols,
   }
 
   if(normalize == "truemax"){
-    #if (max(out$score>=1)){out$score <- out$score / max(out$score)}
     if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)}
     }
 
@@ -328,11 +329,10 @@ frscore <- function(sols,
   }
   out <- out[order(out$score, decreasing = T),]
   rownames(out) <- 1:nrow(out)
-  if(verbose) {
-    scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
-  }
+
+  scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
+
   return(structure(list(models = out,
-                        #verbose = if(verbose){scsums}else{NULL},
                         verbose = verbose,
                         verbout = scsums,
                         print.all = print.all,
@@ -346,7 +346,10 @@ frscore <- function(sols,
 #' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
-  return(data.frame(names(re), attributes(re)$target, ifelse(re[[1]] == TRUE, 1, NA), checked = 1,
+  return(data.frame(names(re),
+                    attributes(re)$target,
+                    ifelse(re[[1]] == TRUE, 1, NA),
+                    checked = 1,
                     stringsAsFactors = FALSE))
 }
 
@@ -358,7 +361,8 @@ verbosify <- function(sc, mf, scoretype){
   supnames <- unlist(lapply(bysup, function(x) unique(x$supmod)))
   names(bysup) <- supnames
   subspermod <- lapply(bysup, function(x) x[,c(1,3)])
-  subspermod <- lapply(subspermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
+  subspermod <- lapply(subspermod,
+                       function(x) as.data.frame(x, stringsAsFactors = FALSE))
   subspermod <- lapply(subspermod, function(x) x[order(x$model),])
 
   sps <- sc[, c(1,2,3)]
@@ -370,31 +374,45 @@ verbosify <- function(sc, mf, scoretype){
   names(bysub) <- subnames
   bysub <- lapply(bysub, function(x) x[order(x$supermodel),])
   superpermod <- lapply(bysub, function(x) x[,2])
-  superpermod <- lapply(superpermod, function(x) as.data.frame(x, stringsAsFactors = FALSE))
+  superpermod <- lapply(superpermod,
+                        function(x) as.data.frame(x, stringsAsFactors = FALSE))
 
   robbasis <- mapply(cbind, subspermod, superpermod, SIMPLIFY = F)
   mfs <- mf[,c(1,2)]
   colnames(mfs)[colnames(mfs) == "sols"] <- "model"
   dups <- lapply(names(robbasis), function(x) mfs[mfs[,1]==x,])
   dupscores <- lapply(dups, function(x) x %>%
-                        dplyr::mutate(sub.frequency=.data$Freq-1, sup.frequency = .data$Freq-1, Freq = NULL))
+                        dplyr::mutate(sub.frequency=.data$Freq-1,
+                                      sup.frequency = .data$Freq-1,
+                                      Freq = NULL))
   dupscores <- lapply(dupscores, function(x) if(x[,2] == 0){x[-1,]}else{x})
   robbasis <- mapply(rbind, robbasis, dupscores, SIMPLIFY = F)
   robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
 
   if (scoretype == "full") {
     scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){x<-NULL}else{x$score <- apply(x[,c(2,3)], 1, sum);return(x[,c(1,4)])}
+      if(nrow(x) == 0){
+        x<-NULL
+      } else {
+          x$score <- apply(x[,c(2,3)], 1, sum);return(x[,c(1,4)])
+          }
     })
   }
   if (scoretype == "supermodel") {
     scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){x<-NULL}else{x$score <- x[,2];return(x[,c(1,4)])}
+      if(nrow(x) == 0){ x<-NULL
+      } else {
+        x$score <- x[,2];return(x[,c(1,4)])
+        }
     })
   }
   if (scoretype == "submodel") {
     scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){x<-NULL}else{x$score <-  x[,3];return(x[,c(1,4)])}
+      if(nrow(x) == 0){
+        x<-NULL
+      } else {
+          x$score <-  x[,3];return(x[,c(1,4)])
+          }
     })
   }
   scsums <- lapply(scsums, function(x) x[x[,2] > 0,])
@@ -451,7 +469,12 @@ stxstd <- function(sols){
 # Print method for frscore()
 #' @export
 #' @importFrom utils head
-print.frscore <- function(x, verbose = x$verbose, verbout = x$verbout, print.all = x$print.all, maxsols = x$maxsols, ...){
+print.frscore <- function(x,
+                          verbose = x$verbose,
+                          verbout = x$verbout,
+                          print.all = x$print.all,
+                          maxsols = x$maxsols,
+                          ...){
   cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n\n")
   if(maxsols$maxsols == "ignored"){
     cat("no submodel checks were needed, argument 'maxsols' ignored \n")
