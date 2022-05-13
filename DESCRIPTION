@@ -1,10 +1,10 @@
 Package: frscore
 Title: Functions for Calculating Fit-Robustness of CNA-Solutions
-Version: 0.1.1.9000
+Version: 0.12.1
 Authors@R: c(
     person(given = "Veli-Pekka",
            family = "Parkkinen",
-           role = c("aut", "cre","cph"),
+           role = c("aut", "cre", "cph"),
            email = "parkkinenv@gmail.com"),
     person("Michael", "Baumgartner", role = c("aut", "cph"),
                      email = "michael.baumgartner@uib.no"),
