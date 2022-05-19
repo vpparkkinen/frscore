@@ -1,8 +1,8 @@
 # frscore 0.12.1
 
 - The unadjusted (non-normalized) fr-score of each model type is now always
-included as a column named `score` in the results returned by
-`frscore()` and `frscored_cna()`. A normalized score for each model type
+included as the `score` column in the results returned by
+`frscore()` and `frscored_cna()`. A normalized score 
 is included as a column named `norm.score` if `normalize = "truemax"` or 
 `normalize = "idealmax"`.
 
