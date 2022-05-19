@@ -495,7 +495,7 @@ print.frscore <- function(x,
 
   }
 
-  if(verbose){
+  if(isTRUE(verbose) & !is.null(verbose)){
     cat('\n')
     cat('Score composition: \n')
     cat('----- \n \n')

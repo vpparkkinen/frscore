@@ -174,11 +174,10 @@ print.frscored_cna <- function(x, verbose = x$verbose, verbout = x$verbout, prin
       cat('...there were', nr, 'more scored model types, use \'print.all = TRUE\' to print all \n')
     }
   }
-  if(verbose){
+  if(isTRUE(verbose) & !is.null(verbose)){
     cat('\n')
     cat('Score composition: \n')
     cat('----- \n')
-
     print(verbout)
   }
   invisible(x)
