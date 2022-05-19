@@ -1,5 +1,5 @@
 
-local_edition(2)
+local_edition(3)
 
 d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
                B = c(1L, 1L, 0L, 1L, 0L, 1L, 0L, 0L),
@@ -10,7 +10,10 @@ d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
           class = "data.frame")
 
 test_that("frscored_cna works", {
-  expect_output(str(frscored_cna(d.error)), "List of 10")
+  expect_snapshot(frscored_cna(d.error))
+  expect_snapshot(frscored_cna(d.error, normalize = "idealmax"))
+  expect_snapshot(frscored_cna(d.error, normalize = "none"))
+  expect_snapshot(frscored_cna(d.error, verbose = TRUE))
 })
 
 
