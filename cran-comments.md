@@ -1,7 +1,7 @@
 ## Test environments 
 
 Checks on the environments listed below were done using Github Actions.
-Results available here:
+Results of latest and past checks available here:
 https://github.com/vpparkkinen/frscore/actions/workflows/R-CMD-check.yaml
 
 * MacOS 11.6.5, R 4.2.0 
