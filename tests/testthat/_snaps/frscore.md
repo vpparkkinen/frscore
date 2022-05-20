@@ -117,3 +117,33 @@
       ...there were 8 more model types, use 'print.all = TRUE' to print all 
       
 
+# frscore works for cs
+
+    Code
+      frscore(ss)
+    Output
+      FRscore, score type: full || score normalization: truemax 
+      
+      maxsols set to 50 -- 0 solution types excluded from scoring 
+      
+      -----
+       
+      Model types: 
+      
+                         model score tokens norm.score
+      1                  A<->E    22      1 1.00000000
+      2                A+B<->E    21      2 0.95454545
+      3              A+B*C<->E    19      3 0.86363636
+      4        A*D+A*c+B*C<->E    18      4 0.81818182
+      5            A*c+B*C<->E    16      4 0.72727273
+      6            A*D+B*C<->E    14      2 0.63636364
+      7        A*B+A*D+B*C<->E    10      2 0.45454545
+      8        A*B+A*D+A*c<->E     5      2 0.22727273
+      9      (E<->A)*(A+B<->E)     4      1 0.18181818
+      10                 E<->A     4      1 0.18181818
+      11 (D*E+E*c<->A)*(A<->E)     2      1 0.09090909
+      12   (E<->A)*(A+C*D<->E)     2      1 0.09090909
+      13   (E<->A)*(B+C*D<->E)     1      1 0.04545455
+      
+      
+
