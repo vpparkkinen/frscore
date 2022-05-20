@@ -1,4 +1,4 @@
-# frscore 0.12.1
+# frscore 0.2.0
 
 - The unadjusted (non-normalized) fr-score of each model type is now always
 included as the `score` column in the results returned by
