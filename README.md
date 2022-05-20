@@ -39,10 +39,10 @@ frsc
 #  
 # Model types: 
 #  
-   outcome   condition consistency  coverage complexity inus score tokens norm.score
-1  R       A+B+F*g<->R   1.0000000 1.0000000          4 TRUE    38      2 1.00000000
-2  R           A+B<->R   1.0000000 0.9230769          2 TRUE    28     12 0.73684211
-3  R         A+B+F<->R   0.9285714 1.0000000          3 TRUE    24      2 0.63157895
+#    outcome   condition consistency  coverage complexity inus score tokens norm.score
+# 1  R       A+B+F*g<->R   1.0000000 1.0000000          4 TRUE    38      2 1.00000000
+# 2  R           A+B<->R   1.0000000 0.9230769          2 TRUE    28     12 0.73684211
+# 3  R         A+B+F<->R   0.9285714 1.0000000          3 TRUE    24      2 0.63157895
 # .
 # .
 # .
@@ -74,9 +74,9 @@ fr
 #  
 # Model types: 
 # 
-         model score tokens norm.score
-1  A+B+F*g<->R    38      2 1.00000000
-2      A+B<->R    28     12 0.73684211
+#          model score tokens norm.score
+# 1  A+B+F*g<->R    38      2 1.00000000
+# 2      A+B<->R    28     12 0.73684211
 # .
 # .
 
