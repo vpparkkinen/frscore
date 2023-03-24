@@ -68,6 +68,7 @@ frscored_cna <- function(x,
                          maxsols = 50,
                          test.model = NULL,
                          print.all = FALSE,
+                         compscoring = TRUE,
                          ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
     stop("invalid argument x")
@@ -80,7 +81,7 @@ frscored_cna <- function(x,
   cl$fit.range <- cl$granularity <- cl$normalize <-
     cl$verbose <- cl$scoretype <-
     cl$test.model <- cl$print.all <-
-    cl$scoretype <- cl$maxsols <- NULL
+    cl$scoretype <- cl$maxsols <- cl$compscoring <- NULL
   cl[[1]] <- as.name("rean_cna")
   if ("ncsf" %in% names(dots)){
     cl$ncsf <- dots$ncsf
@@ -99,14 +100,14 @@ frscored_cna <- function(x,
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize,
                       verbose = verbose, scoretype = scoretype,
-                      maxsols = maxsols)
+                      maxsols = maxsols, compscoring = compscoring)
     if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
       return(NULL)}
   } else {
     if(any(sapply(rescomb$condition, function(x) cna::identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize,
                         verbose = verbose, scoretype = scoretype,
-                        maxsols = maxsols)
+                        maxsols = maxsols, compscoring = compscoring)
       if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
         return(NULL)}
     } else {

@@ -1,9 +1,7 @@
 
-library(cna)
 
-# Minimal implementation for asf in standard form:
-# Note that the rhs is NOT considered at all, such that 
-#   fsubmodel_asf("A+B<->C", "A+B<->D") returns TRUE.
+
+#' @importFrom cna C_is_submodel
 fsubmodel_asf <- function(x, y){
   stopifnot(length(y) == 1)
   # transform asfs to structured lists
@@ -20,14 +18,13 @@ fsubmodel_asf <- function(x, y){
   conjlen2 <- attr(a2, "lengths")[[2]]
   iconj <- rep.int(seq_along(conjlen2), conjlen2)
   b2[] <- b2[order(iconj, b2)]
-  # relist 
+  # relist
   b1 <- relist1(relist1(b1, conjlen1), attr(a1, "lengths")[[1]])
   b2 <- relist1(b2, conjlen2)
   C_is_submodel(b1, b2, strict = FALSE)
-}  
+}
 
 
-# Minimal implementation for csf in standard form:
 fsubmodel_csf <- function(x, y){
   stopifnot(length(y) == 1)
   yy <- extract_asf(y)[[1]]
@@ -43,27 +40,7 @@ fsubmodel_csf <- function(x, y){
     ok[rux == r] <- fsubmodel_asf(lux[rux == r], lhsy[[r]])
   }
   as.vector(rowsum(1-ok, rep.int(seq_along(llx), llx)) == 0)
-}  
+}
 
-# Application of fsubmodel_csf():
-y <- "(A+B*c<->X)*(C+d<->Y)"  # reference model
-x <- c("(A<->X)*(C<->Y)",        # submodel
-       "(B<->X)*(d<->Y)",        # submodel
-       "(A+c<->X)*(C+d<->Y)",    # submodel
-       "A+B*c<->X",              # submodel
-       "(A+B*c<->X)*(C+d<->Y)",  # submodel (identical)
-       "(C<->X)*(C+d<->Y)",      # no submodel
-       "A+B*c<->Z",              # no submodel
-       "(A+B*c<->Z)*(C+d<->Y)")  # no submodel
 
-fsubmodel_csf(x, y)
-is.submodel(x, y)
-
-all(fsubmodel_csf(x, y) == is.submodel(x, y))
-
-library(microbenchmark)
-microbenchmark(
-  slow = is.submodel(x, y), 
-  fast = fsubmodel_csf(x, y))
-# -> fsubmodel_csf() is ~4 times faster in this example
 

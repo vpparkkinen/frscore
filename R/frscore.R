@@ -53,7 +53,8 @@ frscore <- function(sols,
                     normalize = c("truemax", "idealmax", "none"),
                     maxsols = 50,
                     verbose = FALSE,
-                    print.all = FALSE){
+                    print.all = FALSE,
+                    compscoring = TRUE){
   if (length(sols) == 0){
     warning('no solutions to test')
     return(NULL)
@@ -168,7 +169,12 @@ frscore <- function(sols,
     for (m in 1:(length(compsplit)-1)){
       subres <- sapply(1:nrow(compsplit[[m]]), function(p)
         lapply(1:nrow(compsplit[[m+1]]),
-               function(x) subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])))
+               function(x)
+                 if(compscoring){
+                   comptest(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
+                   } else {
+                     subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
+                   }))
       sscore[[m]] <- do.call(rbind, subres)
     }
     scs <- do.call(rbind, sscore)
@@ -207,8 +213,11 @@ frscore <- function(sols,
         nacol_rles <- rle(col(tmat)[nas])
         ids <- nas[1:nacol_rles$lengths[1]]
         chks <- lapply(ids, function(x)
-          subAdd(colnames(tmat)[col(tmat)[x]],
-                 rownames(tmat)[row(tmat)[x]]))
+          if(compscoring){comptest(colnames(tmat)[col(tmat)[x]],
+                 rownames(tmat)[row(tmat)[x]])} else {
+                   subAdd(colnames(tmat)[col(tmat)[x]],
+                          rownames(tmat)[row(tmat)[x]])
+                 })
 
         for(n in seq_along(chks)){
           tmat[ids[n]] <- chks[[n]][,3]
@@ -343,7 +352,7 @@ frscore <- function(sols,
 
 }
 
-#' @importFrom cna is.submodel
+#' #' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
   return(data.frame(names(re),
@@ -352,6 +361,17 @@ subAdd <- function(x, y){
                     checked = 1,
                     stringsAsFactors = FALSE))
 }
+
+comptest <- function(x, y){
+  re <- is_compatible(x,y)
+  return(data.frame(x,
+                    y,
+                    ifelse(re[[1]] == TRUE, 1, NA),
+                    checked = 1,
+                    stringsAsFactors = FALSE))
+}
+
+
 
 verbosify <- function(sc, mf, scoretype){
   bs <- sc[, c(1,3,4)]
