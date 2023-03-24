@@ -100,7 +100,8 @@ frscored_cna <- function(x,
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize,
                       verbose = verbose, scoretype = scoretype,
-                      maxsols = maxsols, compscoring = compscoring)
+                      maxsols = maxsols, compscoring = compscoring,
+                      dat = x)
     if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
       return(NULL)}
   } else {

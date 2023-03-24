@@ -44,7 +44,10 @@ ccheck_prep <- function(x,y){
   return(out)
 }
 
-
+#' @importFrom cna C_is_submodel cyclic extract_asf full.ct getCond hstrsplit lhs
+#' @importFrom cna noblanks relist1 rhs rreduce selectCases
+#' @importFrom stats setNames
+#' @export
 is_compatible <- function(x, y, dat = NULL){
   x <- noblanks(x)
   y <- noblanks(y)

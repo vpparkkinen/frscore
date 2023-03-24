@@ -54,6 +54,7 @@ frscore <- function(sols,
                     maxsols = 50,
                     verbose = FALSE,
                     print.all = FALSE,
+                    dat = NULL,
                     compscoring = TRUE){
   if (length(sols) == 0){
     warning('no solutions to test')
@@ -171,7 +172,9 @@ frscore <- function(sols,
         lapply(1:nrow(compsplit[[m+1]]),
                function(x)
                  if(compscoring){
-                   comptest(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
+                   comptest(compsplit[[m]][p,1],
+                            compsplit[[m+1]][x,1],
+                            dat = dat)
                    } else {
                      subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
                    }))
@@ -214,7 +217,7 @@ frscore <- function(sols,
         ids <- nas[1:nacol_rles$lengths[1]]
         chks <- lapply(ids, function(x)
           if(compscoring){comptest(colnames(tmat)[col(tmat)[x]],
-                 rownames(tmat)[row(tmat)[x]])} else {
+                 rownames(tmat)[row(tmat)[x]], dat = dat)} else {
                    subAdd(colnames(tmat)[col(tmat)[x]],
                           rownames(tmat)[row(tmat)[x]])
                  })
@@ -254,9 +257,9 @@ frscore <- function(sols,
 
       prescore <- prescore %>% dplyr::filter(.data$mod != .data$supmod)
       prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("mod" = "sols")) %>%
-        dplyr::mutate(supsc = .data$Freq) %>% dplyr::select(-.data$Freq)
+        dplyr::mutate(supsc = .data$Freq) %>% dplyr::select(-"Freq")
       prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("supmod" = "sols")) %>%
-        dplyr::mutate(subsc = .data$Freq) %>% dplyr::select(-.data$Freq)
+        dplyr::mutate(subsc = .data$Freq) %>% dplyr::select(-"Freq")
     }
 
     prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
@@ -352,7 +355,7 @@ frscore <- function(sols,
 
 }
 
-#' #' @importFrom cna is.submodel
+#' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
   return(data.frame(names(re),
@@ -362,8 +365,8 @@ subAdd <- function(x, y){
                     stringsAsFactors = FALSE))
 }
 
-comptest <- function(x, y){
-  re <- is_compatible(x,y)
+comptest <- function(x, y, dat = NULL){
+  re <- is_compatible(x, y, dat = dat)
   return(data.frame(x,
                     y,
                     ifelse(re[[1]] == TRUE, 1, NA),
