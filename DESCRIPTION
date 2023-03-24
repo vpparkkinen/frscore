@@ -27,7 +27,7 @@ Imports:
     rlang
 Depends: 
     R (>= 3.5),
-    cna (>= 3.2.0)
+    cna (>= 3.5.1)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)
