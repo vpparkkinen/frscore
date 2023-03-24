@@ -1,3 +1,7 @@
+# frscore 0.3.0
+
+- `frscored_cna()` and `rean_cna()` gain an explicit argument
+
 # frscore 0.2.0
 
 - The unadjusted (non-normalized) fr-score of each model type is now always
