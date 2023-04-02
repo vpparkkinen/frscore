@@ -59,8 +59,10 @@ is_compatible <- function(x, y, dat = NULL){
                           cand_asfs_checked = NULL,
                           og_y = y,
                           og_x = x)
-  if(grepl("=", y)){
-    if(!grepl("=", x)){stop("x and y must be same type of model")}
+  mvx <- grepl("=", x)
+  mvy <- grepl("=", y)
+  if(xor(mvx, mvy)){stop("x and y must be of same model type")}
+  if(mvy){
     type <- "mv"
   } else {
     type <- "bin"
@@ -87,7 +89,7 @@ is_compatible <- function(x, y, dat = NULL){
   }
   if(cyclic(x) || cyclic(y)){
     out[1] <- is_sm
-    attr(out, "why") <- "x or y is cyclic, fall back on testing submodel relation"
+    attr(out, "why") <- "x or y is cyclic, only submodel relation between x and y tested"
     return(out)
   }
 
@@ -129,8 +131,8 @@ subin_target_ccomp <- function(x, y, out, dat = NULL, type){
   } else {
     attr(out, "why") <- "some x asfs are not submodels of expanded y asfs"
   }
-  attr(out, "expanded_tar_asfs") <- subbed_tar_asfs
-  attr(out, "cand_asfs_checked") <- correct
+  #attr(out, "expanded_tar_asfs") <- subbed_tar_asfs
+  #attr(out, "cand_asfs_checked") <- correct
   return(out)
 }
 
@@ -225,7 +227,7 @@ substitute_all <- function(x, dat = NULL, type){
   return(subbed)
 }
 
-
+# this regex maybe gsub("(?<![[:alpha:]])c(?!\\w)", "REP", "(A+B<->C)*(cg+T<->E)", perl = T)
 chain_substituter <- function(x,
                                subbed_from = vector("logical", length(x[[1]]))){
   sub_from_capmatch <- lapply(x$rhss,
@@ -233,23 +235,31 @@ chain_substituter <- function(x,
                                 grepl(y, x$lhss))
   id_sub_capmatch <- unlist(lapply(sub_from_capmatch, any))
 
+  # sub_from_capflip <- lapply(case_flipper(x$rhss),
+  #                            function(y)
+  #                              grepl(y, x$lhss)) #this needs fixing
   sub_from_capflip <- lapply(case_flipper(x$rhss),
                              function(y)
-                               grepl(y, x$lhss))
+                               grepl(paste0("(?<![[:alpha:]])",y, "(?!\\w)"),
+                                     x$lhss, perl = TRUE)) #this needs fixing
   id_sub_capflip <- unlist(lapply(sub_from_capflip, any))
   while(any(c(id_sub_capflip, id_sub_capmatch))){
     for(i in seq_along(sub_from_capmatch)){
       if(id_sub_capmatch[i]){
-        x$lhss[sub_from_capmatch[[i]]] <- gsub(x$rhss[i],
+        #x$lhss[sub_from_capmatch[[i]]] <- gsub(x$rhss[i],
+        x$lhss[sub_from_capmatch[[i]]] <- gsub(paste0("(?<![[:alpha:]])",x$rhss[i],"(?!\\w)"),
                                                paste0("(", x$lhss[i], ")"),
-                                               x$lhss[sub_from_capmatch[[i]]])
+                                               x$lhss[sub_from_capmatch[[i]]],
+                                               perl = TRUE)
       }
     }
     for(i in seq_along(sub_from_capflip)){
       if(id_sub_capflip[i]){
-        x$lhss[sub_from_capflip[[i]]] <- gsub(tolower(x$rhss[i]),
+        #x$lhss[sub_from_capflip[[i]]] <- gsub(tolower(x$rhss[i]),
+        x$lhss[sub_from_capflip[[i]]] <- gsub(paste0("(?<![[:alpha:]])", tolower(x$rhss[i]),"(?!\\w)"),
                                               paste0("!(", x$lhss[i], ")"),
-                                              x$lhss[sub_from_capflip[[i]]])
+                                              x$lhss[sub_from_capflip[[i]]],
+                                              perl = TRUE)
       }
     }
 

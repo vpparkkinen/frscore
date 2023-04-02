@@ -75,10 +75,10 @@ frscored_cna <- function(x,
     }
   cl <- match.call()
   dots <- list(...)
-  if(scoretype != "full"){
+  if(match.arg(scoretype) != "full"){
     lifecycle::deprecate_warn("0.3.0",
                               what = "frscored_cna(scoretype)",
-                              details = "FR-scores are calculated based on causal compatibility rather
+                              details = "From version 0.3.0 FR-scores are calculated based on causal compatibility rather
                               than submodel-relations. The scoretype argument will be dropped in next release.")
   }
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
@@ -262,4 +262,3 @@ rean_cna <- function(x,
   }
   return(structure(sols, class = c("rean_cna", "list")))
 }
-
