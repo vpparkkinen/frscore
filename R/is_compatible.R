@@ -52,13 +52,15 @@ is_compatible <- function(x, y, dat = NULL){
   x <- noblanks(x)
   y <- noblanks(y)
   out <- vector("logical", 1)
-  attributes(out) <- list(why = "",
-                          x = x,
-                          y = y,
-                          ultimate_asfs = NULL,
-                          cand_asfs_checked = NULL,
-                          og_y = y,
-                          og_x = x)
+  # attributes(out) <- list(why = "",
+  #                         x = x,
+  #                         y = y,
+  #                         ultimate_asfs = NULL,
+  #                         cand_asfs_checked = NULL,
+  #                         og_y = y,
+  #                         og_x = x)
+  attributes(out) <- list(target = y)
+  names(out) <- x
   mvx <- grepl("=", x)
   mvy <- grepl("=", y)
   if(xor(mvx, mvy)){stop("x and y must be of same model type")}
@@ -84,26 +86,26 @@ is_compatible <- function(x, y, dat = NULL){
   is_x_csf <- length(c_asfcount) > 2
   if(!is_x_csf & is_sm){
     out[1] <- TRUE
-    attr(out, "why") <- "x is asf and a submodel of y"
+    #attr(out, "why") <- "x is asf and a submodel of y"
     return(out)
   }
   if(cyclic(x) || cyclic(y)){
     out[1] <- is_sm
-    attr(out, "why") <- "x or y is cyclic, only submodel relation between x and y tested"
+    #attr(out, "why") <- "x or y is cyclic, only submodel relation between x and y tested"
     return(out)
   }
 
 
   if(is_x_csf & is_sm){
      x <- is_comp_subtar(x, dat = dat, type = type)
-     attr(out, "why") <- "x is a csf and a submodel of y, substitute in x before checking compatibility"
+     #attr(out, "why") <- "x is a csf and a submodel of y, substitute in x before checking compatibility"
   }
-  out <- subin_target_ccomp(x , y , out, dat, type)
+  out <- subin_target_ccomp(x =x, y = y, dat = dat, type = type)
   return(out)
 }
 
-subin_target_ccomp <- function(x, y, out, dat = NULL, type){
-  prepared <- ccheck_prep(x,y)
+subin_target_ccomp <- function(x, y, dat = NULL, type){
+  prepared <- ccheck_prep(x, y)
   prep_target <- prepared$target_lhss
   asf_subms <- fsubmodel_csf(prepared$candidate_asfs, y)
   cand_need_checking <- prepared$candidate_lhss[!asf_subms]
@@ -123,14 +125,15 @@ subin_target_ccomp <- function(x, y, out, dat = NULL, type){
                            subbed_tar_asfs[i])
     correct[names(correct) == prepared$candidate_asfs[idx]] <- asf_cor
   }
-  attr(correct, "target") <- NULL
+  #attr(correct, "target") <- NULL
 
-  out[1] <- all(correct)
-  if(out[1]){
-    attr(out, "why") <- "all x asfs are submodels of expanded y asfs"
-  } else {
-    attr(out, "why") <- "some x asfs are not submodels of expanded y asfs"
-  }
+  #out[1] <- all(correct)
+  out <- all(correct)
+  # if(out[1]){
+  #   attr(out, "why") <- "all x asfs are submodels of expanded y asfs"
+  # } else {
+  #   attr(out, "why") <- "some x asfs are not submodels of expanded y asfs"
+  # }
   #attr(out, "expanded_tar_asfs") <- subbed_tar_asfs
   #attr(out, "cand_asfs_checked") <- correct
   return(out)
@@ -162,30 +165,36 @@ check_comp_asf <- function(x, y, not_subbable, ogy, dat = NULL, type){
   ultimate_lhs <- ultimate_lhs1 <- y[outcome_match]
   idx_sub_from <- vector("logical", length(tar_outs))
 
+  # while(any(sapply(toupper(tar_outs[!not_subbable]),
+  #           function(x) grepl(x, toupper(ultimate_lhs))))){
   while(any(sapply(toupper(tar_outs[!not_subbable]),
-            function(x) grepl(x, toupper(ultimate_lhs))))){
+                   function(x) fac_grepl(x, toupper(ultimate_lhs))))){
     sub_from_capmatch <- sapply(tar_outs,
                                 function(y)
-                                  grepl(y, ultimate_lhs))
+                                  fac_grepl(y, ultimate_lhs))
     sub_from_capmatch[which(not_subbable)] <- FALSE
     sub_from_capflip <- sapply(tar_outs_flipped,
                                function(y)
-                                 grepl(y, ultimate_lhs))
+                                 fac_grepl(y, ultimate_lhs))
     sub_from_capflip[which(not_subbable)] <- FALSE
     subbing_from <- unique(c(which(sub_from_capmatch), which(sub_from_capflip)))
     idx_sub_from[subbing_from] <- TRUE
     if(any(sub_from_capmatch)){
       for(i in which(sub_from_capmatch)){
-        ultimate_lhs <- gsub(tar_outs[i],
+        ultimate_lhs <- gsub(paste0("(?<![[:alpha:]])", tar_outs[i], "(?!\\w)"),
                              paste0("(", tar_lhss[i], ")"),
-                             ultimate_lhs)
+                             ultimate_lhs,
+                             perl = TRUE)
       }
     }
     if(any(sub_from_capflip)){
       for(i in which(sub_from_capflip)){
-        ultimate_lhs <- gsub(tar_outs_flipped[i],
+        ultimate_lhs <- gsub(paste0("(?<![[:alpha:]])",
+                                    tar_outs_flipped[i],
+                                    "(?!\\w)"),
                             paste0("!(", tar_lhss[i], ")"),
-                            ultimate_lhs)
+                            ultimate_lhs,
+                            perl = TRUE)
       }
     }
   }
@@ -227,21 +236,35 @@ substitute_all <- function(x, dat = NULL, type){
   return(subbed)
 }
 
-# this regex maybe gsub("(?<![[:alpha:]])c(?!\\w)", "REP", "(A+B<->C)*(cg+T<->E)", perl = T)
+
+fac_grepl <- function(te, tar){
+  r <- paste0("(?<![[:alpha:]])", te, "(?!\\w)")
+  out <- grepl(r, tar, perl = TRUE)
+  return(out)
+}
+
+
 chain_substituter <- function(x,
                                subbed_from = vector("logical", length(x[[1]]))){
+  # sub_from_capmatch <- lapply(x$rhss,
+  #                             function(y)
+  #                               grepl(paste0("(?<![[:alpha:]])", y, "(?!\\w)"),
+  #                                     x$lhss,
+  #                                     perl = TRUE))
   sub_from_capmatch <- lapply(x$rhss,
-                              function(y)
-                                grepl(y, x$lhss))
+                              function(y) fac_grepl(y, x$lhss))
   id_sub_capmatch <- unlist(lapply(sub_from_capmatch, any))
 
   # sub_from_capflip <- lapply(case_flipper(x$rhss),
   #                            function(y)
   #                              grepl(y, x$lhss)) #this needs fixing
+  # sub_from_capflip <- lapply(case_flipper(x$rhss),
+  #                            function(y)
+  #                              grepl(paste0("(?<![[:alpha:]])",y, "(?!\\w)"),
+  #                                    x$lhss, perl = TRUE)) #this needs fixing
+
   sub_from_capflip <- lapply(case_flipper(x$rhss),
-                             function(y)
-                               grepl(paste0("(?<![[:alpha:]])",y, "(?!\\w)"),
-                                     x$lhss, perl = TRUE)) #this needs fixing
+                             function(y) fac_grepl(y, x$lhss))
   id_sub_capflip <- unlist(lapply(sub_from_capflip, any))
   while(any(c(id_sub_capflip, id_sub_capmatch))){
     for(i in seq_along(sub_from_capmatch)){
@@ -268,14 +291,21 @@ chain_substituter <- function(x,
     wh_capflip <- which(id_sub_capflip)
     w_subbed <- unique(c(wh_subbed_from, wh_capmatch, wh_capflip))
     subbed_from[w_subbed] <- TRUE
+    # sub_from_capmatch <- lapply(x$rhss,
+    #                             function(y)
+    #                               grepl(paste0("(?<![[:alpha:]])", y, "(?!\\w)"),
+    #                                     x$lhss,
+    #                                     perl = TRUE))
     sub_from_capmatch <- lapply(x$rhss,
-                                function(y)
-                                  grepl(y, x$lhss))
+                                function(y) fac_grepl(y, x$lhss))
     id_sub_capmatch <- unlist(lapply(sub_from_capmatch, any))
 
+    # sub_from_capflip <- lapply(case_flipper(x$rhss),
+    #                            function(y)
+    #                              grepl(paste0("(?<![[:alpha:]])",y, "(?!\\w)"),
+    #                                    x$lhss, perl = TRUE))
     sub_from_capflip <- lapply(case_flipper(x$rhss),
-                               function(y)
-                                 grepl(y, x$lhss))
+                               function(y) fac_grepl(y, x$lhss))
     id_sub_capflip <- unlist(lapply(sub_from_capflip, any))
   }
   x <- lapply(x, function(y){y <- y[!subbed_from]; return(y)})
