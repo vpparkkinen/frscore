@@ -75,7 +75,7 @@ frscore <- function(sols,
   if(match.arg(scoretype) != "full"){
     lifecycle::deprecate_warn("0.3.0",
                               what = "frscore(scoretype)",
-                              details = "From version 0.3.0 FR-scores are calculated based on causal compatibility rather
+                              details = "From version 0.3.0, FR-scores are calculated based on causal compatibility rather
                               than submodel-relations. The scoretype argument will be dropped in next release.")
   }
   normalize <- match.arg(normalize)

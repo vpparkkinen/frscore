@@ -69,6 +69,7 @@ frscored_cna <- function(x,
                          test.model = NULL,
                          print.all = FALSE,
                          compscoring = TRUE,
+                         n.init = 1000,
                          ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
     stop("invalid argument x")
@@ -236,7 +237,8 @@ rean_cna <- function(x,
     # abort(paste0("`x` should be a data frame or configuration table, not an object of type ", typeof(x)))
   }
   if(lifecycle::is_present(ncsf)){
-    deprecate_warn("0.3.0", "frscore::rean_cna(ncsf = )", "frscore::rean_cna(n.init = )")
+    lifecycle::deprecate_warn("0.3.0", "frscore::rean_cna(ncsf = )", "frscore::rean_cna(n.init = )")
+    n.init <- ncsf
   }
   cl <- match.call()
   dots <- list(...)

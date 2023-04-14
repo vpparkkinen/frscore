@@ -1,6 +1,7 @@
 # frscore 0.3.0
 
-- `frscored_cna()` and `rean_cna()` gain an explicit argument
+- `frscored_cna()` and `rean_cna()` gain an argument `n.init` that
+controls the maximum number of csfs that are calculated in each analysis.
 
 # frscore 0.2.0
 

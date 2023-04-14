@@ -13,6 +13,7 @@ frscored_cna(
   maxsols = 50,
   test.model = NULL,
   print.all = FALSE,
+  n.init = 1000,
   ...
 )
 }
@@ -30,9 +31,11 @@ this value in the reanalysis series. Defaults to \code{0.1}.}
 \item{output}{Character vector that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
 
-\item{scoretype}{Character vector specifying the scoring method: \code{"full"}
-(default; scoring is based on counting both sub- and supermodels), \code{"supermodel"}
-(count supermodels only), \code{"submodel"} (count submodels only).}
+\item{scoretype}{Allowed for backward compatibility only, due to be dropped
+in next version. Character vector specifying the scoring method: \code{"full"}
+(default; scoring is based on counting every compatibility relation found), \code{"supermodel"}
+(count compatibility with more complex models only), \code{"submodel"} (count
+compatibility with less complex models only).}
 
 \item{normalize}{Character vector that determines the method used in
 normalizing the scores. \code{"truemax"} (default) normalizes by the highest score among the elements of \code{sols},
@@ -40,7 +43,7 @@ such that the highest scoring solution types get score 1. \code{"idealmax"}
 normalizes by a theoretical maximum score (see Details). }
 
 \item{verbose}{Logical; if \code{TRUE}, additional
-information about submodel relations among the unique solution types found
+information about causal compatibility relations among the unique solution types found
 in \code{sols} is printed. Defaults to \code{FALSE}.}
 
 \item{maxsols}{Integer determining the maximum number of unique solution
@@ -54,6 +57,9 @@ the results of the reanalysis series.}
 printing the results. If \code{TRUE}, results are printed as when using the defaults of
 \code{print.data.frame}. If \code{FALSE}, 20 highest scoring
 solutions/models are printed.}
+
+\item{n.init}{Integer that determines the maximum number of csfs built in
+the analyses, see \code{\link[cna:csf]{csf()}}. Only applied when \code{output = "csf"}.}
 
 \item{...}{Any arguments to be passed to \code{\link[cna:cna]{cna()}} except \code{con}, \code{cov} or
 \code{con.msc}. The effect of argument \code{what} is overriden
@@ -80,7 +86,17 @@ fit-robustness scores of the resulting solutions/models
 \code{frscored_cna()} is a wrapper function that sequentially executes \code{\link[frscore:rean_cna]{rean_cna()}} and \code{\link[frscore:frscore]{frscore()}}, meaning it performs both computational phases of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). In the first phase, the function conducts a reanalysis series on the input data \code{x} at all combinatorially possible combinations of fit thresholds that can be generated from the interval given by \code{fit.range} at increments given by \code{granularity} and collects all solutions/models in a set \strong{M}. In the second phase, it calculates the fit-robustness scores of the atomic (asf) and/or complex (csf) solution formulas in \strong{M}.
 The argument \code{output} allows for controlling whether csf or only asf are built, the latter normally being  faster but less complete.
 
-When the argument \code{scoretype} is set to its default value \code{"full"}, the score of each solution/model in \strong{M} is calculated by counting both the sub- and supermodel relations it has to the other elements of \strong{M}. Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, supermodel and submodel relations only. In the former setting, less complex models will tend to get higher fit-robustness scores because they tend to have more supermodels in \strong{M}, while the latter setting gives preference to more complex models, which have more submodels in \strong{M} on average.
+The argument \code{scoretype} is deprecated as of \code{frscore} v0.3.0, and will be dropped
+from future versions of the package.
+That is to say that explicitly setting its value, especially changing the default value \code{"full"},
+is allowed so that older code can be run without errors, but doing this is discouraged.
+In \code{frscore} v0.3.0, the permissible values of \code{scoretype} have the following effects.
+When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
+the number of other elements of \strong{M} that are compatible with \strong{m}
+in the causal attributions that they make. Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, counting compatibility relations with more complex, and less complex models only.
+In the former setting, less complex models will tend to get higher fit-robustness scores, while the latter setting gives preference to more complex models. In future versions of \code{frscore}, fit-robustness
+scores will be calculated as with the default value (\code{"full"}), and
+changing the scoring method will not be possible.
 
 The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each solution/model is divided by the maximum score obtained by an element of \strong{M}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal complexity in \strong{M} are identical and that for every model of a given complexity, all less complex elements of \strong{M} are its
 submodels and all more complex elements of \strong{M} are its supermodels.

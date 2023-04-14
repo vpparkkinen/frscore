@@ -2,7 +2,8 @@
 \alias{rean_cna}
 \title{rean_cna}
 \usage{
-rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf"), ...)
+rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf, output = c("csf", "asf"),
+n.init = 1000, ...)
 }
 \arguments{
 \item{x}{A \code{data.frame} or \code{configTable} to be analyzed with \code{\link[cna:cna]{cna()}}. In case of multi-value or fuzzy-set data, the data type must be indicated by \code{type = "mv"} and \code{type = "fs"}, respectively.}
@@ -11,11 +12,14 @@ rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = 20, output = c("csf", "asf"), ..
 combinations of consistency and coverage thresholds are formed, to be used
 in the analyses.}
 
-\item{ncsf}{Scalar integer that determines the maximum number of csfs (complex solutions formulas) calculated
-in a each \code{cna()} analysis, if \code{output = "csf"}. Defaults to 20.}
+\item{ncsf}{Allowed for backward compatibility, due to be dropped in future
+versions. Please use \code{n.init} instead.}
 
 \item{output}{Character vector that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
+
+\item{n.init}{Integer that determines the maximum number of csfs built in
+the analyses. See \code{\link[cna:csf]{csf()}}}
 
 \item{...}{Any arguments to be passed to \code{\link[cna:cna]{cna()}} except \code{con}, \code{cov} or
 \code{con.msc}. The effect of argument \code{what} is overriden
@@ -34,7 +38,7 @@ range of values
 }
 \details{
 \code{rean_cna()} performs a reanalysis series of a data set \code{x}, which constitutes the first
-computational phase of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). The  series consists of \code{\link[cna:cna]{cna()}} calls at all combinatorially possible consistency and coverage settings drawn from the vector \code{attempt}. If the \code{output} argument is set to its default value \code{"csf"}, \code{rean_cna()} returns complex solutions formulas (csf), in case of \code{"asf"} only atomic solution formulas ("asf") are built, which is faster. The argument \code{ncsf} allows for controlling the number of csf to be built, if \code{output = "csf"}.
+computational phase of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). The  series consists of \code{\link[cna:cna]{cna()}} calls at all combinatorially possible consistency and coverage settings drawn from the vector \code{attempt}. If the \code{output} argument is set to its default value \code{"csf"}, \code{rean_cna()} returns complex solutions formulas (csf), in case of \code{"asf"} only atomic solution formulas ("asf") are built, which is faster. The argument \code{n.init} allows for controlling the number of csf to be built, if \code{output = "csf"}.
 }
 \references{
 V.P. Parkkinen and M. Baumgartner (2021), \dQuote{Robustness and Model Selection in Configurational Causal Modeling,} \emph{Sociological Methods and Research}, doi:10.1177/0049124120986200.
