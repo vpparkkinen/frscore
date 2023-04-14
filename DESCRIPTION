@@ -27,7 +27,8 @@ Imports:
     rlang
 Depends: 
     R (>= 3.5),
-    cna (>= 3.5.1)
+    cna (>= 3.5.1),
+    lifecycle (>= 1.0.0)
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

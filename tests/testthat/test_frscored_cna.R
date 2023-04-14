@@ -14,6 +14,11 @@ test_that("frscored_cna works", {
   expect_snapshot(frscored_cna(d.error, normalize = "idealmax"))
   expect_snapshot(frscored_cna(d.error, normalize = "none"))
   expect_snapshot(frscored_cna(d.error, verbose = TRUE))
+  expect_snapshot(frscored_cna(d.pban))
+  expect_snapshot(frscored_cna(d.jobsecurity,
+                               fit.range = c(0.8, 0.7),
+                               granularity = 0.1,
+                               outcome = "JSR"))
 })
 
 

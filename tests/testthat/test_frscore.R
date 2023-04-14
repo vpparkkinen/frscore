@@ -1,16 +1,25 @@
 
 local_edition(3)
 
-
+mvdatgen <- function(x){
+  fct <- full.ct(x)
+  fct_u <- apply(fct, 2, unique)
+  mv_values <- lapply(fct_u,
+                      function(x) {if(length(unique(x)) < 2){
+                        x <- min(x):(max(x)+(2-length(x)))
+                      } else {
+                        x <- x
+                      }
+                        return(x)})
+  out <- full.ct(x = mv_values)
+  return(out)
+}
 
 mv_all <- readRDS(testthat::test_path("frscore_mvcortest_all.RDS"))
-
-mv_res <- lapply(mv_all, '[[', 2)
+mvdat <- mvdatgen("(D=2*E=1+C=3*D=3*E=1<->A=2)*(A=3*E=2+D=1*E=1<->B=2)")
 
 test_that("frscore works for mv",{
- expect_snapshot(frscore(mv_all[[1]][[1]]))
- expect_snapshot(frscore(mv_all[[2]][[1]]))
- expect_snapshot(frscore(mv_all[[3]][[1]]))
+ expect_snapshot(frscore(mv_all[[1]][[1]], dat = mvdat))
 })
 
 

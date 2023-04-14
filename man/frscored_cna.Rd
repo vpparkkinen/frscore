@@ -88,18 +88,22 @@ The argument \code{output} allows for controlling whether csf or only asf are bu
 
 The argument \code{scoretype} is deprecated as of \code{frscore} v0.3.0, and will be dropped
 from future versions of the package.
-That is to say that explicitly setting its value, especially changing the default value \code{"full"},
+Explicitly setting its value
 is allowed so that older code can be run without errors, but doing this is discouraged.
 In \code{frscore} v0.3.0, the permissible values of \code{scoretype} have the following effects.
 When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
 the number of other elements of \strong{M} that are compatible with \strong{m}
 in the causal attributions that they make. Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, counting compatibility relations with more complex, and less complex models only.
 In the former setting, less complex models will tend to get higher fit-robustness scores, while the latter setting gives preference to more complex models. In future versions of \code{frscore}, fit-robustness
-scores will be calculated as with the default value (\code{"full"}), and
+scores will be calculated as with the current default value (\code{"full"}), and
 changing the scoring method will not be possible.
 
-The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each solution/model is divided by the maximum score obtained by an element of \strong{M}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal complexity in \strong{M} are identical and that for every model of a given complexity, all less complex elements of \strong{M} are its
-submodels and all more complex elements of \strong{M} are its supermodels.
+The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all the models in \code{sols} are causally compatible with each other.
+Different values of \code{scoretype} will result in different values of this theoretical
+maximum score, insofar as the models in \code{sols} vary in their complexity.
+When normalization is applied, the normalized score is shown in its
+own column 'norm.score' in the results. The raw scores are shown in the column
+'score'.
 
 If the argument \code{verbose} is set to \code{TRUE}, \code{frscored_cna()} also
 prints a list indicating for each solution/model how many raw score points it receives from which elements of \strong{M}. The verbose list is ordered with decreasing fit robustness scores.
