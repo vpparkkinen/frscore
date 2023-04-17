@@ -19,24 +19,36 @@ decompose_model <- function(x){
 }
 
 
-ccheck_prep <- function(x,y){
-  tar_decomp <- decompose_model(y)
+ccheck_prep <- function(x, y, ogy){
+  # tar_decomp <- decompose_model(y)
+
   cand_decomp <- decompose_model(x)
-  tar_asfs <- tar_decomp$asfs
-  tar_outs <- tar_decomp$rhss
-  tar_lhss <- tar_decomp$lhss
+  #tar_asfs <- tar_decomp$asfs
+  #tar_outs <- tar_decomp$rhss
+  #tar_lhss <- tar_decomp$lhss
   cand_asfs <- cand_decomp$asfs
   cand_outs <- cand_decomp$rhss
   cand_lhss <- cand_decomp$lhss
   names(cand_lhss) <- cand_outs
   cand_facs <- unlist(lit_extract(cand_lhss), use.names = FALSE)
-  not_subbable <- toupper(tar_outs) %in% c(toupper(cand_facs),
+  # not_subbable <- toupper(tar_outs) %in% c(toupper(cand_facs),
+  #                                          toupper(cand_outs))
+  not_subbable <- toupper(y$rhss) %in% c(toupper(cand_facs),
                                            toupper(cand_outs))
-  test_tar_lhss <- tar_lhss
-  names(test_tar_lhss) <- tar_outs
-  out <- list(target = y,
+  # test_tar_lhss <- tar_lhss
+  test_tar_lhss <- y$lhss
+  # names(test_tar_lhss) <- tar_outs
+  names(test_tar_lhss) <- y$rhss
+  # out <- list(target = y,
+  #             target_lhss = test_tar_lhss,
+  #             target_asfs = tar_asfs,
+  #             candidate = x,
+  #             candidate_lhss = cand_lhss,
+  #             candidate_asfs = cand_asfs,
+  #             no_sub = not_subbable)
+  out <- list(target = ogy,
               target_lhss = test_tar_lhss,
-              target_asfs = tar_asfs,
+              target_asfs = y$asfs,
               candidate = x,
               candidate_lhss = cand_lhss,
               candidate_asfs = cand_asfs,
@@ -44,7 +56,34 @@ ccheck_prep <- function(x,y){
   return(out)
 }
 
-#' @importFrom cna C_is_submodel cyclic extract_asf full.ct getCond hstrsplit lhs
+
+
+
+
+#' is_compatible
+#' @description Determine whether the causal ascriptions made by
+#'   \emph{candidate} solution/model \code{x} are compatible with the causal
+#'   ascriptions made by \emph{target} model \code{y}.
+#'
+#' @param x A string that specifies valid \code{cna} model.
+#'
+#' @param y A string that specifies valid \code{cna} model.
+#'
+#' @param dat A \code{configTable}, a data frame, a matrix, or a list that
+#'   specifies the range of admissible factor values for the factors featured in
+#'   \code{x} and \code{y}. Only needed when the models \code{x} and \code{y}
+#'   are multi-valued, otherwise ignored.
+#'
+#' @details \code{is_compatible} performs a check to determine whether the
+#'   direct and indirect causal claims made by a candidate model \code{x} are a
+#'   subset of the direct and indirect causal claims made by the target model
+#'   \code{y}. Direct causal claims are those claims that can be read off from
+#'   the explicit ssyntax of an atomic solution/model such as \code{"A+B<->C"}.
+#'   This model claims that factors \code{A} and \code{B} are alternative,
+#'   direct cases of \code{C}.
+#'
+#' @importFrom cna C_is_submodel cyclic extract_asf full.ct getCond hstrsplit
+#'   lhs
 #' @importFrom cna noblanks relist1 rhs rreduce selectCases
 #' @importFrom stats setNames
 #' @export
@@ -94,20 +133,24 @@ is_compatible <- function(x, y, dat = NULL){
     #attr(out, "why") <- "x or y is cyclic, only submodel relation between x and y tested"
     return(out)
   }
-
-
-  if(is_x_csf & is_sm){
-     x <- is_comp_subtar(x, dat = dat, type = type)
-     #attr(out, "why") <- "x is a csf and a submodel of y, substitute in x before checking compatibility"
+  dy <- decompose_model(y)
+  out <- subin_target_ccomp(x =x, y = dy, ogy = y, dat = dat, type = type)
+  if(!out){
+    return(out)
   }
-  out <- subin_target_ccomp(x =x, y = y, dat = dat, type = type)
+  #if(is_x_csf & is_sm){
+  x <- is_comp_subtar(x, dat = dat, type = type)
+     #attr(out, "why") <- "x is a csf and a submodel of y, substitute in x before checking compatibility"
+  #}
+  out <- subin_target_ccomp(x =x, y = dy, ogy = y, dat = dat, type = type)
   return(out)
 }
 
-subin_target_ccomp <- function(x, y, dat = NULL, type){
-  prepared <- ccheck_prep(x, y)
+subin_target_ccomp <- function(x, y, ogy, dat = NULL, type){
+  prepared <- ccheck_prep(x, y, ogy)
   prep_target <- prepared$target_lhss
-  asf_subms <- fsubmodel_csf(prepared$candidate_asfs, y)
+  #asf_subms <- fsubmodel_csf(prepared$candidate_asfs, y)
+  asf_subms <- fsubmodel_csf(prepared$candidate_asfs, ogy)
   cand_need_checking <- prepared$candidate_lhss[!asf_subms]
   subbed_tar_asfs <- vector("character", length(prepared$target_lhss))
   correct <- asf_subms
@@ -117,7 +160,8 @@ subin_target_ccomp <- function(x, y, dat = NULL, type){
     subbed_tar_asfs[i] <- check_comp_asf(cand_need_checking[i],
                                          prepared$target_lhss,
                                          prepared$no_sub,
-                                         y,
+                                         #y,
+                                         ogy,
                                          dat = dat,
                                          type = type)
     idx <- which(names(prepared$candidate_lhss) == names(cand_need_checking[i]))
@@ -384,9 +428,7 @@ lit_extract <- function(lhs){
   return(out)
 }
 
-print.is_compatible <- function(x){
-  print(x[[1]])
-}
+
 
 
 

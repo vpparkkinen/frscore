@@ -98,9 +98,11 @@ In the former setting, less complex models will tend to get higher fit-robustnes
 scores will be calculated as with the current default value (\code{"full"}), and
 changing the scoring method will not be possible.
 
-The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all the models in \code{sols} are causally compatible with each other.
+The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all the solutions/models in \code{sols} that have the same complexity
+are identical and hence compatible with each other, and that for each solution/model
+\code{sols[i]}, all less complex solutions/models are causally compatible with \code{sols[i]}.
 Different values of \code{scoretype} will result in different values of this theoretical
-maximum score, insofar as the models in \code{sols} vary in their complexity.
+maximum score insofar as elements of \code{sols} vary in their complexity.
 When normalization is applied, the normalized score is shown in its
 own column 'norm.score' in the results. The raw scores are shown in the column
 'score'.

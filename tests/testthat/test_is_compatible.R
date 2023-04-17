@@ -136,6 +136,14 @@ test_that("is_compatible() works", {
   y <- "(C+D<->E)*(A+B<->C)*(E+F<->A)"
   x <- "(C+D<->E)*(A+B<->C)"
   expect_true(is_compatible(x,y))
+
+  y <- "(A+B*D<->C)*(C+H<->G)*(G+D<->I)"
+  x <- "(A+B*D<->C)*(C<->I)"
+  expect_false(is_compatible(x,y))
+
+  y <- "(A+B<->C)*(C+D<->E)*(E+F<->G)*(G+H<->I)"
+  x <- "(A+B<->E)*(E+H<->I)"
+  expect_true(is_compatible(x,y))
 })
 
 
