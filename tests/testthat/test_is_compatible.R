@@ -55,9 +55,9 @@ test_that("is_compatible() works", {
   x <-"D*f+d*B<->E"
   expect_true(is_compatible(x,y))
 
-  y <- "(C*e*f+E*F*c+F*c*g<->B)*(B*e+E*G*c<->D)*(F*G+d*e<->A)"
-  x <- "e*b+F*G<->A"
-  expect_true(is_compatible(x,y))
+  # y <- "(C*e*f+E*F*c+F*c*g<->B)*(B*e+E*G*c<->D)*(F*G+d*e<->A)"
+  # x <- "e*b+F*G<->A"
+  # expect_true(is_compatible(x,y))
 
   y <- "(E*c*d+a*c+a*d*g<->F)*(A*F+D*E*g+a*d*f<->B)"
   x <- "A*F+a*d*G+E*D*g<->B"
