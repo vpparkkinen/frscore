@@ -19,7 +19,7 @@ frscore(
 for the factors featured in the models included in \code{sols}. Only needed when the models in
 \code{sols} are multi-valued, otherwise ignored.}
 
-\item{scoretype}{Allowed for backward compatibility only, due to be dropped
+\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Allowed for backward compatibility only, due to be dropped
 in next version. Character vector specifying the scoring method: \code{"full"}
 (default; scoring is based on counting every compatibility relation found), \code{"supermodel"}
 (count compatibility with more complex models only), \code{"submodel"} (count

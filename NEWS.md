@@ -1,7 +1,21 @@
 # frscore 0.3.0
 
+- A new function `is_compatible()` is introduced, to be used for determining
+the causal compatibility of `cna` models in lieu of `cna::is.submodel()`. 
+`frscore()` is updated to use `is_compatible()` as the default 
+option for this purpose.
+
 - `frscored_cna()` and `rean_cna()` gain an argument `n.init` that
 controls the maximum number of csfs that are calculated in each analysis.
+This is a replacement for and intended to be used instead of the 
+argument `ncsf`, which is now deprecated. This change makes the syntax
+more consistent with related functions from the `cna` package.
+
+- The `scoretype` argument in `frscore()` and `frscored_cna()` is deprecated
+ahead of removal in the next version.
+
+
+
 
 # frscore 0.2.0
 

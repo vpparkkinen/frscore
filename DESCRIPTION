@@ -4,17 +4,17 @@ Version: 0.2.0.9000
 Authors@R: c(
     person(given = "Veli-Pekka",
            family = "Parkkinen",
-           role = c("aut", "cre", "cph"),
+           role = c("aut", "cre"),
            email = "parkkinenv@gmail.com"),
-    person("Michael", "Baumgartner", role = c("aut", "cph"),
+    person("Michael", "Baumgartner", role = c("aut"),
                      email = "michael.baumgartner@uib.no"),
-    person("Mathias", "Ambuehl", role = "ctb")
+    person("Mathias", "Ambuehl", role = c("aut"))
     )
 Description: Functions for automatically performing 
              a reanalysis series
              on a data set using CNA, and for calculating the fit-robustness
              of the resulting models, as described in 
-             Parkkinen and Baumgartner (2021) <doi:10.1177/0049124120986200>.
+             Parkkinen and Baumgartner (2021) <https://doi.org/10.1177/0049124120986200>.
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true

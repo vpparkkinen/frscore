@@ -12,7 +12,7 @@ n.init = 1000, ...)
 combinations of consistency and coverage thresholds are formed, to be used
 in the analyses.}
 
-\item{ncsf}{Allowed for backward compatibility, due to be dropped in future
+\item{ncsf}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Allowed for backward compatibility, due to be dropped in future
 versions. Please use \code{n.init} instead.}
 
 \item{output}{Character vector that determines whether csfs or asfs are

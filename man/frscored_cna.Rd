@@ -31,7 +31,7 @@ this value in the reanalysis series. Defaults to \code{0.1}.}
 \item{output}{Character vector that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
 
-\item{scoretype}{Allowed for backward compatibility only, due to be dropped
+\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Allowed for backward compatibility only, due to be dropped
 in next version. Character vector specifying the scoring method: \code{"full"}
 (default; scoring is based on counting every compatibility relation found), \code{"supermodel"}
 (count compatibility with more complex models only), \code{"submodel"} (count

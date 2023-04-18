@@ -60,54 +60,58 @@ ccheck_prep <- function(x, y, ogy){
 
 
 
-#' is_compatible
+#' Determine the causal compatibility of `cna` models
 #' @description Determine whether the causal ascriptions made by
 #'   \emph{candidate} solution/model \code{x} are compatible with the causal
 #'   ascriptions made by \emph{target} model \code{y}.
 #'
-#' @param x A string that specifies valid \code{cna} model.
+#' @param x A string that specifies a valid \code{cna} model.
 #'
-#' @param y A string that specifies valid \code{cna} model.
+#' @param y A string that specifies a valid \code{cna} model.
 #'
 #' @param dat A \code{configTable}, a data frame, a matrix, or a list that
 #'   specifies the range of admissible factor values for the factors featured in
 #'   \code{x} and \code{y}. Only needed when the models \code{x} and \code{y}
 #'   are multi-valued, otherwise ignored.
 #'
-#' @details \code{is_compatible} checks whether the causal relevance claims made
-#'   by the candidate model \code{x} are compatible with the causal structure
-#'   represented by the target model \code{y}. In short, the function checks
-#'   whether \code{x} is causally compatible with \code{y}. When \code{x} and
-#'   \code{y} are multi-valued models, a further argument \code{dat} must be
+#' @details \code{is_compatible()} checks whether the causal relevance claims
+#'   made by the candidate model \code{x} are compatible with the causal
+#'   structure represented by the target model \code{y}. In short, the function
+#'   checks whether \code{x} is causally compatible with \code{y}. When \code{x}
+#'   and \code{y} are multi-valued models, a further argument \code{dat} must be
 #'   provided to determine the admissible factor values for the factors featured
 #'   in \code{x} and \code{y}. This would typically be the data set that
 #'   \code{x} and \code{y} were inferred from.
 #'
 #'   For \code{x} to be causally compatible with \code{y}, (1), every ascription
 #'   of direct causal relevance made by \code{x} must have a counterpart direct
-#'   or indirect causal ascription in \code{y}, and (2) every ascription of
-#'   indirect causal relevance made by \code{x} must have a counterpart indirect
-#'   causal ascription in \code{y}. That is, every pair of factors represented
-#'   as direct cause and effect in \code{x} must either be represented as direct
-#'   cause and effect in \code{y}, or be connected by a transitive chain of
-#'   direct causal relations according to \code{y}. Direct causal relations are
-#'   those causal relations that can be read off from the explicit syntax of an
-#'   atomic solution/model ("asf"). For example, according to
-#'   \code{"A*F+B<->C"}, \code{A} and \code{B} are direct causes of \code{C} on
-#'   alternative paths. Furthermore, candidate model \code{"A+B<->C"} is
-#'   causally compatible with the target \code{"A*F+B<->C"}, but
-#'   \code{"A+B*U<->C"} is not, since the latter makes a claim about the causal
-#'   relevance of \code{U} to \code{C} which is not made by the target. Each
-#'   direct cause is a difference-maker for its effect in some circumstances
-#'   where alternative sufficient causes of the effect are not present, and the
-#'   \emph{co-factors} located on the same path are present. For example,
-#'   \code{"A*F+B<->C"} claims that when \code{B} is absent and \code{F} is
-#'   present, difference in the presence of \code{A} will associate with
-#'   differences in \code{C}, given some suitable configuration of factors not
-#'   explicitly represented in \code{"A*F+B<->C"}. When \code{x} and \code{y}
-#'   are atomic, i.e. represent direct causal relations only, a necessary and
-#'   sufficient condition for causal compatibility is that \code{x} is a
-#'   \link[cna::submodel]{submodel} of \code{y}.
+#'   causal ascription in \code{y}, or a counterpart indirect causal ascription
+#'   in \code{y} such that any factors that mediate the relation in `y` (making
+#'   it indirect in `y`) are omitted in `x`. (2), every ascription of indirect
+#'   causal relevance made by \code{x} must have a counterpart indirect causal
+#'   ascription in \code{y}. That is, every pair of factors represented as
+#'   direct cause and effect in \code{x} must either be represented as direct
+#'   cause and effect in \code{y}, or must correspond to a transitive chain of
+#'   direct causal relations according to \code{y} such that `x` omits the
+#'   factors that mediate the relation in `y`. Direct causal relations are those
+#'   causal relations that can be read off from the explicit syntax of an atomic
+#'   solution/model ("asf"), and is thus relativized to the set of factors
+#'   included into a model. For example, according to \code{"A*F+B<->C"},
+#'   \code{A} and \code{B} are direct causes of \code{C} on alternative paths.
+#'   Furthermore, candidate model \code{"A+B<->C"} is causally compatible with
+#'   the target \code{"A*F+B<->C"}, but \code{"A+B*U<->C"} is not, since the
+#'   latter makes a claim about the causal relevance of \code{U} to \code{C}
+#'   which is not made by the target. Each direct cause is a difference-maker
+#'   for its effect in some circumstances where alternative sufficient causes of
+#'   the effect are not present, and the \emph{co-factors} located on the same
+#'   path are present. For example, \code{"A*F+B<->C"} claims that when \code{B}
+#'   is absent and \code{F} is present, difference in the presence of \code{A}
+#'   will associate with differences in \code{C}, given some suitable
+#'   configuration of factors not explicitly represented in \code{"A*F+B<->C"}.
+#'   When \code{x} and \code{y} are atomic, i.e. represent direct causal
+#'   relations only, a necessary and sufficient condition for causal
+#'   compatibility is that \code{x} is a [submodel][cna::is.submodel()] of
+#'   \code{y}.
 #'
 #'   A causal chain comprises sequentially ordered direct causal relations. For
 #'   example, \code{"(A+B<->C)*(C+D<->E)"} represents a \emph{transitive} causal
@@ -116,13 +120,16 @@ ccheck_prep <- function(x, y, ogy){
 #'   and the difference-making ability they have on \code{E} via \code{C}. A
 #'   model like \code{"A+B<->E"} is causally compatible with
 #'   \code{"(A+B<->C)*(C+D<->E)"} even though they make different claims about
-#'   direct vs. indirect causal relevance, because both models nonetheless
-#'   entail that \code{A} and \code{B} are difference-makers for \code{E} in
-#'   some circumstances, and hence causally relevant for \code{E}. The simpler
-#'   model merely omits the middle link \code{C} which transmits the causal
-#'   influence of \code{A} and \code{B} to \code{E}. Hence, both models can be
-#'   seen as descriptions of the same causal structure, one more complete in
-#'   detail than the other.
+#'   direct vs. indirect causal relevance. Direct causation is a model-relative
+#'   notion, so this difference in itself does not entail incompatibility, given
+#'   that the simpler model does not include the mediating factor `C` at all.
+#'   Both models entail that \code{A} and \code{B} are difference-makers for
+#'   \code{E} in some circumstances, and hence causally relevant for \code{E}.
+#'   The models are thus compatible;
+#'   the simpler one merely omits the middle link \code{C} which transmits the
+#'   causal influence of \code{A} and \code{B} to \code{E}. Hence, both models
+#'   can be seen as descriptions of the same causal structure, one more complete
+#'   in detail than the other.
 #'
 #'
 #'   An \emph{in}transitive chain is a causal chain where the influence of some
@@ -179,7 +186,7 @@ ccheck_prep <- function(x, y, ogy){
 #'   proceeds to the second phase. For those direct relations that cannot be
 #'   mapped to direct relations as represented by the target, the function
 #'   searches for counterpart indirect relations in the target. Since \code{cna}
-#'   models do not represent indirect relations explicitly, these these must be
+#'   models do not represent indirect relations explicitly, these must be
 #'   explicated by syntactically manipulating the target. This involves finding
 #'   asfs in the target with the same outcomes as those candidate asfs that are
 #'   not submodels of the target \emph{as is}. For each such component asf of
@@ -212,13 +219,13 @@ ccheck_prep <- function(x, y, ogy){
 #'   the target makes claims of indirect causal relevance that license the
 #'   (direct) causal claims made by the candidate.
 #'
-#'   The purpose of the second phase is to check that all the indirect causal
-#'   claims made by the \emph{candidate} model have a counterpart in the target.
-#'   This involves doing all the substitutions of left-hand side factors by
-#'   their causes in the candidate model, to generate expressions that
-#'   explicitly represent the indirect claims of the candidate. The asfs
-#'   generated by such manipulations of the candidate model are then checked
-#'   against the target similarly to the first phase. For example, say that
+#'   The purpose of the second phase is to check that all indirect causal claims
+#'   made by the \emph{candidate} model have a counterpart in the target. This
+#'   involves doing all the substitutions of left-hand side factors by their
+#'   causes in the candidate model, to generate expressions that explicitly
+#'   represent the indirect claims of the candidate. The asfs generated by such
+#'   manipulations of the candidate model are then checked against the target
+#'   similarly to the first phase. For example, say that
 #'   \code{"(A+B*D<->C)*(C+D<->G)"} and \code{"(A+B*D<->C)*(C<->G)"} are the
 #'   target and the candidate, respectively. Here, each candidate asf
 #'   \code{"A+B*D<->C"} and \code{"C<->G"} has a supermodel in one of the target
@@ -242,14 +249,14 @@ ccheck_prep <- function(x, y, ogy){
 #'   valid check for causal compatibility of \code{cna} models. Since the
 #'   syntactic manipulations and, especially, minimization of the resulting
 #'   expressions is so costly, \code{is_compatible} relies on the
-#'   \code{\link[cna::rreduce]{rreduce}} function from the
-#'   \code{\link[cna:]{cna}} package, which randomly chooses a single reduction
-#'   path to produce only one minimal form of an expression whenever more than
-#'   one exists, i.e. when the expression is ambiguous in its causal claims. In
-#'   some cases of wildly ambiguous models, the output of \code{is_compatible}
-#'   will depend on which reduction path was chosen. These cases are rare enough
-#'   to not significantly affect the intended use of \code{is_compatible} in the
-#'   context of \code{\link[frscore]{frscore}}. Another instance of
+#'   [`rreduce()`][cna::rreduce()] function from the [cna][cna::cna-package]
+#'   package for minimization. [`rreduce()`][cna::rreduce] randomly chooses a
+#'   single reduction path to produce only one minimal form of an expression
+#'   whenever more than one exists, i.e. when the expression is ambiguous in its
+#'   causal claims. In the case of ambiguous models, the output of
+#'   \code{is_compatible} may depend on which reduction path(s) were chosen.
+#'   These cases are rare enough to not significantly affect the intended use of
+#'   \code{is_compatible} in the context of `frscore`. Another instance of
 #'   \code{is_compatible} taking a shortcut is when processing cyclic models
 #'   like \code{"(A+B<->C)*(C+D<->A)"}. Here the problems are as much
 #'   philosophical as computational. It is clear that a cyclic candidate model
@@ -258,11 +265,10 @@ ccheck_prep <- function(x, y, ogy){
 #'   target: it is not clear what counts as an incompatibility in causal
 #'   ordering, given that a cyclic target model does not (causally) order its
 #'   factors strictly, but a non-cyclic candidate does. Since many conclusions
-#'   can be argued for here but some approach must be taken
-#'   to ensure that \code{is_compatible} works on all valid \code{cna} models,
-#'   \code{is_compatible} takes the least costly option and simply
-#'   checks whether the candidate is a submodel of the target, and returns
-#'   the result.
+#'   can be argued for here but some approach must be taken to ensure that
+#'   \code{is_compatible()} works on all valid \code{cna} models,
+#'   \code{is_compatible()} takes the least costly option and simply checks
+#'   whether the candidate is a submodel of the target, and returns the result.
 #'
 #'
 #' @importFrom cna C_is_submodel cyclic extract_asf full.ct getCond hstrsplit
