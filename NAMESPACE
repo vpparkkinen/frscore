@@ -2,9 +2,9 @@
 
 S3method(print,frscore)
 S3method(print,frscored_cna)
+export(causal_submodel)
 export(frscore)
 export(frscored_cna)
-export(is_compatible)
 export(rean_cna)
 importFrom(Rfast,floyd)
 importFrom(cna,C_is_submodel)

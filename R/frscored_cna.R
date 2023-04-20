@@ -68,7 +68,7 @@ frscored_cna <- function(x,
                          maxsols = 50,
                          test.model = NULL,
                          print.all = FALSE,
-                         compscoring = TRUE,
+                         comp.method = c("causal_submodel", "is.submodel"),
                          n.init = 1000,
                          ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
@@ -88,7 +88,7 @@ frscored_cna <- function(x,
   cl$fit.range <- cl$granularity <- cl$normalize <-
     cl$verbose <- cl$scoretype <-
     cl$test.model <- cl$print.all <-
-    cl$scoretype <- cl$maxsols <- cl$compscoring <- NULL
+    cl$scoretype <- cl$maxsols <- cl$comp.method <- NULL
   cl[[1]] <- as.name("rean_cna")
   if ("ncsf" %in% names(dots)){
     cl$ncsf <- dots$ncsf
@@ -107,7 +107,7 @@ frscored_cna <- function(x,
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize,
                       verbose = verbose, scoretype = scoretype,
-                      maxsols = maxsols, compscoring = compscoring,
+                      maxsols = maxsols, comp.method = comp.method,
                       dat = x)
     if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
       return(NULL)}
@@ -115,7 +115,7 @@ frscored_cna <- function(x,
     if(any(sapply(rescomb$condition, function(x) cna::identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize,
                         verbose = verbose, scoretype = scoretype,
-                        maxsols = maxsols, compscoring = compscoring,
+                        maxsols = maxsols, comp.method = comp.method,
                         dat = x)
       if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
         return(NULL)}

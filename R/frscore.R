@@ -55,7 +55,8 @@ frscore <- function(sols,
                     verbose = FALSE,
                     print.all = FALSE,
                     dat = NULL,
-                    compscoring = TRUE){
+                    comp.method = c("causal_submodel", "is.submodel")
+                    ){
   if (length(sols) == 0){
     warning('no solutions to test')
     return(NULL)
@@ -79,6 +80,8 @@ frscore <- function(sols,
                               than submodel-relations. The scoretype argument will be dropped in next release.")
   }
   normalize <- match.arg(normalize)
+  compmeth <- match.arg(comp.method)
+  compscoring <- switch(compmeth, causal_submodel = TRUE, is.submodel = FALSE)
   sols <- sols[order(sols)]
 
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
@@ -364,15 +367,15 @@ frscore <- function(sols,
 #' @importFrom cna is.submodel
 subAdd <- function(x, y){
   re <- is.submodel(x,y)
-  return(data.frame(names(re),
-                    attributes(re)$target,
+  return(data.frame(x,
+                    y,
                     ifelse(re[[1]] == TRUE, 1, NA),
                     checked = 1,
                     stringsAsFactors = FALSE))
 }
 
 comptest <- function(x, y, dat = NULL){
-  re <- is_compatible(x, y, dat = dat)
+  re <- causal_submodel(x, y, dat = dat)
   return(data.frame(x,
                     y,
                     ifelse(re[[1]] == TRUE, 1, NA),
@@ -524,7 +527,7 @@ print.frscore <- function(x,
 
   }
 
-  if(isTRUE(verbose) & !is.null(verbose)){
+  if(verbose & !is.null(verbose)){
     cat('\n')
     cat('Score composition: \n')
     cat('----- \n \n')
