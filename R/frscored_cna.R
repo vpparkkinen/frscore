@@ -79,8 +79,13 @@ frscored_cna <- function(x,
   if(match.arg(scoretype) != "full"){
     lifecycle::deprecate_warn("0.3.0",
                               what = "frscored_cna(scoretype)",
-                              details = "From version 0.3.0 FR-scores are calculated based on causal compatibility rather
-                              than submodel-relations. The scoretype argument will be dropped in next release.")
+                              details = "The `scoretype` argument is on its way to be removed.
+                              It is not recommended to restrict the scoring to sub- or
+                              supermodel relations only, as the scores will then not reflect
+                              the intended meaning of fit-robustness.
+                              Information about the score composition of the models
+                              can always be found by inspecting the $verbout -element
+                              of the output of `frscore()` and `frscored_cna()`.")
   }
   if (any(c("cov", "con", "con.msc") %in% names(dots))){
     abort("cna arguments 'con', 'cov', 'con.msc' not meaningful")

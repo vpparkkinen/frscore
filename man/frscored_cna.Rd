@@ -13,6 +13,7 @@ frscored_cna(
   maxsols = 50,
   test.model = NULL,
   print.all = FALSE,
+  comp.method = c("causal_submodel", "is.submodel"),
   n.init = 1000,
   ...
 )
@@ -28,16 +29,16 @@ reanalysis series. Defaults to \code{c(1, 0.7)}.}
 \item{granularity}{Numeric scalar; consistency and coverage are varied by
 this value in the reanalysis series. Defaults to \code{0.1}.}
 
-\item{output}{Character vector that determines whether csfs or asfs are
+\item{output}{String that determines whether csfs or asfs are
 returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
 
-\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Allowed for backward compatibility only, due to be dropped
-in next version. Character vector specifying the scoring method: \code{"full"}
-(default; scoring is based on counting every compatibility relation found), \code{"supermodel"}
-(count compatibility with more complex models only), \code{"submodel"} (count
-compatibility with less complex models only).}
+\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} String specifying the scoring method: \code{"full"}
+(default; scoring is based on counting sub- and supermodel relations), \code{"supermodel"}
+(count supermodels only), \code{"submodel"} (count
+submodels only). Allowed for backward compatibility only, due to be dropped
+in next version.}
 
-\item{normalize}{Character vector that determines the method used in
+\item{normalize}{String that determines the method used in
 normalizing the scores. \code{"truemax"} (default) normalizes by the highest score among the elements of \code{sols},
 such that the highest scoring solution types get score 1. \code{"idealmax"}
 normalizes by a theoretical maximum score (see Details). }
@@ -49,7 +50,7 @@ in \code{sols} is printed. Defaults to \code{FALSE}.}
 \item{maxsols}{Integer determining the maximum number of unique solution
 types found in the reanalysis series to be included in the scoring (see Details).}
 
-\item{test.model}{Character vector that specifies a single candidate
+\item{test.model}{String that specifies a single candidate
 \code{cna()} solution/model whose fit-robustness score is calculated against
 the results of the reanalysis series.}
 
@@ -58,8 +59,13 @@ printing the results. If \code{TRUE}, results are printed as when using the defa
 \code{print.data.frame}. If \code{FALSE}, 20 highest scoring
 solutions/models are printed.}
 
+\item{comp.method}{String that determines how the models in \code{sols} are compared
+to determine their fr-score. \code{"causal_submodel"} (the default) checks for
+causal submodel relations using \code{causal_submodel()},
+\code{"is.submodel"} checks for syntactic submodel relations with \code{is.submodel()}}
+
 \item{n.init}{Integer that determines the maximum number of csfs built in
-the analyses, see \code{\link[cna:csf]{csf()}}. Only applied when \code{output = "csf"}.}
+the analyses, see \code{\link[cna:csf]{cna::csf()}}. Only applied when \code{output = "csf"}.}
 
 \item{...}{Any arguments to be passed to \code{\link[cna:cna]{cna()}} except \code{con}, \code{cov} or
 \code{con.msc}. The effect of argument \code{what} is overriden
@@ -86,36 +92,41 @@ fit-robustness scores of the resulting solutions/models
 \code{frscored_cna()} is a wrapper function that sequentially executes \code{\link[frscore:rean_cna]{rean_cna()}} and \code{\link[frscore:frscore]{frscore()}}, meaning it performs both computational phases of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). In the first phase, the function conducts a reanalysis series on the input data \code{x} at all combinatorially possible combinations of fit thresholds that can be generated from the interval given by \code{fit.range} at increments given by \code{granularity} and collects all solutions/models in a set \strong{M}. In the second phase, it calculates the fit-robustness scores of the atomic (asf) and/or complex (csf) solution formulas in \strong{M}.
 The argument \code{output} allows for controlling whether csf or only asf are built, the latter normally being  faster but less complete.
 
-The argument \code{scoretype} is deprecated as of \code{frscore} v0.3.0, and will be dropped
+The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.0, and will be dropped
 from future versions of the package.
-Explicitly setting its value
+Giving it a non-default value
 is allowed so that older code can be run without errors, but doing this is discouraged.
-In \code{frscore} v0.3.0, the permissible values of \code{scoretype} have the following effects.
+The permissible values of \code{scoretype} have the following effects.
 When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
-the number of other elements of \strong{M} that are compatible with \strong{m}
-in the causal attributions that they make. Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, counting compatibility relations with more complex, and less complex models only.
-In the former setting, less complex models will tend to get higher fit-robustness scores, while the latter setting gives preference to more complex models. In future versions of \code{frscore}, fit-robustness
-scores will be calculated as with the current default value (\code{"full"}), and
-changing the scoring method will not be possible.
+the number of the (either causal or syntactic) sub- and supermodel relations \strong{m} has to the other elements of \strong{M}. Whether causal or syntactic submodel relations
+are counted depends on the value of \code{comp.method}: \code{"causal_submodel"} (default)
+counts causal submodel relations using \code{\link[frscore:causal_submodel]{causal_submodel()}},
+\code{"is.submodel"} counts syntactic submodel relations using \code{\link[cna:is.submodel]{cna::is.submodel()}}.
+Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, supermodel and submodel relations only. In future versions of \code{frscore}, fit-robustness
+scores will always be calculated as with \code{scoretype = "full"}, and
+changing this will not be possible. If additional information about the numbers of
+sub- vs. supermodel relations a particular model has to other models is needed, this
+can be acquired by inspecting the \code{$verbout} element of the output of \code{frscored_cna()}.
 
-The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all the solutions/models in \code{sols} that have the same complexity
-are identical and hence compatible with each other, and that for each solution/model
-\code{sols[i]}, all less complex solutions/models are causally compatible with \code{sols[i]}.
-Different values of \code{scoretype} will result in different values of this theoretical
-maximum score insofar as elements of \code{sols} vary in their complexity.
-When normalization is applied, the normalized score is shown in its
-own column 'norm.score' in the results. The raw scores are shown in the column
-'score'.
+The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained
+maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal
+complexity in \code{sols} are identical and that for every \code{sols[i]} of a given complexity, all less complex
+elements of \code{sols} are its submodels and all more complex elements of \code{sols} are its supermodels.
+When normalization is applied, the normalized score is shown in its own column ’norm.score’ in
+the results. The raw scores are shown in the column ’score’.
+
 
 If the argument \code{verbose} is set to \code{TRUE}, \code{frscored_cna()} also
 prints a list indicating for each solution/model how many raw score points it receives from which elements of \strong{M}. The verbose list is ordered with decreasing fit robustness scores.
 
 If the size of the consistency and coverage range scanned in the reanalysis series generating \strong{M} is large or there are many model ambiguities, \strong{M} may contain so many different types of solutions that robustness cannot be calculated for all of them in reasonable time. In that case, the argument \code{maxsols} allows for capping the number of solution types to be included in the scoring (defaults to 50). \code{frscored_cna()} then selects the most frequent solutions in \strong{M} of each complexity level until \code{maxsols} is reached and only scores the thus selected elements of \strong{M}.
 
-If the user is interested in the robustness of one specific candidate model, that model can be given to \code{forscored_cna()} by the argument \code{test.model}. The result for that model will then be printed separately, provided the model is found in the
+If the user is interested in the robustness of one specific candidate model, that model can be given to \code{frscored_cna()} by the argument \code{test.model}. The result for that model will then be printed separately, provided the model is found in the
 reanalysis series, if not, the function stops.
 }
-\seealso{\code{\link[frscore:frscore]{frscore}}, \code{\link[frscore:rean_cna]{rean_cna}}}
+\seealso{\code{\link[frscore:frscore]{frscore()}}, \code{\link[frscore:rean_cna]{rean_cna()}},
+\code{\link[frscore:causal_submodel]{causal_submodel()}}, \code{\link[cna:is.submodel]{cna::is.submodel()}}
+}
 \references{
 P. Emmenegger (2011) \dQuote{Job Security Regulations in Western Democracies:
 A Fuzzy Set Analysis.} \emph{European Journal of Political Research} 50(3):336-64.

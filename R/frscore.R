@@ -49,12 +49,12 @@
 #' @importFrom rlang .data
 #' @export
 frscore <- function(sols,
+                    dat = NULL,
                     scoretype = c("full", "supermodel", "submodel"),
                     normalize = c("truemax", "idealmax", "none"),
                     maxsols = 50,
                     verbose = FALSE,
                     print.all = FALSE,
-                    dat = NULL,
                     comp.method = c("causal_submodel", "is.submodel")
                     ){
   if (length(sols) == 0){
@@ -73,11 +73,16 @@ frscore <- function(sols,
     }
 
   scoretype <- match.arg(scoretype)
-  if(match.arg(scoretype) != "full"){
+  if(!identical(rlang::caller_call()[[1]], as.symbol("frscored_cna")) && (match.arg(scoretype) != "full")){
     lifecycle::deprecate_warn("0.3.0",
                               what = "frscore(scoretype)",
-                              details = "From version 0.3.0, FR-scores are calculated based on causal compatibility rather
-                              than submodel-relations. The scoretype argument will be dropped in next release.")
+                              details = "The `scoretype` argument is on its way to be removed.
+                              It is not recommended to restrict the scoring to sub- or
+                              supermodel relations only, as the scores will then not reflect
+                              the intended meaning of fit-robustness.
+                              Information about the score composition of the models
+                              can always be found by inspecting the $verbout -element
+                              of the output of `frscore()` and `frscored_cna()`.")
   }
   normalize <- match.arg(normalize)
   compmeth <- match.arg(comp.method)

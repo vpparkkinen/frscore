@@ -9,7 +9,8 @@ frscore(
   normalize = c("truemax", "idealmax", "none"),
   maxsols = 50,
   verbose = FALSE,
-  print.all = FALSE
+  print.all = FALSE,
+  comp.method = c("causal_submodel", "is.submodel")
 )
 }
 \arguments{
@@ -19,13 +20,13 @@ frscore(
 for the factors featured in the models included in \code{sols}. Only needed when the models in
 \code{sols} are multi-valued, otherwise ignored.}
 
-\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Allowed for backward compatibility only, due to be dropped
-in next version. Character vector specifying the scoring method: \code{"full"}
-(default; scoring is based on counting every compatibility relation found), \code{"supermodel"}
-(count compatibility with more complex models only), \code{"submodel"} (count
-compatibility with less complex models only).}
+\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}  String specifying the scoring method: \code{"full"}
+(default; scoring is based on counting sub- and supermodel relations), \code{"supermodel"}
+(count supermodels only), \code{"submodel"} (count
+submodels only). Allowed for backward compatibility only, due to be dropped
+in next version.}
 
-\item{normalize}{Character vector that determines the method used in
+\item{normalize}{String that determines the method used in
 normalizing the scores. \code{"truemax"} (default) normalizes by the highest score among the elements of \code{sols},
 such that the highest scoring solution types get score 1. \code{"idealmax"}
 normalizes by a theoretical maximum score (see Details). }
@@ -41,6 +42,11 @@ in \code{sols} is printed. Defaults to \code{FALSE}.}
 printing the results. If \code{TRUE}, results are printed as when using the defaults of
 \code{print.data.frame}. If \code{FALSE}, 20 highest scoring
 solutions/models are printed.}
+
+\item{comp.method}{String that determines how the models in \code{sols} are compared
+to determine their fr-score. \code{"causal_submodel"} (the default) checks for causal submodel relations using \code{causal_submodel()},
+\code{"is.submodel"} checks for syntactic submodel relations with \code{is.submodel()}}
+
 }
 \value{
 A named list where the first element is a data frame containing
@@ -59,38 +65,41 @@ fit-robustness scores of Boolean solutions/models output by the \code{\link[cna:
 a data set repeatedly, e.g. with \code{rean_cna()}, using different consistency and coverage
 thresholds in each analysis.
 
-Fit-robustness is calculated by determining which models in \code{sols} are
-compatible with each other in the causal attributions they make. For multi-valued
-models, this requires that the range of admissible values for the factors featured
-in the models is known. This information is provided via the argument \code{dat},
-that accepts data frames, \code{configTable}s, and lists of factor-value ranges as its value,
+For multi-valued
+models, the range of admissible values for the factors featured
+in the models must be provided via the argument \code{dat}, which accepts a data
+frame, \code{configTable}, or a list of factor-value ranges as its value,
 in the same manner as \code{\link[cna:full.ct]{cna::full.ct()}}.
 Typically, one would use the data set that the models in \code{sols}
-were inferred from as the value of \code{dat}, and this is what is done when
-\code{frscore} is called within \code{frscored_cna}. When the models in \code{sols}
-are binary/crisp-set, \code{dat} should be left to its default value \code{NULL},
+were inferred from, and this is what is done automatically when
+\code{frscore()} is called within \code{frscored_cna()}. When the models in \code{sols}
+are binary, \code{dat} should be left to its default value \code{NULL},
 and will in any case be ignored.
 
-The argument \code{scoretype} is deprecated as of \code{frscore} v0.3.0, and will be dropped
-from future versions of the package.
-Explicitly setting its value
+The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.0, and will be dropped
+in the next version.
+Giving it a non-default value
 is allowed so that older code can be run without errors, but doing this is discouraged.
-In \code{frscore} v0.3.0, the permissible values of \code{scoretype} have the following effects.
-When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
-the number of other elements of \strong{M} that are compatible with \strong{m}
-in the causal attributions that they make. Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, counting compatibility relations with more complex, and less complex models only.
-In the former setting, less complex models will tend to get higher fit-robustness scores, while the latter setting gives preference to more complex models. In future versions of \code{frscore}, fit-robustness
-scores will be calculated as with the current default value (\code{"full"}), and
-changing the scoring method will not be possible.
+When set to its default value \code{"full"},
+the score of each \code{sols[i]} is calculated by counting the (either syntactic or
+causal) sub- and supermodel relations \code{sols[i]} has to the other elements
+of \code{sols}. Setting scoretype to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on,
+respectively, supermodel and submodel relations only. Whether causal or syntactic submodel relations
+are counted depends on the value of \code{comp.method}: \code{"causal_submodel"} (default)
+counts causal submodel relations using \code{\link[frscore:causal_submodel]{causal_submodel()}},
+\code{"is.submodel"} counts syntactic submodel relations using \code{\link[cna:is.submodel]{cna::is.submodel()}}.
+In future versions of \code{frscore}, fit-robustness
+scores will always be calculated as with \code{scoretype = "full"}, and
+changing this will not be possible. If additional information about the numbers of
+sub- vs. supermodel relations a particular model has to other models is needed, this
+can be acquired by inspecting the \code{$verbout} element of the output of \code{frscore()}.
 
-The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained maximum but by an idealized maximum, which is calculated by assuming that all the solutions/models in \code{sols} that have the same complexity
-are identical and hence compatible with each other, and that for each solution/model
-\code{sols[i]}, all less complex solutions/models are causally compatible with \code{sols[i]}.
-Different values of \code{scoretype} will result in different values of this theoretical
-maximum score insofar as elements of \code{sols} vary in their complexity.
-When normalization is applied, the normalized score is shown in its
-own column 'norm.score' in the results. The raw scores are shown in the column
-'score'.
+The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained
+maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal
+complexity in \code{sols} are identical and that for every \code{sols[i]} of a given complexity, all less complex
+elements of \code{sols} are its submodels and all more complex elements of \code{sols} are its supermodels.
+When normalization is applied, the normalized score is shown in its own column ’norm.score’ in
+the results. The raw scores are shown in the column ’score’.
 
 If the size of the consistency and coverage interval scanned in the reanalysis series generating \code{sols} is large or there are many model ambiguities, \code{sols} may contain so many different types of solutions/models that robustness cannot be calculated for all of them in reasonable time. In that case, the argument \code{maxsols} allows for capping the number of solution types to be included in the scoring (defaults to 50). \code{frscore()} then selects the most frequent solutions/models in \code{sols} of each complexity level until  \code{maxsols} is reached and only scores the thus selected elements of \code{sols}.
 
@@ -105,7 +114,8 @@ Resource Theory using Fuzzy-Set Qualitative Comparative Analysis: Insights from
 Twenty Years of Biodiversity Conservation in Costa Rica.} \emph{Global Environmental Change} \strong{23} (3):573-87.
 
 }
-\seealso{\code{\link{rean_cna}}, \code{\link[cna:cna]{cna}}}
+\seealso{\code{\link[frscore:rean_cna]{rean_cna()}}, \code{\link[cna:cna]{cna()}},
+\code{\link[frscore:causal_submodel]{causal_submodel()}}, \code{\link[cna:is.submodel]{is.submodel()}}}
 \examples{
 # Artificial data from Parkkinen and Baumgartner (2021)
 sols1 <- rean_cna(d.error, attempt = seq(1, 0.8, -0.1))
