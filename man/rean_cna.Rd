@@ -44,7 +44,7 @@ computational phase of fit-robustness scoring as introduced in Parkkinen and Bau
 V.P. Parkkinen and M. Baumgartner (2021), \dQuote{Robustness and Model Selection in Configurational Causal Modeling,} \emph{Sociological Methods and Research}, doi:10.1177/0049124120986200.
 
 }
-\seealso{\code{\link{frscore}}, \code{\link[cna:cna]{cna}}}
+\seealso{\code{\link[frscore:frscore]{frscore()}}, \code{\link[cna:cna]{cna()}}}
 
 \examples{
 # Crisp-set data

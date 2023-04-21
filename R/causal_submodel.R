@@ -95,20 +95,20 @@ ccheck_prep <- function(x, y, ogy){
 #'  For \code{x} to be causal submodel of \code{y}, (1), every ascription of
 #'  direct causal relevance made by \code{x} must either have a counterpart
 #'  direct causal ascription in \code{y}, or a counterpart indirect causal
-#'  ascription in \code{y} such that `x` omits any factors that mediate the relation in
-#'  `y` (making it indirect in `y`). (2), every ascription of
-#'  indirect causal relevance made by \code{x} must have a counterpart indirect
-#'  causal ascription in \code{y}. That is, every pair of factors represented as
-#'  direct cause and effect in \code{x} must either be represented as direct
-#'  cause and effect in \code{y}, or be connected by a transitive chain of
-#'  direct causal relations according to \code{y}. In the latter case, `x` must
-#'  in addition omit the factors that according to `y` mediate the causal
-#'  relation in question. Direct causal relations are those causal relations
-#'  that can be read off from the explicit syntax of an atomic solution/model
-#'  ("asf"). For example, according to \code{A*F+B<->C}, \code{A} and \code{B}
-#'  are direct causes of \code{C} on alternative paths. Furthermore, candidate
-#'  model \code{A+B<->C} is a causal submodel of the target \code{A*F+B<->C},
-#'  but \code{A+B*U<->C} is not, since the latter makes a claim about the causal
+#'  ascription in \code{y} such that `x` omits any factors that mediate the
+#'  relation according to `y`. (2), every ascription of indirect causal
+#'  relevance made by \code{x} must have a counterpart indirect causal
+#'  ascription in \code{y}. That is, every pair of factors represented as direct
+#'  cause and effect in \code{x} must either be represented as direct cause and
+#'  effect in \code{y}, or be connected by a transitive chain of direct causal
+#'  relations according to \code{y}. In the latter case, `x` must in addition
+#'  omit the factors that according to `y` mediate the causal relation in
+#'  question. Direct causal relations are those causal relations that can be
+#'  read off from the explicit syntax of an atomic solution/model ("asf"). For
+#'  example, according to \code{A*F+B<->C}, \code{A} and \code{B} are direct
+#'  causes of \code{C} on alternative paths. Furthermore, candidate model
+#'  \code{A+B<->C} is a causal submodel of the target \code{A*F+B<->C}, but
+#'  \code{A+B*U<->C} is not, since the latter makes a claim about the causal
 #'  relevance of \code{U} to \code{C} which is not made by the target. Each
 #'  direct cause is a difference-maker for its effect in some circumstances
 #'  where alternative sufficient causes of the effect are not present, and the
@@ -116,10 +116,11 @@ ccheck_prep <- function(x, y, ogy){
 #'  \code{A*F+B<->C} claims that when \code{B} is absent and \code{F} is
 #'  present, difference in the presence of \code{A} will associate with
 #'  differences in \code{C}, given some suitable configuration of factors not
-#'  explicitly represented in \code{A*F+B<->C}. When \code{x} and \code{y} are
-#'  atomic, i.e. represent direct causal relations only, a necessary and
-#'  sufficient condition for causal compatibility is that \code{x} is a
-#'  syntactic [submodel][cna::is.submodel()] of \code{y}.
+#'  explicitly represented in \code{A*F+B<->C}. When both \code{x} and \code{y}
+#'  are asfs, i.e. represent direct causal relations only, \code{x} is a causal
+#'  submodel of \code{y} if, and only if \code{x} is is a [syntactic
+#'  submodel][cna::is.submodel()] of \code{y}, as the syntax of an asf is such
+#'  that every causal ascription is explicitly represented.
 #'
 #'  Judgments of direct vs. indirect causation are relative to the set of
 #'  factors included in a model. `A+B<->E` describes `A` and `B` as direct
@@ -129,12 +130,12 @@ ccheck_prep <- function(x, y, ogy){
 #'  makes no claim that would contradict the chain model; it merely says that
 #'  *relative* to the factor set `{A,B,E}`, the factors are causally ordered so
 #'  that `A` and `B` are causes of `E`, and there is no causal relation between
-#'  `A` and `B`. Here, causal order refers to the order of the factors according
-#'  to the structure of causal relations described by a model -- what is
-#'  causally "upstream" and "downstream". The exogenous factors `{A,B,D}` are
-#'  top-level upstream causes in \code{(A+B<->C)*(C+D<->E)}, as they are not
-#'  caused by any other factor. Endogenous factors `C` and `E` are downstream of
-#'  of `{A,B}` by one and two levels respectively, and `E` is one level
+#'  `A` and `B`. Causal order refers to the ordering of the factors by the
+#'  relation of direct causation that determines what is causally "upstream" and
+#'  "downstream" of what. The exogenous factors `{A,B,D}` are top-level upstream
+#'  causes in \code{(A+B<->C)*(C+D<->E)}, as they are not caused by any other
+#'  factor included in the model. Endogenous factors `C` and `E` are downstream
+#'  of of `{A,B}` by one and two levels respectively, and `E` is one level
 #'  downstream of `D`. The chain model agrees with the direct cause model on the
 #'  causal ordering of `{A,B,E}` -- `A` and `B` are upstream of `E` and not
 #'  causes of each other -- but also includes an additional cause of `E`, `C`,
@@ -179,64 +180,65 @@ ccheck_prep <- function(x, y, ogy){
 #'  associate with differences in \code{G} when \code{C} is fixed absent, but
 #'  the target claims that this is impossible.
 #'
-#'  Finally, causal compatibility requires that any claims of indirect causal
-#'  relevance made by a candidate model are claims made by the target also.
-#'  Consider the target model \code{(A+B*D<->C)*(C+D<->G)} and a candidate
+#'  Finally, a causal submodel relation requires that any claims of indirect
+#'  causal relevance made by a candidate model are claims made by the target
+#'  also. Consider the target model \code{(A+B*D<->C)*(C+D<->G)} and a candidate
 #'  \code{(A+B*D<->C)*(C<->G)}. Despite superficial similarity (the candidate is
-#'  a submodel of the target), the candidate is not a causal submodel of the
-#'  target. Namely, the candidate makes a claim that \code{B} is indirectly
-#'  causally relevant for \code{G}, a claim that is not made by the target.
-#'  Again, it is best to examine the specific difference-making claim in
-#'  question. The candidate model claims that differences in \code{B} when
-#'  \code{D} is fixed to be present make a difference to the presence of
-#'  \code{G}. But this is false according to the target. The target claims that
-#'  \code{G} is always present whenever \code{D} is: \code{B} is not causally
-#'  relevant for \code{G} despite being a cause of an intermediary factor
-#'  \code{C}.
+#'  a syntactic submodel of the target), the candidate is not a causal submodel
+#'  of the target. Namely, the candidate makes a claim that \code{B} is
+#'  indirectly causally relevant for \code{G}, a claim that is not made by the
+#'  target. Again, it is best to examine the specific difference-making claim in
+#'  question. The candidate model claims that differences in \code{B} make a
+#'  difference to the presence of \code{G} when \code{D} is fixed to be present.
+#'  But this is false according to the target. The target claims that \code{G}
+#'  is always present whenever \code{D} is: \code{B} is not causally relevant
+#'  for \code{G} despite being a cause of an intermediary factor \code{C}.
 #'
-#'  In its implementation, \code{causal_submodel()} exploits the fact that a
-#'  submodel relation is a necessary and sufficient condition for causal
-#'  compatibility when both the target and candidate are asfs. Thus, if both a
-#'  submodel test is performed, and the result returned. In the case that the
-#'  target, or both the target and candidate include more than one asf, the
-#'  process is more complicated. First, the function checks if the component
-#'  asfs of the candidate are submodels of the target \emph{as is}. If yes for
-#'  all, each of the candidate's direct causal relevance ascriptions has a
-#'  counterpart direct causal relation in the target, and the function proceeds
-#'  to the second phase. For those direct relations that cannot be mapped to
-#'  direct relations as represented by the target, the function searches for
+#'  In its implementation, \code{causal_submodel()} relies on the fact that when
+#'  both the target and candidate are asfs, a syntactic submodel relation that
+#'  can be verified with [`is.submodel()`][cna::is.submodel] is a necessary and
+#'  sufficient condition for causal submodel relation. If both the candidate and
+#'  the target are asfs, a check for syntactic submodel relation is performed,
+#'  and the result returned. When the target, or both the target and candidate
+#'  comprise more than one asf, the process is more complicated. First,
+#'  `causal_submodel()` checks if the component asfs of the candidate are
+#'  syntactic submodels of the target \emph{as is}. If yes for all, each of the
+#'  candidate's direct causal relevance ascriptions is contained in the target,
+#'  and the function proceeds to the second phase. For those direct causal
+#'  relations that are not contained in the target, the function searches for
 #'  counterpart indirect relations in the target. Since \code{cna} models do not
-#'  represent indirect relations explicitly, these must be explicated by
+#'  represent indirect relations explicitly, these are explicated by
 #'  syntactically manipulating the target. This involves finding asfs in the
-#'  target with the same outcomes as those candidate asfs that are not submodels
-#'  of the target \emph{as is}. For each such component asf of the target,
-#'  factors in the disjunction on the left hand side of the equivalence sign
-#'  ("<->") are substituted with the disjunctions, if any, that according to the
-#'  target represent their causes. The resulting expression is then minimized to
-#'  render it causally interpretable. What is left is an asf representing some
-#'  of the target's indirect causal claims as direct causal claims. Then, the
-#'  candidate asfs that are not submodels of the target \emph{as is} are tested
-#'  against the manipulated target asfs for submodel relation. This process is
-#'  repeated until all the submodel checks return `TRUE`, or no further
-#'  substitutions are possible. In the former case, the function proceeds to the
-#'  second phase. In the latter case, the candidate is deemed not to be a causal
-#'  submodel of the target, and the function returns `FALSE`.
+#'  target with the same outcomes as those candidate asfs that are not syntactic
+#'  submodels of the target \emph{as is}. For each such component asf of the
+#'  target, factors in the disjunction on the left hand side of the equivalence
+#'  sign ("<->") are substituted with the disjunctions, if any, that according
+#'  to the target represent their causes. The resulting expression is then
+#'  minimized to render it causally interpretable. What is left is an asf
+#'  representing some of the target's indirect causal claims as direct causal
+#'  claims. Then, the candidate asfs that are not syntactic submodels of the
+#'  target \emph{as is} are tested against the manipulated target asfs for
+#'  syntactic submodel relation. This process is repeated until all the submodel
+#'  checks return `TRUE`, or no further substitutions are possible. In the
+#'  former case, the function proceeds to the second phase. In the latter case,
+#'  the candidate is deemed not to be a causal submodel of the target, and the
+#'  function returns `FALSE`.
 #'
 #'  An example is in order to illustrate the procedure so far. Say that the
 #'  target and candidate are \code{(A+B<->C)*(C+D<->E)} and \code{A+B<->E},
-#'  respectively. Since the only candidate asf is not a submodel of the target,
-#'  one then attempts to find indirect causal relevance claims in the target to
-#'  license the direct causal claims made by that asf. By the procedure
-#'  described above, one focuses on the second asf of the target,
-#'  \code{C+D<->E}, and seeks to syntactically manipulate that until it is
-#'  transformed into a supermodel of \code{A+B<->E}, or until no transformation
-#'  is possible. According to the first component asf of the target, \code{C} is
-#'  equivalent to (caused by) \code{A+B}. Hence, \code{C} in \code{C+D<->E} can
-#'  be replaced with \code{A+B}, which yields \code{(A+B)+D<->E}, reducing
-#'  simply to \code{A+B+D<->E}. Since \code{A+B<->E} is a submodel of
-#'  \code{A+B+D<->E}, we have shown that the target makes claims of indirect
-#'  causal relevance that license the (direct) causal claims made by the
-#'  candidate.
+#'  respectively. Since the sole candidate asf is not a syntactic submodel of
+#'  the target, one then attempts to find indirect causal relevance ascriptions
+#'  in the target to license the direct causal claims made by the candidate asf.
+#'  By the procedure described above, one focuses on the second asf of the
+#'  target, \code{C+D<->E}, and seeks to syntactically manipulate that until it
+#'  is transformed into a syntactic supermodel of \code{A+B<->E}, or until no
+#'  transformation is possible. According to the first component asf of the
+#'  target, \code{C} is equivalent to (caused by) \code{A+B}. Hence, \code{C} in
+#'  \code{C+D<->E} can be replaced with \code{A+B}, which yields
+#'  \code{(A+B)+D<->E}, reducing simply to \code{A+B+D<->E}. Since
+#'  \code{A+B<->E} is a syntactic submodel of \code{A+B+D<->E}, we have shown
+#'  that the causal relevance claims made by the candidate are contained in the
+#'  target.
 #'
 #'  The purpose of the second phase is to check that all indirect causal claims
 #'  made by the \emph{candidate} model have a counterpart in the target. This
@@ -244,9 +246,8 @@ ccheck_prep <- function(x, y, ogy){
 #'  causes in the candidate model, to generate expressions that explicitly
 #'  represent the indirect claims of the candidate. The asfs generated by such
 #'  manipulations of the candidate model are then tested for causal
-#'  compatibility with the target, following the exact same procedure that was
-#'  applied in the first phase to determine the compatibility of the candidate's
-#'  direct causal claims. For example, say that \code{(A+B*D<->C)*(C+D<->G)} and
+#'  compatibility with the target, following the exact same procedure described
+#'  above. For example, say that \code{(A+B*D<->C)*(C+D<->G)} and
 #'  \code{(A+B*D<->C)*(C<->G)} are the target and the candidate, respectively.
 #'  Here, each candidate asf \code{A+B*D<->C} and \code{C<->G} has a supermodel
 #'  in one of the target asfs \code{A+B*D<->C} and \code{C+D<->G}, i.e. each
@@ -258,12 +259,13 @@ ccheck_prep <- function(x, y, ogy){
 #'  indirect causal relevance, as claimed by the candidate, of \code{A+B*D} on
 #'  \code{G}. This expression is then tested against the target as in the first
 #'  phase: the target asf with \code{G} as the outcome is manipulated to reflect
-#'  the indirect claims that the target makes about \code{G}. After substitution
-#'  and minimization, we get \code{A+D<->G}, meaning that the target does
-#'  \emph{not} make a claim of indirect causal relevance of \code{B} for
-#'  \code{G}. That the candidate and the target are incompatible in their
-#'  indirect causal claims is shown by the fact that \code{A+B*D<->G} is not a
-#'  submodel of \code{A+D<->G}, and the function returns `FALSE`.
+#'  the indirect claims that the target makes about \code{G}, based on what the
+#'  target says about the indirect causes of `G`. After substitution and
+#'  minimization, we get \code{A+D<->G}, meaning that the target does \emph{not}
+#'  make a claim of indirect causal relevance of \code{B} for \code{G}. That the
+#'  candidate's indirect causal ascriptions are not contained in the target is
+#'  shown by the fact that \code{A+B*D<->G} is not a syntactic submodel of
+#'  \code{A+D<->G}, and the function returns `FALSE`.
 #'
 #'  Due to the computational demands of some of the steps in the above
 #'  procedure, \code{causal_submodel()} is an approximation of a strictly
@@ -284,12 +286,12 @@ ccheck_prep <- function(x, y, ogy){
 #'  causal submodel of a non-cyclic target. However, problems arise when testing
 #'  a non-cyclic candidate against a cyclic target: it is not clear what counts
 #'  as an incompatibility in causal ordering, given that a cyclic target model
-#'  does not describe an unambiguous causal ordering of the factors involved.
-#'  Since many conclusions can be argued for here but some approach must be
-#'  taken to ensure that \code{causal_submodel()} works on all valid \code{cna}
-#'  models, \code{causal_submodel()} takes the least costly option and simply
-#'  checks whether the candidate is a syntactic submodel of the target, and
-#'  returns the result.
+#'  includes factors that are causally relevant for themselves. Since many
+#'  conclusions can be argued for here but some approach must be taken to ensure
+#'  that \code{causal_submodel()} works on all valid \code{cna} models,
+#'  \code{causal_submodel()} takes the least costly option and simply checks
+#'  whether the candidate is a syntactic submodel of the target, and returns the
+#'  result.
 #'
 #'@seealso [cna::is.submodel()]
 #'
