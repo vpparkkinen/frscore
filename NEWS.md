@@ -1,11 +1,10 @@
 # frscore 0.3.0
 
-- A new function `causal_submodel()` is introduced, to be used for determining
-causal submodel relations between `cna` models. `causal_submodel()` is like `cna::is.submodel()`, except that `causal_submodel()` checks whether all
+- A new function `causal_submodel()` is introduced. `causal_submodel()` is like `cna::is.submodel()`, but checks that all
 causal relevance ascriptions, rather than just ascriptions of direct causation,
 of one model are contained in another model.
 
-- `frscore()` is updated to use `causal_submodel()`, instead of `cna::is.submodel()`, by default to compare model types when calculating fr-scores.
+- `frscore()` is updated to use `causal_submodel()`, instead of `cna::is.submodel()`, as default comparison between models when calculating fr-scores.
 
 - `frscored_cna()` and `frscore()` gain a new argument `comp.method` that
 allows the user to decide whether fr-scores are calculated using `causal_submodel()` (default) or `cna::is.submodel()`. 
@@ -16,9 +15,7 @@ admissible factor values when processing multi-valued models using
 
 - `frscored_cna()` and `rean_cna()` gain a new argument `n.init` that
 controls the maximum number of csfs that are calculated in each analysis.
-This is a replacement for and intended to be used instead of the (`rean_cna()`)
-argument `ncsf`, which is now deprecated. This change makes the syntax
-more consistent with related functions from the `cna` package.
+This replaces `ncsf` in `rean_cna()`, `ncsf` is deprecated. 
 
 - The `scoretype` argument in `frscore()` and `frscored_cna()` is deprecated
 ahead of removal in the next version.

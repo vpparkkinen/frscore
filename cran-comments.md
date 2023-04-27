@@ -1,7 +1,7 @@
 ## A minor release 
 
 This version introduces one new exported function, and makes
-moderate changes to some functions' arguments to make the syntax consistent with related
+slight changes to some functions' arguments to make their syntax consistent with related
 functions from the `cna` package.
 
 
