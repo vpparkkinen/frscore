@@ -95,7 +95,7 @@ The argument \code{output} allows for controlling whether csf or only asf are bu
 The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.0, and will be dropped
 from future versions of the package.
 Giving it a non-default value
-is allowed so that older code can be run without errors, but doing this is discouraged.
+is allowed so that older code can be run without errors, but doing this is otherwise discouraged.
 The permissible values of \code{scoretype} have the following effects.
 When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
 the number of the (either causal or syntactic) sub- and supermodel relations \strong{m} has to the other elements of \strong{M}. Whether causal or syntactic submodel relations
@@ -106,14 +106,14 @@ Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the 
 scores will always be calculated as with \code{scoretype = "full"}, and
 changing this will not be possible. If additional information about the numbers of
 sub- vs. supermodel relations a particular model has to other models is needed, this
-can be acquired by inspecting the \code{$verbout} element of the output of \code{frscored_cna()}.
+can be acquired by inspecting the \code{"verbout"} element of the output of \code{frscored_cna()}.
 
 The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained
 maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal
 complexity in \code{sols} are identical and that for every \code{sols[i]} of a given complexity, all less complex
 elements of \code{sols} are its submodels and all more complex elements of \code{sols} are its supermodels.
-When normalization is applied, the normalized score is shown in its own column ’norm.score’ in
-the results. The raw scores are shown in the column ’score’.
+When normalization is applied, the normalized score is shown in its own column \code{norm.score} in
+the results. The raw scores are shown in the column \code{score}.
 
 
 If the argument \code{verbose} is set to \code{TRUE}, \code{frscored_cna()} also

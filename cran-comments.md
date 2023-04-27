@@ -1,11 +1,13 @@
-## This is a resubmission to fix mistakenly done inappropriate bump in version.
+## A minor release 
+
+This version introduces one new exported function, and makes
+moderate changes to some functions' arguments to make the syntax consistent with related
+functions from the `cna` package.
 
 
 ## Test environments 
 
-Checks on the environments listed below were done using Github Actions.
-Results of latest and past checks available here:
-https://github.com/vpparkkinen/frscore/actions/workflows/R-CMD-check.yaml
+Checked on the following environments via Github Actions:
 
 * MacOS 11.6.5, R 4.2.0 
 * Windows Server 2022 10.0.20348, R 4.2.0 
@@ -16,4 +18,5 @@ https://github.com/vpparkkinen/frscore/actions/workflows/R-CMD-check.yaml
 ## R CMD check results
 0 errors | 0 warnings | 0 notes
 
+No reverse dependencies.
 

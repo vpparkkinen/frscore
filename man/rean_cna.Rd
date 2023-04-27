@@ -2,7 +2,7 @@
 \alias{rean_cna}
 \title{rean_cna}
 \usage{
-rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf, output = c("csf", "asf"),
+rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = deprecated(), output = c("csf", "asf"),
 n.init = 1000, ...)
 }
 \arguments{
@@ -59,7 +59,7 @@ sols2 <- do.call(rbind, sols2)
 sols2
 
 # Fuzzy-set data
-\donttest{sols3 <- rean_cna(d.jobsecurity, type = "fs", attempt = seq(0.9, 0.6, -0.05),
+\donttest{sols3 <- rean_cna(d.jobsecurity, type = "fs", attempt = seq(0.9, 0.7, -0.1),
                   ordering = list("JSR"), strict = TRUE) # execution takes a couple of seconds
 sols3 <- do.call(rbind, sols2)
 sols3}

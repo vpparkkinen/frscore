@@ -276,7 +276,7 @@ ccheck_prep <- function(x, y, ogy){
 #'  \code{causal_submodel()} takes the least costly option and simply checks
 #'  whether the candidate is a syntactic submodel of the target, and returns the
 #'  result.
-#'
+#'@returns Named logical.
 #'@seealso [cna::is.submodel()]
 #'
 #'@examples

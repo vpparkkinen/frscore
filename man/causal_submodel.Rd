@@ -16,6 +16,9 @@ specifies the range of admissible factor values for the factors featured in
 \code{x} and \code{y}. Only needed when the models \code{x} and \code{y} are
 multi-valued, otherwise ignored.}
 }
+\value{
+Named logical.
+}
 \description{
 Determine whether the causal relevance ascriptions made by
 \emph{candidate} solution/model \code{x} are contained in the causal

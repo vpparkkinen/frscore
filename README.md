@@ -28,13 +28,13 @@ install.packages("frscore")
 ```r
 library(frscore)
 
-frsc <- frscored_cna(ct2df(selectCases("A+B+F*g<->R")))
+frsc <- frscored_cna(selectCases("A+B+F*g<->R"))
 frsc
 
 # FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
 # Score type: full || score normalization: truemax 
 # maxsols set to 50 -- 0 model types excluded from scoring 
-# 
+
 # ----- 
 #  
 # Model types: 
@@ -43,6 +43,7 @@ frsc
 # 1  R       A+B+F*g<->R   1.0000000 1.0000000          4 TRUE    38      2 1.00000000
 # 2  R           A+B<->R   1.0000000 0.9230769          2 TRUE    28     12 0.73684211
 # 3  R         A+B+F<->R   0.9285714 1.0000000          3 TRUE    24      2 0.63157895
+# 4  R         A+B+g<->R   0.9285714 1.0000000          3 TRUE    24      2 0.63157895
 # .
 # .
 # .
@@ -77,9 +78,12 @@ fr
 #          model score tokens norm.score
 # 1  A+B+F*g<->R    38      2 1.00000000
 # 2      A+B<->R    28     12 0.73684211
+# 3    A+B+F<->R    24      2 0.63157895
+# 4    A+B+g<->R    24      2 0.63157895
+# 5      A+F<->R    15      4 0.39473684
+# 6      A+g<->R    15      4 0.39473684
 # .
 # .
-
 
 ```
 
