@@ -1,6 +1,3 @@
-library(cna)
-
-
 case_flipper <- function(x){
   out <- ifelse(x == toupper(x), tolower(x), toupper(x))
   return(out)

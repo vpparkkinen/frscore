@@ -240,7 +240,7 @@ rean_cna <- function(x,
                      n.init = 1000,
                      ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
-    # abort(paste0("`x` should be a data frame or configuration table, not an object of type ", typeof(x)))
+    abort(paste0("`x` should be a data frame or configuration table, not an object of type ", typeof(x)))
   }
   if(lifecycle::is_present(ncsf)){
     lifecycle::deprecate_warn("0.3.0", "frscore::rean_cna(ncsf = )", "frscore::rean_cna(n.init = )")
