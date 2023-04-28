@@ -1,17 +1,17 @@
 # frscore 0.3.0
 
 - A new function `causal_submodel()` is introduced. `causal_submodel()` is like `cna::is.submodel()`, but checks that all
-causal relevance ascriptions, rather than just ascriptions of direct causation,
+causal relevance ascriptions, rather than ascriptions of direct causation only,
 of one model are contained in another model.
 
-- `frscore()` is updated to use `causal_submodel()`, instead of `cna::is.submodel()`, as default comparison between models when calculating fr-scores.
+- `frscore()` is updated to use `causal_submodel()` instead of `cna::is.submodel()` to compare models when calculating fr-scores.
 
-- `frscored_cna()` and `frscore()` gain a new argument `comp.method` that
+- `frscored_cna()` and `frscore()` gain an argument `comp.method` that
 allows the user to decide whether fr-scores are calculated using `causal_submodel()` (default) or `cna::is.submodel()`. 
 
-- `frscore()` gains a new argument `dat`, which is to be used to determine
+- `frscore()` gains a new argument `dat`, to be used to determine
 admissible factor values when processing multi-valued models using 
-`comp.method = "causal_submodel()"`.
+`comp.method = "causal_submodel"`.
 
 - `frscored_cna()` and `rean_cna()` gain a new argument `n.init` that
 controls the maximum number of csfs that are calculated in each analysis.

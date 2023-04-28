@@ -7,7 +7,7 @@
 ## Overview
 
 Functions for automatically performing a reanalysis series
-on a data set using CNA, and for calculating the fit-robustness
+on a data set using `cna::cna()`, and for calculating the fit-robustness
 of the resulting models, as described in 
 Parkkinen and Baumgartner (2021): https://journals.sagepub.com/doi/full/10.1177/0049124120986200.
 
@@ -92,6 +92,21 @@ fr
 # 6      A+g<->R    15      4 0.39473684
 # .
 # .
+
+
+target <- "(A+B<->C)*(C+D<->E)"
+candidate <- "A+B<->E"
+
+causal_submodel(candidate, target)
+
+# A+B<->E 
+#    TRUE 
+# attr(,"target")
+# [1] "(A+B<->C)*(C+D<->E)"
+
+
+
+
 
 ```
 

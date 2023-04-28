@@ -364,7 +364,8 @@ frscore <- function(sols,
                         print.all = print.all,
                         scoretype = scoretype,
                         normal = normalize,
-                        maxsols = list(maxsols = maxsols, excluded = excluded_sols)
+                        maxsols = list(maxsols = maxsols, excluded = excluded_sols),
+                        comp.method = comp.method
   ), class = "frscore"))
 
 }

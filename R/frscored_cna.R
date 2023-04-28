@@ -157,7 +157,8 @@ frscored_cna <- function(x,
                         scoretype = scoretype,
                         normal = normalize,
                         rean.results = rescombtemp,
-                        maxsols = scored$maxsols),
+                        maxsols = scored$maxsols,
+                        comp.method = match.arg(comp.method)),
                    class = c("frscored_cna", "list"))
   return(out)
 }
