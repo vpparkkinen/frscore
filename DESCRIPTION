@@ -1,6 +1,6 @@
 Package: frscore
 Title: Functions for Calculating Fit-Robustness of CNA-Solutions
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person(given = "Veli-Pekka",
            family = "Parkkinen",
@@ -14,7 +14,7 @@ Description: Functions for automatically performing
              a reanalysis series
              on a data set using CNA, and for calculating the fit-robustness
              of the resulting models, as described in 
-             Parkkinen and Baumgartner (2021) <https://doi.org/10.1177/0049124120986200>.
+             Parkkinen and Baumgartner (2021) <doi:10.1177/0049124120986200>.
 License: AGPL (>= 3)
 Encoding: UTF-8
 LazyData: true

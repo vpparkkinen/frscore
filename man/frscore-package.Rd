@@ -6,7 +6,7 @@
 \alias{_PACKAGE}
 \title{frscore: Functions for Calculating Fit-Robustness of CNA-Solutions}
 \description{
-Functions for automatically performing a reanalysis series on a data set using CNA, and for calculating the fit-robustness of the resulting models, as described in Parkkinen and Baumgartner (2021) \url{https://doi.org/10.1177/0049124120986200}.
+Functions for automatically performing a reanalysis series on a data set using CNA, and for calculating the fit-robustness of the resulting models, as described in Parkkinen and Baumgartner (2021) \doi{10.1177/0049124120986200}.
 }
 \author{
 \strong{Maintainer}: Veli-Pekka Parkkinen \email{parkkinenv@gmail.com} [copyright holder]

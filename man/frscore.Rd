@@ -76,7 +76,7 @@ were inferred from, and this is what is done automatically when
 are binary, \code{dat} should be left to its default value \code{NULL},
 and will in any case be ignored.
 
-The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.0, and will be dropped
+The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.1, and will be dropped
 in the next version.
 Giving it a non-default value
 is allowed so that older code can be run without errors, but doing this is otherwise discouraged.
