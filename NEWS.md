@@ -1,3 +1,8 @@
+# frscore DEV
+
+- `frscored_cna()` and `rean_cna()`  now accept `output = "msc"`, in which case only mscs are calculated in, and collected
+from the reanalysis series.
+
 # frscore 0.3.1
 
 - A new function `causal_submodel()` is introduced. `causal_submodel()` is like `cna::is.submodel()`, but checks that all
