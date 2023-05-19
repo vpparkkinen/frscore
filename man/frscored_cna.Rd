@@ -6,7 +6,7 @@ frscored_cna(
   x,
   fit.range = c(1, 0.7),
   granularity = 0.1,
-  output = c("csf", "asf"),
+  output = c("csf", "asf", "msc"),
   scoretype = c("full", "supermodel", "submodel"),
   normalize = c("truemax", "idealmax", "none"),
   verbose = FALSE,
@@ -29,8 +29,9 @@ reanalysis series. Defaults to \code{c(1, 0.7)}.}
 \item{granularity}{Numeric scalar; consistency and coverage are varied by
 this value in the reanalysis series. Defaults to \code{0.1}.}
 
-\item{output}{String that determines whether csfs or asfs are
-returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs.}
+\item{output}{String that determines whether csfs, asfs, or mscs are
+returned; \code{"csf"} (default) returns csfs, \code{"asf"} asfs,
+and \code{"msc"} mscs.}
 
 \item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} String specifying the scoring method: \code{"full"}
 (default; scoring is based on counting sub- and supermodel relations), \code{"supermodel"}
