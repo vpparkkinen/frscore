@@ -2,7 +2,8 @@
 \alias{rean_cna}
 \title{rean_cna}
 \usage{
-rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = deprecated(), output = c("csf", "asf"),
+rean_cna(x, attempt = seq(1, 0.7, -0.1), ncsf = deprecated(),
+output = c("csf", "asf", "msc"),
 n.init = 1000, ...)
 }
 \arguments{
