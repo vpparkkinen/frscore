@@ -61,7 +61,7 @@
 frscored_cna <- function(x,
                          fit.range = c(1, 0.7),
                          granularity = 0.1,
-                         output = c("csf", "asf"),
+                         output = c("csf", "asf", "msc"),
                          scoretype = c("full", "supermodel", "submodel"),
                          normalize = c("truemax", "idealmax", "none"),
                          verbose = FALSE,
@@ -236,7 +236,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, verbout = x$verbout, prin
 rean_cna <- function(x,
                      attempt = seq(1, 0.7, -0.1),
                      ncsf = deprecated(),
-                     output = c("csf", "asf"),
+                     output = c("csf", "asf", "msc"),
                      n.init = 1000,
                      ...){
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
@@ -255,6 +255,7 @@ rean_cna <- function(x,
   cl$attempt <- cl$asf <- cl$ncsf <- cl$csf <- cl$output <- cl$n.init <- NULL
   cl[[1]] <- as.name("cna")
   cl$what <- if(output == "asf"){"a"} else {"c"}
+  if(output == "msc"){cl$suff.only <- TRUE}
   ccargs <- as.data.frame(expand.grid(attempt, attempt))
   colnames(ccargs)<-c("lowfirst", "lowsec")
 
@@ -262,8 +263,9 @@ rean_cna <- function(x,
   for (i in 1:length(sols)){
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
-    if (output=="csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)}
-    if (output=="asf"){sols[[i]] <- cna::asf(eval.parent(cl))}
+    if (output == "csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)}
+    if (output == "asf"){sols[[i]] <- cna::asf(eval.parent(cl))}
+    if (output == "msc"){sols[[i]] <- cna::msc(eval.parent(cl))}
     dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
                      cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
