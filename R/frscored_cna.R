@@ -71,13 +71,14 @@ frscored_cna <- function(x,
                          comp.method = c("causal_submodel", "is.submodel"),
                          n.init = 1000,
                          ...){
+  call <- match.call()
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
     stop("invalid argument x")
     }
   cl <- match.call()
   dots <- list(...)
   if(match.arg(scoretype) != "full"){
-    lifecycle::deprecate_warn("0.3.0",
+    lifecycle::deprecate_warn("0.3.1",
                               what = "frscored_cna(scoretype)",
                               details = "The `scoretype` argument is on its way to be removed.
                               It is not recommended to restrict the scoring to sub- or
@@ -158,7 +159,9 @@ frscored_cna <- function(x,
                         normal = normalize,
                         rean.results = rescombtemp,
                         maxsols = scored$maxsols,
-                        comp.method = match.arg(comp.method)),
+                        comp.method = match.arg(comp.method),
+                        submodel_adjacencies = scored$submodel_adjacencies,
+                        call = call),
                    class = c("frscored_cna", "list"))
   return(out)
 }

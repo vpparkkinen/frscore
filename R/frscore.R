@@ -57,6 +57,7 @@ frscore <- function(sols,
                     print.all = FALSE,
                     comp.method = c("causal_submodel", "is.submodel")
                     ){
+  call <- match.call()
   if (length(sols) == 0){
     warning('no solutions to test')
     return(NULL)
@@ -251,7 +252,7 @@ frscore <- function(sols,
         }
       }
     }
-
+    #tmat_out <- tmat
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
       }
@@ -365,7 +366,9 @@ frscore <- function(sols,
                         scoretype = scoretype,
                         normal = normalize,
                         maxsols = list(maxsols = maxsols, excluded = excluded_sols),
-                        comp.method = comp.method
+                        comp.method = comp.method,
+                        submodel_adjacencies = tmat,
+                        call = call
   ), class = "frscore"))
 
 }
