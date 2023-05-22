@@ -1,6 +1,11 @@
 # frscore DEV
 
-- `frscored_cna()` and `rean_cna()`  now accept `output = "msc"`, in which case only mscs are calculated in, and collected
+- `frscore()`, hence also `frscored_cna()`, return an adjacency matrix where
+adjacencies represent submodel relations between the scored model types.
+
+- `frscored_cna()` and  `frscore()` return how they were called.
+
+- `frscored_cna()` and `rean_cna()` accept `output = "msc"`, in which case only mscs are calculated in, and collected
 from the reanalysis series.
 
 # frscore 0.3.1
