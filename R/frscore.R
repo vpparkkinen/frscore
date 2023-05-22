@@ -367,7 +367,9 @@ frscore <- function(sols,
                         normal = normalize,
                         maxsols = list(maxsols = maxsols, excluded = excluded_sols),
                         comp.method = comp.method,
-                        submodel_adjacencies = tmat,
+                        submodel_adjacencies = if(exists("tmat", inherits = FALSE)){
+                          tmat
+                          } else {NULL},
                         call = call
   ), class = "frscore"))
 
