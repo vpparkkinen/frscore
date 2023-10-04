@@ -1,5 +1,7 @@
 # frscore DEV
 
+- unless `normalize = "none"`, `norm.score` column filled with zeroes is added to the output of `frscore()` when maximum score obtained by a model is zero.
+
 - `frscore()`, hence also `frscored_cna()`, return an adjacency matrix where
 adjacencies represent submodel relations between the scored model types.
 

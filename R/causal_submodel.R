@@ -374,7 +374,7 @@ check_comp_asf <- function(x, y, not_subbable, ogy, dat = NULL, type){
   }
   tar_lhss <- y
   tar_outs <- names(y)
-  tar_outs_flipped <- sapply(tar_outs, case_flipper) #fix for mv
+  tar_outs_flipped <- sapply(tar_outs, case_flipper)
   cand_out <- names(x)
   outc_matches <- tar_outs %in% cand_out
   if(!any(outc_matches)){
