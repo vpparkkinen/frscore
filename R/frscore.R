@@ -95,7 +95,10 @@ frscore <- function(sols,
   excluded_sols <- 0
 
   if(length(sols) == 1){
-    out <- data.frame(model = sols, score = 0L, stringsAsFactors = FALSE)
+    out <- data.frame(model = sols,
+                      score = 0L,
+                      tokens = 1L,
+                      stringsAsFactors = FALSE)
     scsums <- list(data.frame(model = character(), score=numeric()))
     names(scsums) <- sols
   } else if (nrow(mf) == 1){
@@ -313,7 +316,8 @@ frscore <- function(sols,
   }
 
   if(normalize == "truemax"){
-    if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)}
+    if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)} else
+    {out$norm.score <- 0L}
     }
 
   if(normalize == "idealmax"){
@@ -351,7 +355,9 @@ frscore <- function(sols,
 
     cfreqtab$otherscore <- otherscore
     idealmaxscore <- max(cfreqtab$selfscore + cfreqtab$otherscore)
-    if (max(out$score>=1)){out$norm.score <- out$score / idealmaxscore}
+    if (max(out$score>=1)){out$norm.score <- out$score / idealmaxscore} else {
+      out$norm.score <- 0L
+    }
 
   }
   out <- out[order(out$score, decreasing = T),]
