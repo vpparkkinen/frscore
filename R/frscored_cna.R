@@ -71,6 +71,7 @@ frscored_cna <- function(x,
                          comp.method = c("causal_submodel", "is.submodel"),
                          n.init = 1000,
                          ...){
+  withr::local_collate("C")
   call <- match.call()
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
     stop("invalid argument x")
@@ -242,6 +243,7 @@ rean_cna <- function(x,
                      output = c("csf", "asf", "msc"),
                      n.init = 1000,
                      ...){
+  withr::local_collate("C")
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
     abort(paste0("`x` should be a data frame or configuration table, not an object of type ", typeof(x)))
   }

@@ -56,7 +56,8 @@ frscore <- function(sols,
                     verbose = FALSE,
                     print.all = FALSE,
                     comp.method = c("causal_submodel", "is.submodel")
-                    ){
+){
+  withr::local_collate("C")
   call <- match.call()
   if (length(sols) == 0){
     warning('no solutions to test')
@@ -68,10 +69,10 @@ frscore <- function(sols,
 
   if (inherits(sols, c("stdAtomic", "stdComplex"))){
     sols <- as.character(sols)
-    } else {
-      sols <- as.character(sols)
-      sols <- stxstd(sols)
-    }
+  } else {
+    sols <- as.character(sols)
+    sols <- stxstd(sols)
+  }
 
   scoretype <- match.arg(scoretype)
   if(!identical(rlang::caller_call()[[1]], as.symbol("frscored_cna")) && (match.arg(scoretype) != "full")){
@@ -88,7 +89,7 @@ frscore <- function(sols,
   normalize <- match.arg(normalize)
   compmeth <- match.arg(comp.method)
   compscoring <- switch(compmeth, causal_submodel = TRUE, is.submodel = FALSE)
-  sols <- sols[order(sols, method = "radix")]
+  sols <- sols[order(sols)]
 
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna::getComplexity(mf[,1])
@@ -117,7 +118,7 @@ frscore <- function(sols,
 
     if (scoretype %in% c("supermodel", "submodel")){
       elems$Freq <- elems$Freq / 2
-      }
+    }
     colnames(elems) <- c("model", "score")
     scsums <- list(elems)
     names(scsums) <- sols[1]
@@ -140,7 +141,7 @@ frscore <- function(sols,
 
     if (scoretype %in% c("supermodel", "submodel")){
       elems$Freq <- elems$Freq / 2
-      }
+    }
     colnames(elems) <- c("model", "score")
     scsums <- split(elems, elems$model)
     scsums <- lapply(scsums,
@@ -148,19 +149,16 @@ frscore <- function(sols,
                        x <- data.frame(model = character(),
                                        score = numeric())} else {
                                          x <- x
-                                         };return(x)})
+                                       };return(x)})
     names(scsums) <- unique(sols)
     zeroid <- unlist(lapply(scsums, function(x) x[[1]] < 1))
     scsums[zeroid] <- list(NULL)
     maxsols <- "ignored"
-    } else {
+  } else {
     compsplit <- split(mf, mf$cx)
     if (nrow(mf) > maxsols){
       excluded_sols <- nrow(mf) - maxsols
-      compsplit <- lapply(compsplit, function(x)
-        x[order(x[,1], decreasing = T, method = "radix"),])
-      compsplit <- lapply(compsplit, function(x)
-        x[order(x[,2], decreasing = T, method = "radix"),])
+      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
@@ -196,16 +194,16 @@ frscore <- function(sols,
                    comptest(compsplit[[m]][p,1],
                             compsplit[[m+1]][x,1],
                             dat = dat)
-                   } else {
-                     subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
-                   }))
+                 } else {
+                   subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
+                 }))
       sscore[[m]] <- do.call(rbind, subres)
     }
     scs <- do.call(rbind, sscore)
 
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
-      }
+    }
 
     tmat_b <- tmat
 
@@ -238,10 +236,10 @@ frscore <- function(sols,
         ids <- nas[1:nacol_rles$lengths[1]]
         chks <- lapply(ids, function(x)
           if(compscoring){comptest(colnames(tmat)[col(tmat)[x]],
-                 rownames(tmat)[row(tmat)[x]], dat = dat)} else {
-                   subAdd(colnames(tmat)[col(tmat)[x]],
-                          rownames(tmat)[row(tmat)[x]])
-                 })
+                                   rownames(tmat)[row(tmat)[x]], dat = dat)} else {
+                                     subAdd(colnames(tmat)[col(tmat)[x]],
+                                            rownames(tmat)[row(tmat)[x]])
+                                   })
 
         for(n in seq_along(chks)){
           tmat[ids[n]] <- chks[[n]][,3]
@@ -261,7 +259,7 @@ frscore <- function(sols,
     #tmat_out <- tmat
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
-      }
+    }
 
     hits <- apply(tmat, 2, function(x) x == 1)
     nohits <- apply(tmat, 2, is.na)
@@ -289,10 +287,10 @@ frscore <- function(sols,
                                supsc = 0, stringsAsFactors = FALSE)
 
     sc <- rbind(prescore, prescore_neg)
-    mf <- mf[order(mf$sols, method = "radix"),]
+    mf <- mf[order(mf$sols),]
 
     #if(verbose){
-      scsums <- verbosify(sc, mf, scoretype)
+    scsums <- verbosify(sc, mf, scoretype)
     #}
 
     pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
@@ -300,8 +298,8 @@ frscore <- function(sols,
       dplyr::distinct()
     pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(.data$supmod) %>%
       dplyr::mutate(supsc = sum(.data$supsc)) %>% dplyr::distinct()
-    pre.ssc <- pre.ssc[order(pre.ssc$mod, method = "radix"),]
-    pre.susc <- pre.susc[order(pre.susc$supmod, method = "radix"),]
+    pre.ssc <- pre.ssc[order(pre.ssc$mod),]
+    pre.susc <- pre.susc[order(pre.susc$supmod),]
 
     if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
       (mf$Freq-1)*2}
@@ -321,7 +319,7 @@ frscore <- function(sols,
   if(normalize == "truemax"){
     if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)} else
     {out$norm.score <- 0L}
-    }
+  }
 
   if(normalize == "idealmax"){
     compx <- rep(mf$cx, mf$Freq)
@@ -378,7 +376,7 @@ frscore <- function(sols,
                         comp.method = comp.method,
                         submodel_adjacencies = if(exists("tmat", inherits = FALSE)){
                           tmat
-                          } else {NULL},
+                        } else {NULL},
                         call = call
   ), class = "frscore"))
 
@@ -415,7 +413,7 @@ verbosify <- function(sc, mf, scoretype){
   subspermod <- lapply(bysup, function(x) x[,c(1,3)])
   subspermod <- lapply(subspermod,
                        function(x) as.data.frame(x, stringsAsFactors = FALSE))
-  subspermod <- lapply(subspermod, function(x) x[order(x$model, method = "radix"),])
+  subspermod <- lapply(subspermod, function(x) x[order(x$model),])
 
   sps <- sc[, c(1,2,3)]
   sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2],
@@ -424,7 +422,7 @@ verbosify <- function(sc, mf, scoretype){
   bysub <- sps %>% dplyr::group_split(.data$mod)
   subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
   names(bysub) <- subnames
-  bysub <- lapply(bysub, function(x) x[order(x$supermodel, method = "radix"),])
+  bysub <- lapply(bysub, function(x) x[order(x$supermodel),])
   superpermod <- lapply(bysub, function(x) x[,2])
   superpermod <- lapply(superpermod,
                         function(x) as.data.frame(x, stringsAsFactors = FALSE))
