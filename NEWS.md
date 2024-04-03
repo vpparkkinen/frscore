@@ -1,5 +1,9 @@
 # frscore DEV
 
+- `frscore()` and `frscored_cna()` are no longer sensitive to locale (due to
+collation differences) when
+number of unique model types exceeds `maxsols`. 
+
 - unless `normalize = "none"`, `norm.score` column filled with zeroes is added to the output of `frscore()` when maximum score obtained by a model is zero.
 
 - `frscore()`, hence also `frscored_cna()`, return an adjacency matrix where
