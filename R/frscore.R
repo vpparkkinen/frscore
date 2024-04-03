@@ -95,6 +95,7 @@ frscore <- function(sols,
   mf$cx <- cna::getComplexity(mf[,1])
   excluded_sols <- 0
 
+  cat("processing", nrow(mf), "unique model types, maxsols set to", maxsols, "\n\n")
   if(length(sols) == 1){
     out <- data.frame(model = sols,
                       score = 0L,

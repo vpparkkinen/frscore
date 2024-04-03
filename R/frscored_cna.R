@@ -265,7 +265,9 @@ rean_cna <- function(x,
   colnames(ccargs)<-c("lowfirst", "lowsec")
 
   sols <- vector("list", length = nrow(ccargs))
+  #cat("0/", length(sols), " reanalyses completed \r")
   for (i in 1:length(sols)){
+    cat(i-1,"/", length(sols), "reanalyses completed \r")
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
     if (output == "csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)}
@@ -275,5 +277,6 @@ rean_cna <- function(x,
                      cnacov = rep(cl$cov, nrow(sols[[i]])))
     sols[[i]] <- cbind(sols[[i]], dt)
   }
+  cat(length(sols),"/", length(sols), "reanalyses completed\n\n")
   return(structure(sols, class = c("rean_cna", "list")))
 }
