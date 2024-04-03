@@ -289,7 +289,7 @@ frscore <- function(sols,
                                supsc = 0, stringsAsFactors = FALSE)
 
     sc <- rbind(prescore, prescore_neg)
-    mf <- mf[order(mf$sols),]
+    mf <- mf[order(mf$sols, method = "radix"),]
 
     #if(verbose){
       scsums <- verbosify(sc, mf, scoretype)
@@ -300,8 +300,8 @@ frscore <- function(sols,
       dplyr::distinct()
     pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(.data$supmod) %>%
       dplyr::mutate(supsc = sum(.data$supsc)) %>% dplyr::distinct()
-    pre.ssc <- pre.ssc[order(pre.ssc$mod),]
-    pre.susc <- pre.susc[order(pre.susc$supmod),]
+    pre.ssc <- pre.ssc[order(pre.ssc$mod, method = "radix"),]
+    pre.susc <- pre.susc[order(pre.susc$supmod, method = "radix"),]
 
     if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
       (mf$Freq-1)*2}
@@ -415,7 +415,7 @@ verbosify <- function(sc, mf, scoretype){
   subspermod <- lapply(bysup, function(x) x[,c(1,3)])
   subspermod <- lapply(subspermod,
                        function(x) as.data.frame(x, stringsAsFactors = FALSE))
-  subspermod <- lapply(subspermod, function(x) x[order(x$model),])
+  subspermod <- lapply(subspermod, function(x) x[order(x$model, method = "radix"),])
 
   sps <- sc[, c(1,2,3)]
   sps <- data.frame(supermodel = sps[,3], sup.frequency = sps[,2],
@@ -424,7 +424,7 @@ verbosify <- function(sc, mf, scoretype){
   bysub <- sps %>% dplyr::group_split(.data$mod)
   subnames <- supnames <- unlist(lapply(bysub, function(x) unique(x$mod)))
   names(bysub) <- subnames
-  bysub <- lapply(bysub, function(x) x[order(x$supermodel),])
+  bysub <- lapply(bysub, function(x) x[order(x$supermodel, method = "radix"),])
   superpermod <- lapply(bysub, function(x) x[,2])
   superpermod <- lapply(superpermod,
                         function(x) as.data.frame(x, stringsAsFactors = FALSE))
