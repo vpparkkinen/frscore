@@ -186,7 +186,9 @@ frscore <- function(sols,
     mf <- mf[order(mf[,3], decreasing = T),]
     sscore <- vector("list", length(compsplit)-1)
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
-
+    tot_sc <- (nrow(mf)^2)-nrow(mf)
+    tot_sc <- ifelse(tot_sc > maxsols, (maxsols^2)-maxsols, tot_sc)
+    cat("0 /", tot_sc , "submodel relations tested\r")
     for (m in 1:(length(compsplit)-1)){
       subres <- sapply(1:nrow(compsplit[[m]]), function(p)
         lapply(1:nrow(compsplit[[m+1]]),
@@ -199,6 +201,8 @@ frscore <- function(sols,
                    subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
                  }))
       sscore[[m]] <- do.call(rbind, subres)
+      cat(length(compsplit[[m]])*length(compsplit[[m+1]]),
+          "/", tot_sc, "submodel relations tested\r")
     }
     scs <- do.call(rbind, sscore)
 
@@ -253,10 +257,12 @@ frscore <- function(sols,
           subm_paths <- floyd(tmat)
           s_closures <- !apply(subm_paths, 2, is.na)
           tmat_b[s_closures] <- tmat[s_closures] <- 1
-
         }
+        cat(sum(tmat_b, na.rm = TRUE), "/",
+            tot_sc, "submodel relations tested \r")
       }
     }
+    cat(tot_sc, "/", tot_sc, "submodel relations tested \r")
     #tmat_out <- tmat
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
