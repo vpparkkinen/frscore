@@ -88,7 +88,7 @@ frscore <- function(sols,
   normalize <- match.arg(normalize)
   compmeth <- match.arg(comp.method)
   compscoring <- switch(compmeth, causal_submodel = TRUE, is.submodel = FALSE)
-  sols <- sols[order(sols)]
+  sols <- sols[order(sols, method = "radix")]
 
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna::getComplexity(mf[,1])
@@ -157,7 +157,10 @@ frscore <- function(sols,
     compsplit <- split(mf, mf$cx)
     if (nrow(mf) > maxsols){
       excluded_sols <- nrow(mf) - maxsols
-      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
+      compsplit <- lapply(compsplit, function(x)
+        x[order(x[,1], decreasing = T, method = "radix"),])
+      compsplit <- lapply(compsplit, function(x)
+        x[order(x[,2], decreasing = T, method = "radix"),])
       ngroups <- length(compsplit)
       if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
         sizes <- sapply(compsplit, nrow)
