@@ -3,6 +3,8 @@
     Code
       frscore(mv_all[[1]][[1]], dat = mvdat)
     Output
+      processing 6 unique model types, maxsols set to 50 
+      
       FRscore, score type: full || score normalization: truemax 
       
       maxsols set to 50 -- 0 solution types excluded from scoring 
@@ -33,6 +35,8 @@
     Code
       frscore(ss)
     Output
+      processing 13 unique model types, maxsols set to 50 
+      
       FRscore, score type: full || score normalization: truemax 
       
       maxsols set to 50 -- 0 solution types excluded from scoring 

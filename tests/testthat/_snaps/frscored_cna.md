@@ -3,6 +3,10 @@
     Code
       frscored_cna(d.error)
     Output
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      
+      processing 13 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
       Score type: full || score normalization: truemax 
       maxsols set to 50 -- 0 model types excluded from scoring 
@@ -46,6 +50,10 @@
     Code
       frscored_cna(d.error, normalize = "idealmax")
     Output
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      
+      processing 13 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
       Score type: full || score normalization: idealmax 
       maxsols set to 50 -- 0 model types excluded from scoring 
@@ -89,6 +97,10 @@
     Code
       frscored_cna(d.error, normalize = "none")
     Output
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      
+      processing 13 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
       Score type: full || score normalization: none 
       maxsols set to 50 -- 0 model types excluded from scoring 
@@ -132,6 +144,10 @@
     Code
       frscored_cna(d.error, verbose = TRUE)
     Output
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      
+      processing 13 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
       Score type: full || score normalization: truemax 
       maxsols set to 50 -- 0 model types excluded from scoring 
@@ -279,12 +295,21 @@
 
     Code
       frscored_cna(d.pban)
+    Output
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
     Condition
       Warning in `cna::csf()`:
       Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
+    Output
+      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 
+    Condition
       Warning in `cna::csf()`:
       Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
     Output
+      16 / 16 reanalyses completed
+      
+      processing 687 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
       Score type: full || score normalization: truemax 
       maxsols set to 50 -- 637 model types excluded from scoring 
@@ -365,6 +390,10 @@
       frscored_cna(d.jobsecurity, fit.range = c(0.8, 0.7), granularity = 0.1,
       outcome = "JSR")
     Output
+      0 / 4 reanalyses completed 1 / 4 reanalyses completed 2 / 4 reanalyses completed 3 / 4 reanalyses completed 4 / 4 reanalyses completed
+      
+      processing 742 unique model types, maxsols set to 50 
+      
       FR-scored reanalysis series with fit range 0.8 to 0.7 with granularity 0.1 
       Score type: full || score normalization: truemax 
       maxsols set to 50 -- 692 model types excluded from scoring 
