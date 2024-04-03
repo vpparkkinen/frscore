@@ -279,8 +279,10 @@
 
     Code
       frscored_cna(d.pban)
-    Warning <simpleWarning>
+    Condition
+      Warning in `cna::csf()`:
       Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
+      Warning in `cna::csf()`:
       Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
     Output
       FR-scored reanalysis series with fit range 1 to 0.7 with granularity 0.1 
