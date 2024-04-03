@@ -186,9 +186,11 @@ frscore <- function(sols,
     mf <- mf[order(mf[,3], decreasing = T),]
     sscore <- vector("list", length(compsplit)-1)
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
+    nmod <- nrow(tmat)
     tot_sc <- (nrow(mf)^2)-nrow(mf)
-    tot_sc <- ifelse(tot_sc > maxsols, (maxsols^2)-maxsols, tot_sc)
+    tot_sc <- ifelse(nrow(mf) > maxsols, (maxsols^2)-maxsols, tot_sc)
     cat("0 /", tot_sc , "submodel relations tested\r")
+    cspl_ch <- 0
     for (m in 1:(length(compsplit)-1)){
       subres <- sapply(1:nrow(compsplit[[m]]), function(p)
         lapply(1:nrow(compsplit[[m+1]]),
@@ -201,7 +203,8 @@ frscore <- function(sols,
                    subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
                  }))
       sscore[[m]] <- do.call(rbind, subres)
-      cat(length(compsplit[[m]])*length(compsplit[[m+1]]),
+      cspl_ch <- cspl_ch + nrow(sscore[[m]])
+      cat(cspl_ch,
           "/", tot_sc, "submodel relations tested\r")
     }
     scs <- do.call(rbind, sscore)
@@ -214,23 +217,30 @@ frscore <- function(sols,
 
     for(x in 1:(ncol(tmat_b)-1)){
       tmat_b[x, (x+1):ncol(tmat_b)] <- 1
+      # cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+      #     tot_sc, "submodel relations tested \r")
     }
 
     for(c in seq_along(compsplit)){
       tmat_b[which(rownames(tmat_b) %in% compsplit[[c]]$sols),
              which(colnames(tmat_b) %in% compsplit[[c]]$sols)] <- 1
+      # cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+      #     tot_sc, "submodel relations tested \r")
     }
 
     for (i in 1:nrow(scs)){
       tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
       tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
+      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+          tot_sc, "submodel relations tested \r")
     }
 
     subm_paths <- floyd(tmat)
     s_closures <- !apply(subm_paths, 2, is.na)
     tmat_b[s_closures] <- tmat[s_closures] <- 1
+    cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+        tot_sc, "submodel relations tested \r")
     nci <- apply(tmat_b, 2, is.na)
-
     if(any(is.na(tmat_b))){
       tmat <- t(tmat)
       tmat_b <- t(tmat_b)
@@ -249,6 +259,8 @@ frscore <- function(sols,
         for(n in seq_along(chks)){
           tmat[ids[n]] <- chks[[n]][,3]
           tmat_b[ids[n]] <- chks[[n]][,4]
+          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+              tot_sc, "submodel relations tested \r")
         }
 
         ress <- unlist(sapply(chks, "[", 3))
@@ -258,11 +270,11 @@ frscore <- function(sols,
           s_closures <- !apply(subm_paths, 2, is.na)
           tmat_b[s_closures] <- tmat[s_closures] <- 1
         }
-        cat(sum(tmat_b, na.rm = TRUE), "/",
+        cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
             tot_sc, "submodel relations tested \r")
       }
     }
-    cat(tot_sc, "/", tot_sc, "submodel relations tested \r")
+    cat(tot_sc, "/", tot_sc, "submodel relations tested \n")
     #tmat_out <- tmat
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
