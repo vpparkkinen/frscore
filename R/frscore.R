@@ -95,7 +95,10 @@ frscore <- function(sols,
   mf$cx <- cna::getComplexity(mf[,1])
   excluded_sols <- 0
 
-  cat("processing", nrow(mf), "unique model types, maxsols set to", maxsols, "\n\n")
+  cat("processing", nrow(mf), "unique model types,\nmaxsols set to",
+      paste0(maxsols,","), "excluding",
+      if (nrow(mf) > maxsols) (nrow(mf)-maxsols) else 0,
+      "model types from scoring\n\n")
   if(length(sols) == 1){
     out <- data.frame(model = sols,
                       score = 0L,
@@ -205,7 +208,7 @@ frscore <- function(sols,
       sscore[[m]] <- do.call(rbind, subres)
       cspl_ch <- cspl_ch + nrow(sscore[[m]])
       cat(cspl_ch,
-          "/", tot_sc, "submodel relations tested\r")
+          "/", tot_sc, "potential submodel relations tested\r")
     }
     scs <- do.call(rbind, sscore)
 
@@ -215,31 +218,38 @@ frscore <- function(sols,
 
     tmat_b <- tmat
 
-    for(x in 1:(ncol(tmat_b)-1)){
-      tmat_b[x, (x+1):ncol(tmat_b)] <- 1
+
+    for (i in 1:nrow(scs)){
+      tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
+      tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
       # cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-      #     tot_sc, "submodel relations tested \r")
+      #     tot_sc, "potential submodel relations tested \r")
     }
 
     for(c in seq_along(compsplit)){
       tmat_b[which(rownames(tmat_b) %in% compsplit[[c]]$sols),
              which(colnames(tmat_b) %in% compsplit[[c]]$sols)] <- 1
-      # cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-      #     tot_sc, "submodel relations tested \r")
+      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+          tot_sc, "potential submodel relations tested \r")
     }
 
-    for (i in 1:nrow(scs)){
-      tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
-      tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
+    for(x in 1:(ncol(tmat_b)-1)){
+      tmat_b[x, (x+1):ncol(tmat_b)] <- 1
       cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-          tot_sc, "submodel relations tested \r")
+          tot_sc, "potential submodel relations tested \r")
     }
+
+
+
+
+
+
 
     subm_paths <- floyd(tmat)
     s_closures <- !apply(subm_paths, 2, is.na)
     tmat_b[s_closures] <- tmat[s_closures] <- 1
     cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-        tot_sc, "submodel relations tested \r")
+        tot_sc, "potential submodel relations tested \r")
     nci <- apply(tmat_b, 2, is.na)
     if(any(is.na(tmat_b))){
       tmat <- t(tmat)
@@ -260,7 +270,7 @@ frscore <- function(sols,
           tmat[ids[n]] <- chks[[n]][,3]
           tmat_b[ids[n]] <- chks[[n]][,4]
           cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-              tot_sc, "submodel relations tested \r")
+              tot_sc, "potential submodel relations tested \r")
         }
 
         ress <- unlist(sapply(chks, "[", 3))
@@ -269,12 +279,14 @@ frscore <- function(sols,
           subm_paths <- floyd(tmat)
           s_closures <- !apply(subm_paths, 2, is.na)
           tmat_b[s_closures] <- tmat[s_closures] <- 1
+          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+              tot_sc, "potential submodel relations tested \r")
         }
         cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-            tot_sc, "submodel relations tested \r")
+            tot_sc, "potential submodel relations tested \r")
       }
     }
-    cat(tot_sc, "/", tot_sc, "submodel relations tested \n")
+    cat(tot_sc, "/", tot_sc, "potential submodel relations tested \n\n")
     #tmat_out <- tmat
     for (i in 1:nrow(tmat)){
       tmat[i,i] <- NA
