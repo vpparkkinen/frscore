@@ -1,5 +1,7 @@
 # frscore DEV
 
+- `rean_cna()` and `frscore()` display progress tickers.
+
 - `frscore()` and `frscored_cna()` are no longer sensitive to locale (due to
 collation differences) when
 number of unique model types exceeds `maxsols`. 
