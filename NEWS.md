@@ -6,9 +6,10 @@
 collation differences) when
 number of unique model types exceeds `maxsols`. 
 
-- unless `normalize = "none"`, `norm.score` column filled with zeroes is added to the output of `frscore()` when maximum score obtained by a model is zero.
+- unless `normalize = "none"`, `norm.score` column filled with zeroes is added to the output of `frscore()`
+and `frscored_cna()` when maximum score obtained by a model is zero.
 
-- `frscore()`, hence also `frscored_cna()`, return an adjacency matrix where
+- `frscore()` and `frscored_cna()` return an adjacency matrix where
 adjacencies represent submodel relations between the scored model types.
 
 - `frscored_cna()` and  `frscore()` return how they were called.
