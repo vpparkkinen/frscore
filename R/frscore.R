@@ -93,20 +93,12 @@ frscore <- function(sols,
 
   mf <- as.data.frame(table(sols), stringsAsFactors = FALSE)
   mf$cx <- cna::getComplexity(mf[,1])
-  excluded_sols <- 0
-
+  excluded_sols <- if (nrow(mf) < maxsols) 0 else nrow(mf) - maxsols
   cat("processing", nrow(mf), "unique model types,\nmaxsols set to",
       paste0(maxsols,","), "excluding",
       if (nrow(mf) > maxsols) (nrow(mf)-maxsols) else 0,
       "model types from scoring\n\n")
-  if(length(sols) == 1){
-    out <- data.frame(model = sols,
-                      score = 0L,
-                      tokens = 1L,
-                      stringsAsFactors = FALSE)
-    scsums <- list(data.frame(model = character(), score=numeric()))
-    names(scsums) <- sols
-  } else if (nrow(mf) == 1){
+    if (nrow(mf) == 1){
     if(scoretype %in% c("submodel", "supermodel")){
       sco <- (mf$Freq-1)*2/2
     } else {
@@ -126,7 +118,7 @@ frscore <- function(sols,
     colnames(elems) <- c("model", "score")
     scsums <- list(elems)
     names(scsums) <- sols[1]
-
+    tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
 
   } else if (length(unique(mf$cx)) == 1){
     if(scoretype %in% c("submodel", "supermodel")){
@@ -158,194 +150,13 @@ frscore <- function(sols,
     zeroid <- unlist(lapply(scsums, function(x) x[[1]] < 1))
     scsums[zeroid] <- list(NULL)
     maxsols <- "ignored"
-  } else {
-    compsplit <- split(mf, mf$cx)
-    if (nrow(mf) > maxsols){
-      excluded_sols <- nrow(mf) - maxsols
-      compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
-      ngroups <- length(compsplit)
-      if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
-        sizes <- sapply(compsplit, nrow)
-        n_pick <- as.integer((maxsols / ngroups) + 1)
-        picks <- vector("integer", ngroups)
-        picks[1] <- n_pick
-        for (i in 2:length(sizes)){
-          r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])
-          picks[i] <- r + n_pick
-        }
-        chosen <- vector("list", ngroups)
-        for (i in seq_along(chosen)){
-          nr <- ifelse(nrow(compsplit[[i]]) < picks[i],
-                       nrow(compsplit[[i]]), picks[i])
-          chosen[[i]] <- compsplit[[i]][1:nr,]
-        }
-        mf <- as.data.frame(do.call(rbind, chosen), stringsAsFactors = FALSE)
-        if (nrow(mf) > maxsols){
-          mf <- mf[1:maxsols, ]}
-      }
-      mf <- mf[order(mf[,3], decreasing = T),]
-      compsplit <- split(mf, mf$cx)
-    }
-    mf <- mf[order(mf[,3], decreasing = T),]
-    sscore <- vector("list", length(compsplit)-1)
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
-    nmod <- nrow(tmat)
-    tot_sc <- (nrow(mf)^2)-nrow(mf)
-    tot_sc <- ifelse(nrow(mf) > maxsols, (maxsols^2)-maxsols, tot_sc)
-    cat("0 /", tot_sc , "submodel relations tested\r")
-    cspl_ch <- 0
-    for (m in 1:(length(compsplit)-1)){
-      subres <- sapply(1:nrow(compsplit[[m]]), function(p)
-        lapply(1:nrow(compsplit[[m+1]]),
-               function(x)
-                 if(compscoring){
-                   comptest(compsplit[[m]][p,1],
-                            compsplit[[m+1]][x,1],
-                            dat = dat)
-                 } else {
-                   subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
-                 }))
-      sscore[[m]] <- do.call(rbind, subres)
-      cspl_ch <- cspl_ch + nrow(sscore[[m]])
-      cat(cspl_ch,
-          "/", tot_sc, "potential submodel relations tested\r")
+  } else {
+    t_score <- tmat_scoring(mf, maxsols, scoretype, compscoring, dat)
+    out <- t_score[[1]]
+    scsums <- t_score[[2]]
+    tmat <- t_score[[3]]
     }
-    scs <- do.call(rbind, sscore)
-
-    for (i in 1:nrow(tmat)){
-      tmat[i,i] <- NA
-    }
-
-    tmat_b <- tmat
-
-
-    for (i in 1:nrow(scs)){
-      tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
-      tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
-      # cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-      #     tot_sc, "potential submodel relations tested \r")
-    }
-
-    for(c in seq_along(compsplit)){
-      tmat_b[which(rownames(tmat_b) %in% compsplit[[c]]$sols),
-             which(colnames(tmat_b) %in% compsplit[[c]]$sols)] <- 1
-      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-          tot_sc, "potential submodel relations tested \r")
-    }
-
-    for(x in 1:(ncol(tmat_b)-1)){
-      tmat_b[x, (x+1):ncol(tmat_b)] <- 1
-      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-          tot_sc, "potential submodel relations tested \r")
-    }
-
-
-
-
-
-
-
-    subm_paths <- floyd(tmat)
-    s_closures <- !apply(subm_paths, 2, is.na)
-    tmat_b[s_closures] <- tmat[s_closures] <- 1
-    cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-        tot_sc, "potential submodel relations tested \r")
-    nci <- apply(tmat_b, 2, is.na)
-    if(any(is.na(tmat_b))){
-      tmat <- t(tmat)
-      tmat_b <- t(tmat_b)
-      while(anyNA(tmat_b)){
-
-        nas <- which(apply(tmat_b, 2, is.na))
-        nacol_rles <- rle(col(tmat)[nas])
-        ids <- nas[1:nacol_rles$lengths[1]]
-        chks <- lapply(ids, function(x)
-          if(compscoring){comptest(colnames(tmat)[col(tmat)[x]],
-                                   rownames(tmat)[row(tmat)[x]], dat = dat)} else {
-                                     subAdd(colnames(tmat)[col(tmat)[x]],
-                                            rownames(tmat)[row(tmat)[x]])
-                                   })
-
-        for(n in seq_along(chks)){
-          tmat[ids[n]] <- chks[[n]][,3]
-          tmat_b[ids[n]] <- chks[[n]][,4]
-          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-              tot_sc, "potential submodel relations tested \r")
-        }
-
-        ress <- unlist(sapply(chks, "[", 3))
-
-        if (any(!is.na(ress))){
-          subm_paths <- floyd(tmat)
-          s_closures <- !apply(subm_paths, 2, is.na)
-          tmat_b[s_closures] <- tmat[s_closures] <- 1
-          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-              tot_sc, "potential submodel relations tested \r")
-        }
-        cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
-            tot_sc, "potential submodel relations tested \r")
-      }
-    }
-    cat(tot_sc, "/", tot_sc, "potential submodel relations tested \n\n")
-    #tmat_out <- tmat
-    for (i in 1:nrow(tmat)){
-      tmat[i,i] <- NA
-    }
-
-    hits <- apply(tmat, 2, function(x) x == 1)
-    nohits <- apply(tmat, 2, is.na)
-
-    if(all(is.na(hits))){prescore <- data.frame(mod = character(),
-                                                subsc = integer(),
-                                                supmod = character(),
-                                                supsc = integer())
-    } else {
-      prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
-                             subsc = 0,
-                             supmod = colnames(tmat)[col(tmat)[which(hits)]],
-                             supsc = 0, stringsAsFactors = FALSE)
-
-      prescore <- prescore %>% dplyr::filter(.data$mod != .data$supmod)
-      prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("mod" = "sols")) %>%
-        dplyr::mutate(supsc = .data$Freq) %>% dplyr::select(-"Freq")
-      prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("supmod" = "sols")) %>%
-        dplyr::mutate(subsc = .data$Freq) %>% dplyr::select(-"Freq")
-    }
-
-    prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
-                               subsc = 0,
-                               supmod = colnames(tmat)[col(tmat)[which(nohits)]],
-                               supsc = 0, stringsAsFactors = FALSE)
-
-    sc <- rbind(prescore, prescore_neg)
-    mf <- mf[order(mf$sols),]
-
-    #if(verbose){
-    scsums <- verbosify(sc, mf, scoretype)
-    #}
-
-    pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
-      dplyr::mutate(subsc = sum(.data$subsc)) %>%
-      dplyr::distinct()
-    pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(.data$supmod) %>%
-      dplyr::mutate(supsc = sum(.data$supsc)) %>% dplyr::distinct()
-    pre.ssc <- pre.ssc[order(pre.ssc$mod),]
-    pre.susc <- pre.susc[order(pre.susc$supmod),]
-
-    if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
-      (mf$Freq-1)*2}
-
-    if (scoretype == "submodel") {preout <- pre.ssc$subsc +
-      (mf$Freq-1)*2/2}
-
-    if (scoretype == "supermodel") {preout <- pre.susc$supsc +
-      (mf$Freq-1)*2/2}
-
-    out <- data.frame(model = mf$sols,
-                      score = preout,
-                      tokens = mf$Freq,
-                      stringsAsFactors = FALSE)
-  }
 
   if(normalize == "truemax"){
     if (max(out$score>=1)){out$norm.score <- out$score / max(out$score)} else
@@ -412,6 +223,215 @@ frscore <- function(sols,
   ), class = "frscore"))
 
 }
+
+
+tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
+  compsplit <- split(mf, mf$cx)
+  if (nrow(mf) > maxsols){
+    compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
+    ngroups <- length(compsplit)
+    if (ngroups == 1){mf <- mf[1:maxsols, ]} else {
+      sizes <- sapply(compsplit, nrow)
+      n_pick <- as.integer((maxsols / ngroups) + 1)
+      picks <- vector("integer", ngroups)
+      picks[1] <- n_pick
+      for (i in 2:length(sizes)){
+        r <- ifelse(sizes[i-1] > picks[i-1], 0, picks[i-1] - sizes[i-1])
+        picks[i] <- r + n_pick
+      }
+      chosen <- vector("list", ngroups)
+      for (i in seq_along(chosen)){
+        nr <- ifelse(nrow(compsplit[[i]]) < picks[i],
+                     nrow(compsplit[[i]]), picks[i])
+        chosen[[i]] <- compsplit[[i]][1:nr,]
+      }
+      mf <- as.data.frame(do.call(rbind, chosen), stringsAsFactors = FALSE)
+      if (nrow(mf) > maxsols){
+        mf <- mf[1:maxsols, ]}
+    }
+    mf <- mf[order(mf[,3], decreasing = T),]
+    compsplit <- split(mf, mf$cx)
+  }
+
+  if (length(compsplit) == 1L){
+    mf <- compsplit[[1]]
+    if(scoretype %in% c("submodel", "supermodel")){
+      sco <- (mf$Freq-1)*2/2
+    } else {
+      sco <- (mf$Freq-1)*2
+    }
+
+    out <- data.frame(model = mf$sols,
+                      score = sco,
+                      tokens = mf$Freq,
+                      stringsAsFactors = FALSE)
+
+    elems <- mf[,c(1,2)]
+    elems$Freq <- (elems$Freq-1)*2
+
+    if (scoretype %in% c("supermodel", "submodel")){
+      elems$Freq <- elems$Freq / 2
+    }
+    colnames(elems) <- c("model", "score")
+    scsums <- split(elems, elems$model)
+    scsums <- lapply(scsums,
+                     function(x) {if(x$score == 0){
+                       x <- data.frame(model = character(),
+                                       score = numeric())} else {
+                                         x <- x
+                                       };return(x)})
+    names(scsums) <- unique(mf$sols)
+    zeroid <- unlist(lapply(scsums, function(x) x[[1]] < 1))
+    scsums[zeroid] <- list(NULL)
+    tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
+  } else {
+    mf <- mf[order(mf[,3], decreasing = T),]
+    sscore <- vector("list", length(compsplit)-1)
+    tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
+    nmod <- nrow(tmat)
+    tot_sc <- (nrow(mf)^2)-nrow(mf)
+    tot_sc <- ifelse(nrow(mf) > maxsols, (maxsols^2)-maxsols, tot_sc)
+    cat("0 /", tot_sc , "submodel relations tested\r")
+    cspl_ch <- 0
+    for (m in 1:(length(compsplit)-1)){
+      subres <- sapply(1:nrow(compsplit[[m]]), function(p)
+        lapply(1:nrow(compsplit[[m+1]]),
+               function(x)
+                 if(compscoring){
+                   comptest(compsplit[[m]][p,1],
+                            compsplit[[m+1]][x,1],
+                            dat = dat)
+                 } else {
+                   subAdd(compsplit[[m]][p,1], compsplit[[m+1]][x,1])
+                 }))
+      sscore[[m]] <- do.call(rbind, subres)
+      cspl_ch <- cspl_ch + nrow(sscore[[m]])
+      cat(cspl_ch,
+          "/", tot_sc, "potential submodel relations tested\r")
+    }
+    scs <- do.call(rbind, sscore)
+
+    for (i in 1:nrow(tmat)){
+      tmat[i,i] <- NA
+    }
+    tmat_b <- tmat
+    for (i in 1:nrow(scs)){
+      tmat[which(rownames(tmat) == scs[i,1]), which(colnames(tmat) == scs[i,2])] <- scs[i,3]
+      tmat_b[which(rownames(tmat_b) == scs[i,1]), which(colnames(tmat_b) == scs[i,2])] <- scs[i,4]
+    }
+
+    for(c in seq_along(compsplit)){
+      tmat_b[which(rownames(tmat_b) %in% compsplit[[c]]$sols),
+             which(colnames(tmat_b) %in% compsplit[[c]]$sols)] <- 1
+      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+          tot_sc, "potential submodel relations tested \r")
+    }
+
+    for(x in 1:(ncol(tmat_b)-1)){
+      tmat_b[x, (x+1):ncol(tmat_b)] <- 1
+      cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+          tot_sc, "potential submodel relations tested \r")
+    }
+    subm_paths <- floyd(tmat)
+    s_closures <- !apply(subm_paths, 2, is.na)
+    tmat_b[s_closures] <- tmat[s_closures] <- 1
+    cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+        tot_sc, "potential submodel relations tested \r")
+    nci <- apply(tmat_b, 2, is.na)
+    if(any(is.na(tmat_b))){
+      tmat <- t(tmat)
+      tmat_b <- t(tmat_b)
+      while(anyNA(tmat_b)){
+        nas <- which(apply(tmat_b, 2, is.na))
+        nacol_rles <- rle(col(tmat)[nas])
+        ids <- nas[1:nacol_rles$lengths[1]]
+        chks <- lapply(ids, function(x)
+          if(compscoring){comptest(colnames(tmat)[col(tmat)[x]],
+                                   rownames(tmat)[row(tmat)[x]], dat = dat)} else {
+                                     subAdd(colnames(tmat)[col(tmat)[x]],
+                                            rownames(tmat)[row(tmat)[x]])
+                                   })
+
+        for(n in seq_along(chks)){
+          tmat[ids[n]] <- chks[[n]][,3]
+          tmat_b[ids[n]] <- chks[[n]][,4]
+          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+              tot_sc, "potential submodel relations tested \r")
+        }
+
+        ress <- unlist(sapply(chks, "[", 3))
+
+        if (any(!is.na(ress))){
+          subm_paths <- floyd(tmat)
+          s_closures <- !apply(subm_paths, 2, is.na)
+          tmat_b[s_closures] <- tmat[s_closures] <- 1
+          cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+              tot_sc, "potential submodel relations tested \r")
+        }
+        cat(sum(tmat_b, na.rm = TRUE) - nmod, "/",
+            tot_sc, "potential submodel relations tested \r")
+      }
+    }
+    cat(tot_sc, "/", tot_sc, "potential submodel relations tested \n\n")
+
+    for (i in 1:nrow(tmat)){
+      tmat[i,i] <- NA
+    }
+
+    hits <- apply(tmat, 2, function(x) x == 1)
+    nohits <- apply(tmat, 2, is.na)
+
+    if(all(is.na(hits))){prescore <- data.frame(mod = character(),
+                                                subsc = integer(),
+                                                supmod = character(),
+                                                supsc = integer())
+    } else {
+      prescore <- data.frame(mod = rownames(tmat)[row(tmat)[which(hits)]],
+                             subsc = 0,
+                             supmod = colnames(tmat)[col(tmat)[which(hits)]],
+                             supsc = 0, stringsAsFactors = FALSE)
+      prescore <- prescore %>% dplyr::filter(.data$mod != .data$supmod)
+      prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("mod" = "sols")) %>%
+        dplyr::mutate(supsc = .data$Freq) %>% dplyr::select(-"Freq")
+      prescore <- prescore %>% dplyr::left_join(mf[,1:2], by = c("supmod" = "sols")) %>%
+        dplyr::mutate(subsc = .data$Freq) %>% dplyr::select(-"Freq")
+    }
+    prescore_neg <- data.frame(mod = rownames(tmat)[row(tmat)[which(nohits)]],
+                               subsc = 0,
+                               supmod = colnames(tmat)[col(tmat)[which(nohits)]],
+                               supsc = 0, stringsAsFactors = FALSE)
+    sc <- rbind(prescore, prescore_neg)
+    mf <- mf[order(mf$sols),]
+
+    scsums <- verbosify(sc, mf, scoretype)
+
+    pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
+      dplyr::mutate(subsc = sum(.data$subsc)) %>%
+      dplyr::distinct()
+    pre.susc <- sc[,c(3,4)] %>% dplyr::group_by(.data$supmod) %>%
+      dplyr::mutate(supsc = sum(.data$supsc)) %>% dplyr::distinct()
+    pre.ssc <- pre.ssc[order(pre.ssc$mod),]
+    pre.susc <- pre.susc[order(pre.susc$supmod),]
+
+    if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
+      (mf$Freq-1)*2}
+
+    if (scoretype == "submodel") {preout <- pre.ssc$subsc +
+      (mf$Freq-1)*2/2}
+
+    if (scoretype == "supermodel") {preout <- pre.susc$supsc +
+      (mf$Freq-1)*2/2}
+
+    out <- data.frame(model = mf$sols,
+                      score = preout,
+                      tokens = mf$Freq,
+                      stringsAsFactors = FALSE)
+  }
+  return(list(out, scsums, tmat))
+}
+
+
+
 
 #' @importFrom cna is.submodel
 subAdd <- function(x, y){
