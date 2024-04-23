@@ -37,6 +37,23 @@ test_that("frscore works for cs",{
 })
 
 
+ss2 <- structure(c("A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E", "A*c+A*D+B*C<->E",
+                   "A*c+A*D+B*X<->E", "A*c+A*D+B*Y<->E"))
+
+test_that("frscore corner cases work",{
+  expect_snapshot(frscore(ss2))
+  expect_snapshot(frscore(ss[1]))
+  expect_snapshot(frscore(ss2[1:2]))
+  expect_snapshot(frscore(ss, maxsols = 1))
+})
+
+test_that("tmat object is created",{
+  expect_true(frscore(ss2)$submodel_adjacencies |> is.na() |> all() |> isTRUE())
+  expect_equal(frscore(ss2)$submodel_adjacencies |> dim(), c(3,3))
+  expect_equal(frscore(ss2[1:2])$submodel_adjacencies |> dim(), c(1,1))
+})
+
+
 syntx <- c("z1p * cUe + EUF <-> 7Lv", "fqE * BqT + yq2 <-> M\\M", "1c * bJi + Hin <-> 2x",
            "l]C * NKT + H4M <-> TA0", "QXj * qfC + aHn <-> EdE", "mOb * gCy + 8f0 <-> w3l",
            "N0_ * YCj + 7`] <-> VK`", "ot7 * cGS + r9G <-> DLH", "HrW * SIY + F8L <-> 6rz",

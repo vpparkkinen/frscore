@@ -68,3 +68,88 @@
       
       
 
+# frscore corner cases work
+
+    Code
+      frscore(ss2)
+    Output
+      processing 3 unique model types,
+      maxsols set to 50, excluding 0 model types from scoring
+      
+      FRscore, score type: full || score normalization: truemax 
+      
+      no submodel checks were needed, argument 'maxsols' ignored 
+      -----
+       
+      Model types: 
+      
+                  model score tokens norm.score
+      1 A*D+A*c+B*C<->E     4      3          1
+      2 A*D+A*c+B*X<->E     0      1          0
+      3 A*D+A*c+B*Y<->E     0      1          0
+      
+      
+
+---
+
+    Code
+      frscore(ss[1])
+    Output
+      processing 1 unique model types,
+      maxsols set to 50, excluding 0 model types from scoring
+      
+      FRscore, score type: full || score normalization: truemax 
+      
+      maxsols set to 50 -- 0 solution types excluded from scoring 
+      
+      -----
+       
+      Model types: 
+      
+                  model score tokens norm.score
+      1 A*D+A*c+B*C<->E     0      1          0
+      
+      
+
+---
+
+    Code
+      frscore(ss2[1:2])
+    Output
+      processing 1 unique model types,
+      maxsols set to 50, excluding 0 model types from scoring
+      
+      FRscore, score type: full || score normalization: truemax 
+      
+      maxsols set to 50 -- 0 solution types excluded from scoring 
+      
+      -----
+       
+      Model types: 
+      
+                  model score tokens norm.score
+      1 A*D+A*c+B*C<->E     2      2          1
+      
+      
+
+---
+
+    Code
+      frscore(ss, maxsols = 1)
+    Output
+      processing 13 unique model types,
+      maxsols set to 1, excluding 12 model types from scoring
+      
+      FRscore, score type: full || score normalization: truemax 
+      
+      maxsols set to 1 -- 12 solution types excluded from scoring 
+      
+      -----
+       
+      Model types: 
+      
+        model score tokens norm.score
+      1 A<->E     0      1          0
+      
+      
+
