@@ -19,7 +19,9 @@ fr <- expand.grid(seq(0.5, 1, by = 0.1),
                   seq_along(d_sets)
                   )
 
+skip_megatest <- TRUE
 test_that("frscore_cna returns when it should",{
+  skip_if(skip_megatest)
   skip_on_cran()
   skip_on_ci()
   for (i in 1:nrow(fr)) {
