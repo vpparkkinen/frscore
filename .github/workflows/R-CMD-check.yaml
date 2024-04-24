@@ -18,10 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: macos-latest,   r: '4.4.0'}
-          - {os: windows-latest, r: '4.4.0'}
-          - {os: ubuntu-latest,   r: 'devel', http-user-agent: '4.4.0'}
-          - {os: ubuntu-latest,   r: '4.4.0'}
+          - {os: macos-latest,   r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel-1'}
 
     env:
