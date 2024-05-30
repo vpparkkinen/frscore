@@ -1,4 +1,9 @@
-#' plot_submodel_network
+#' Visualize submodel networks
+#'
+#' @description Visualize the output of `frscore()` and `frscored_cna()` by
+#'   generating a network representation of submodel relations among the scored
+#'   model types.
+#'
 #'
 #' @param x An object of class \code{"frscore"} or \code{"frscored_cna"}.
 #' @param show_clusters Logical; should clusters be visualized?
@@ -7,10 +12,35 @@
 #' @param igraphlayout Logical; should igraph layout be used?
 #' @param ... additional arguments to \code{visNetwork()}.
 #'
+#' @details `plot_submodel_network()` takes as input a results object returned
+#'   by [`frscore()`][frscore::frscore()] or
+#'   [`frscored_cna()`][frscore::frscored_cna()] and uses the included adjacency
+#'   matrix of submodel relations among the scored model types to visualize
+#'   those submodel relations as a network, using
+#'   [`visNetwork()`][visNetwork::visNetwork()]. The nodes of the network
+#'   represent unique model types, and an edge between two nodes represents a
+#'   submodel relation between those model types. By default, the edges of the
+#'   network are undirected. Setting \code{directed = TRUE} produces a network
+#'   with directed edges (arrows), where the direction points from a submodel to
+#'   a supermodel. As the fr-scores of the model types depend on sub- *and*
+#'   supermodel relations they have to other models, the directed network
+#'   representation provides no additional information about fr-scores over and
+#'   above the undirected network. By default, the network plot represents
+#'   clusters of model types based on edge-betweenness, calculated with
+#'   [`cluster_edge_betweenness()`][igraph::cluster_edge_betweenness()] from the
+#'   `igraph` package. The clusters are always base on undirected
+#'   edge-betweenness, as only the presence of submodel-relations, not their
+#'   direction, is relevant for fr-scores. The clusters can be turned off
+#'   by setting \code{show_clusters = FALSE}.
+#'
+#'
+#'
 #' @return A \code{visNetwork} object.
-#' @export
 #'
 #' @examples
+#'
+#'
+#' @export
 plot_submodel_network <- function(x,
                              show_clusters = TRUE,
                              directed = FALSE,
@@ -34,7 +64,7 @@ plot_submodel_network <- function(x,
   return(vn)
 }
 
-#' Title
+#' Generate igraph from submodel adjacencies
 #'
 #' @param x An object of class \code{"frscore"} or \code{"frscored_cna"}.
 #'
