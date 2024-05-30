@@ -50,7 +50,6 @@
 #' @export
 frscore <- function(sols,
                     dat = NULL,
-                    scoretype = c("full", "supermodel", "submodel"),
                     normalize = c("truemax", "idealmax", "none"),
                     maxsols = 50,
                     verbose = FALSE,
@@ -74,18 +73,18 @@ frscore <- function(sols,
     sols <- stxstd(sols)
   }
 
-  scoretype <- match.arg(scoretype)
-  if(!identical(rlang::caller_call()[[1]], as.symbol("frscored_cna")) && (match.arg(scoretype) != "full")){
-    lifecycle::deprecate_warn("0.3.0",
-                              what = "frscore(scoretype)",
-                              details = "The `scoretype` argument is on its way to be removed.
-                              It is not recommended to restrict the scoring to sub- or
-                              supermodel relations only, as the scores will then not reflect
-                              the intended meaning of fit-robustness.
-                              Information about the score composition of the models
-                              can always be found by inspecting the $verbout -element
-                              of the output of `frscore()` and `frscored_cna()`.")
-  }
+  # scoretype <- match.arg(scoretype)
+  # if(!identical(rlang::caller_call()[[1]], as.symbol("frscored_cna")) && (match.arg(scoretype) != "full")){
+  #   lifecycle::deprecate_warn("0.3.0",
+  #                             what = "frscore(scoretype)",
+  #                             details = "The `scoretype` argument is on its way to be removed.
+  #                             It is not recommended to restrict the scoring to sub- or
+  #                             supermodel relations only, as the scores will then not reflect
+  #                             the intended meaning of fit-robustness.
+  #                             Information about the score composition of the models
+  #                             can always be found by inspecting the $verbout -element
+  #                             of the output of `frscore()` and `frscored_cna()`.")
+  # }
   normalize <- match.arg(normalize)
   compmeth <- match.arg(comp.method)
   compscoring <- switch(compmeth, causal_submodel = TRUE, is.submodel = FALSE)
@@ -99,48 +98,31 @@ frscore <- function(sols,
       if (nrow(mf) > maxsols) (nrow(mf)-maxsols) else 0,
       "model types from scoring\n\n")
     if (nrow(mf) == 1){
-    if(scoretype %in% c("submodel", "supermodel")){
-      sco <- (mf$Freq-1)*2/2
-    } else {
       sco <- (mf$Freq-1)*2
-    }
-
-    out <- data.frame(model = mf$sols,
+      out <- data.frame(model = mf$sols,
                       score = sco,
                       tokens = mf$Freq,
                       stringsAsFactors = FALSE)
-    elems <- mf[,c(1,2)]
-    elems$Freq <- (elems$Freq-1)*2
-
-    if (scoretype %in% c("supermodel", "submodel")){
-      elems$Freq <- elems$Freq / 2
-    }
-    colnames(elems) <- c("model", "score")
-    scsums <- list(elems)
-    names(scsums) <- sols[1]
-    tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
-
+      elems <- mf[,c(1,2)]
+      elems$Freq <- (elems$Freq-1)*2
+      colnames(elems) <- c("model", "score")
+      scsums <- list(elems)
+      names(scsums) <- sols[1]
+      tmat <- matrix(nrow = nrow(mf),
+                     ncol = nrow(mf),
+                     dimnames = list(mf[,1], mf[,1]))
   } else if (length(unique(mf$cx)) == 1){
-    if(scoretype %in% c("submodel", "supermodel")){
-      sco <- (mf$Freq-1)*2/2
-    } else {
       sco <- (mf$Freq-1)*2
-    }
-
-    out <- data.frame(model = mf$sols,
+      out <- data.frame(model = mf$sols,
                       score = sco,
                       tokens = mf$Freq,
                       stringsAsFactors = FALSE)
 
-    elems <- mf[,c(1,2)]
-    elems$Freq <- (elems$Freq-1)*2
-
-    if (scoretype %in% c("supermodel", "submodel")){
-      elems$Freq <- elems$Freq / 2
-    }
-    colnames(elems) <- c("model", "score")
-    scsums <- split(elems, elems$model)
-    scsums <- lapply(scsums,
+      elems <- mf[,c(1,2)]
+      elems$Freq <- (elems$Freq-1)*2
+      colnames(elems) <- c("model", "score")
+      scsums <- split(elems, elems$model)
+      scsums <- lapply(scsums,
                      function(x) {if(x$score == 0){
                        x <- data.frame(model = character(),
                                        score = numeric())} else {
@@ -152,7 +134,9 @@ frscore <- function(sols,
     maxsols <- "ignored"
     tmat <- matrix(nrow = nrow(mf), ncol = nrow(mf), dimnames = list(mf[,1], mf[,1]))
   } else {
-    t_score <- tmat_scoring(mf, maxsols, scoretype, compscoring, dat)
+    #t_score <- tmat_scoring(mf, maxsols, scoretype, compscoring, dat)
+    t_score <- tmat_scoring(mf, maxsols, compscoring, dat)
+    #t_score <- score2(mf, maxsols, compscoring, dat)
     out <- t_score[[1]]
     scsums <- t_score[[2]]
     tmat <- t_score[[3]]
@@ -168,33 +152,36 @@ frscore <- function(sols,
     cfreqtab <- as.data.frame(table(compx), stringsAsFactors = FALSE)
     cfreqtab$compx <- as.integer(as.character(cfreqtab$compx))
     cfreqtab <- cfreqtab[order(cfreqtab$compx, decreasing = T),]
-    cfreqtab$selfscore <- if(scoretype == "full"){
-      (cfreqtab$Freq - 1) * 2
-    } else {
-      cfreqtab$Freq - 1
-    }
+    # cfreqtab$selfscore <- if(scoretype == "full"){
+    #   (cfreqtab$Freq - 1) * 2
+    # } else {
+    #   cfreqtab$Freq - 1
+    # }
+
+    cfreqtab$selfscore <- (cfreqtab$Freq - 1) * 2
+
 
     otherscore <- vector("integer", nrow(cfreqtab))
 
-    if (scoretype == "supermodel"){
-      for (i in seq_along(1:nrow(cfreqtab))) {
-        tt <- cfreqtab[cfreqtab$compx > cfreqtab[i,]$compx,]
-        otherscore[i] <- sum(tt$Freq)
-      }
-    }
+    # if (scoretype == "supermodel"){
+    #   for (i in seq_along(1:nrow(cfreqtab))) {
+    #     tt <- cfreqtab[cfreqtab$compx > cfreqtab[i,]$compx,]
+    #     otherscore[i] <- sum(tt$Freq)
+    #   }
+    # }
+    #
+    # if (scoretype == "submodel"){
+    #   for (i in seq_along(1:nrow(cfreqtab))) {
+    #     tt <- cfreqtab[cfreqtab$compx < cfreqtab[i,]$compx,]
+    #     otherscore[i] <- sum(tt$Freq)
+    #   }
+    # }
 
-    if (scoretype == "submodel"){
-      for (i in seq_along(1:nrow(cfreqtab))) {
-        tt <- cfreqtab[cfreqtab$compx < cfreqtab[i,]$compx,]
-        otherscore[i] <- sum(tt$Freq)
-      }
-    }
-
-    if (scoretype == "full"){
+    #if (scoretype == "full"){
       for (i in seq_along(1:nrow(cfreqtab))) {
         otherscore[i] <- sum(cfreqtab[-i,]$Freq)
       }
-    }
+    #}
 
     cfreqtab$otherscore <- otherscore
     idealmaxscore <- max(cfreqtab$selfscore + cfreqtab$otherscore)
@@ -204,6 +191,8 @@ frscore <- function(sols,
 
   }
   out <- out[order(out$score, decreasing = T),]
+  relscore <- (out$score - (out$tokens - 1)) / (sum(out$tokens) - 1)
+  out$rel.score <- if (anyNA(relscore)) 0L else relscore
   rownames(out) <- 1:nrow(out)
 
   scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
@@ -212,7 +201,7 @@ frscore <- function(sols,
                         verbose = verbose,
                         verbout = scsums,
                         print.all = print.all,
-                        scoretype = scoretype,
+                        #scoretype = scoretype,
                         normal = normalize,
                         maxsols = list(maxsols = maxsols, excluded = excluded_sols),
                         comp.method = comp.method,
@@ -225,7 +214,9 @@ frscore <- function(sols,
 }
 
 
-tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
+
+#tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
+tmat_scoring <- function(mf, maxsols, compscoring, dat){
   compsplit <- split(mf, mf$cx)
   if (nrow(mf) > maxsols){
     compsplit <- lapply(compsplit, function(x) x[order(x[,2], decreasing = T),])
@@ -255,11 +246,11 @@ tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
 
   if (length(compsplit) == 1L){
     mf <- compsplit[[1]]
-    if(scoretype %in% c("submodel", "supermodel")){
-      sco <- (mf$Freq-1)*2/2
-    } else {
+    #if(scoretype %in% c("submodel", "supermodel")){
+    #  sco <- (mf$Freq-1)*2/2
+    #} else {
       sco <- (mf$Freq-1)*2
-    }
+    #}
 
     out <- data.frame(model = mf$sols,
                       score = sco,
@@ -269,9 +260,9 @@ tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
     elems <- mf[,c(1,2)]
     elems$Freq <- (elems$Freq-1)*2
 
-    if (scoretype %in% c("supermodel", "submodel")){
-      elems$Freq <- elems$Freq / 2
-    }
+    # if (scoretype %in% c("supermodel", "submodel")){
+    #   elems$Freq <- elems$Freq / 2
+    # }
     colnames(elems) <- c("model", "score")
     scsums <- split(elems, elems$model)
     scsums <- lapply(scsums,
@@ -403,8 +394,8 @@ tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
     sc <- rbind(prescore, prescore_neg)
     mf <- mf[order(mf$sols),]
 
-    scsums <- verbosify(sc, mf, scoretype)
-
+    #scsums <- verbosify(sc, mf, scoretype)
+    scsums <- verbosify(sc, mf)
     pre.ssc <- sc[,c(1,2)] %>% dplyr::group_by(.data$mod) %>%
       dplyr::mutate(subsc = sum(.data$subsc)) %>%
       dplyr::distinct()
@@ -413,14 +404,16 @@ tmat_scoring <- function(mf, maxsols, scoretype, compscoring, dat){
     pre.ssc <- pre.ssc[order(pre.ssc$mod),]
     pre.susc <- pre.susc[order(pre.susc$supmod),]
 
-    if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
-      (mf$Freq-1)*2}
+    # if (scoretype == "full") {preout <- pre.ssc$subsc + pre.susc$supsc +
+    #   (mf$Freq-1)*2}
+    #
+    preout <- pre.ssc$subsc + pre.susc$supsc + (mf$Freq-1)*2
 
-    if (scoretype == "submodel") {preout <- pre.ssc$subsc +
-      (mf$Freq-1)*2/2}
-
-    if (scoretype == "supermodel") {preout <- pre.susc$supsc +
-      (mf$Freq-1)*2/2}
+    # if (scoretype == "submodel") {preout <- pre.ssc$subsc +
+    #   (mf$Freq-1)*2/2}
+    #
+    # if (scoretype == "supermodel") {preout <- pre.susc$supsc +
+    #   (mf$Freq-1)*2/2}
 
     out <- data.frame(model = mf$sols,
                       score = preout,
@@ -454,7 +447,8 @@ comptest <- function(x, y, dat = NULL){
 
 
 
-verbosify <- function(sc, mf, scoretype){
+#verbosify <- function(sc, mf, scoretype){
+verbosify <- function(sc, mf){
   bs <- sc[, c(1,3,4)]
   colnames(bs)[colnames(bs) == "supsc"] <- "sub.frequency"
   colnames(bs)[colnames(bs) == "mod"] <- "model"
@@ -490,32 +484,32 @@ verbosify <- function(sc, mf, scoretype){
   robbasis <- mapply(rbind, robbasis, dupscores, SIMPLIFY = F)
   robred <- lapply(robbasis, function(x) x[x[,2] + x[,3] > 0,])
 
-  if (scoretype == "full") {
-    scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){
-        x<-NULL
-      } else {
-          x$score <- apply(x[,c(2,3)], 1, sum);return(x[,c(1,4)])
-          }
-    })
-  }
-  if (scoretype == "supermodel") {
-    scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){ x<-NULL
-      } else {
-        x$score <- x[,2];return(x[,c(1,4)])
+  #if (scoretype == "full") {
+  scsums <- lapply(robred, function(x){
+    if(nrow(x) == 0){
+      x<-NULL
+    } else {
+        x$score <- apply(x[,c(2,3)], 1, sum);return(x[,c(1,4)])
         }
     })
-  }
-  if (scoretype == "submodel") {
-    scsums <- lapply(robred, function(x){
-      if(nrow(x) == 0){
-        x<-NULL
-      } else {
-          x$score <-  x[,3];return(x[,c(1,4)])
-          }
-    })
-  }
+  #}
+  # if (scoretype == "supermodel") {
+  #   scsums <- lapply(robred, function(x){
+  #     if(nrow(x) == 0){ x<-NULL
+  #     } else {
+  #       x$score <- x[,2];return(x[,c(1,4)])
+  #       }
+  #   })
+  # }
+  # if (scoretype == "submodel") {
+  #   scsums <- lapply(robred, function(x){
+  #     if(nrow(x) == 0){
+  #       x<-NULL
+  #     } else {
+  #         x$score <-  x[,3];return(x[,c(1,4)])
+  #         }
+  #   })
+  # }
   scsums <- lapply(scsums, function(x) x[x[,2] > 0,])
   return(scsums)
 }
@@ -576,7 +570,8 @@ print.frscore <- function(x,
                           print.all = x$print.all,
                           maxsols = x$maxsols,
                           ...){
-  cat("FRscore, score type:", x$scoretype, "||", "score normalization:", x$normal, "\n\n")
+  #cat("FRscore, score type: full", "||", "score normalization:", x$normal, "\n\n")
+  cat("FRscore, score normalization:", x$normal, "\n\n")
   if(maxsols$maxsols == "ignored"){
     cat("no submodel checks were needed, argument 'maxsols' ignored \n")
   } else {
