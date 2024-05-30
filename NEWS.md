@@ -1,8 +1,17 @@
 # frscore (development version)
 
+- new functions `submodel_adjacencies_to_igraph()` and `plot_submodel_network()`  
+  for representing submodel relations as graphs, and for plotting them as networks.
+  
+- argument `scoretype` is removed from `frscore()` and `frscored_cna()`.
+
+- `frscore()` and `frscored_cna()` results now include a column that describes
+  the proportion of other models to which each token model relates to as
+  a sub- or supermodel. 
+
 # frscore 0.4.0
 
-- `rean_cna()` and `frscore()` display progress tickers.
+- `rean_cna()`, `frscore()`, and `frscored_cna()` display progress tickers.
 
 - `frscore()` and `frscored_cna()` are no longer sensitive to locale (due to
 collation differences) when
