@@ -116,7 +116,7 @@ ccheck_prep <- function(x, y, ogy){
 #'  "downstream" of what. The exogenous factors `{A,B,D}` are top-level upstream
 #'  causes in \code{(A+B<->C)*(C+D<->E)}, as they are not caused by any other
 #'  factor included in the model. Endogenous factors `C` and `E` are downstream
-#'  of of `{A,B}` by one and two levels respectively, and `E` is one level
+#'  of `{A,B}` by one and two levels respectively, and `E` is one level
 #'  downstream of `D`. The chain model agrees with the direct cause model on the
 #'  causal ordering of `{A,B,E}` -- `A` and `B` are upstream of `E` and not
 #'  causes of each other -- but also includes an additional cause of `E`, `C`,
