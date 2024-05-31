@@ -35,22 +35,30 @@ model types.
 \details{
 \code{plot_submodel_network()} takes as input a results object returned
 by \code{\link[=frscore]{frscore()}} or
-\code{\link[=frscored_cna]{frscored_cna()}} and uses the included adjacency
-matrix of submodel relations among the scored model types to visualize
-those submodel relations as a network, using
+\code{\link[=frscored_cna]{frscored_cna()}}, and creates a network
+visualization of the submodel relations among the scored models using
 \code{\link[visNetwork:visNetwork]{visNetwork()}}. The nodes of the network
 represent unique model types, and an edge between two nodes represents a
 submodel relation between those model types. By default, the edges of the
-network are undirected. Setting \code{directed = TRUE} produces a network
-with directed edges (arrows), where the direction points from a submodel to
-a supermodel. As the fr-scores of the model types depend on sub- \emph{and}
-supermodel relations they have to other models, the directed network
-representation provides no additional information about fr-scores over and
-above the undirected network. By default, the network plot represents
-clusters of model types based on edge-betweenness, calculated with
+network are undirected. Setting \code{directed = TRUE} creates a directed
+network with edges pointing from submodels to supermodels. As it is only
+the presence of and not the direction of submodel relations that matters
+for the fr-score of a model type, the directed network provides no
+additional information about fr-scores over and above the undirected
+network. By default, the network color-codes clusters of model types based
+on edge-betweenness, calculated with
 \code{\link[igraph:cluster_edge_betweenness]{cluster_edge_betweenness()}} from the
-\code{igraph} package. The clusters are always base on undirected
-edge-betweenness, as only the presence of submodel-relations, not their
-direction, is relevant for fr-scores. The clusters can be turned off
-by setting \code{show_clusters = FALSE}.
+package \code{igraph}. The clusters are always base on undirected
+edge-betweenness, to reflect the fact that only the presence of
+submodel-relations, not their direction, is relevant for fr-scores. The
+clusters can be turned off by setting \code{show_clusters = FALSE}. The
+network plot uses \code{igraph} layout by default, this can be changed to
+\code{visNetwork} default by setting \code{igraphlayout = FALSE}. The
+visualization can be customized by passing other \code{visNetwork()} arguments
+in \code{...}, and with other functions from the \code{visNetwork} package. For other
+types of plots of the submodel network, and for more flexibility,
+\link[=submodel_adjacencies_to_igraph]{´submodel_adjacencies_to_igraph()´}
+extracts produces an \code{igraph} graph of the network from
+\code{\link[=frscore]{frscore()}} or
+\code{\link[=frscored_cna]{frscored_cna()}} output.
 }

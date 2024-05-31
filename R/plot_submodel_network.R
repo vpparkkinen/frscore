@@ -34,8 +34,9 @@
 #'   network plot uses `igraph` layout by default, this can be changed to
 #'   `visNetwork` default by setting \code{igraphlayout = FALSE}. The
 #'   visualization can be customized by passing other `visNetwork()` arguments
-#'   in `...`, and with other functions from the `visNetwork` package. For other
-#'   types of plots of the submodel network, and for more flexibility,
+#'   in `...`, and by using other functions from the `visNetwork` package (see
+#'   examples). For other types of plots of the submodel network, and for more
+#'   flexibility,
 #'   [´submodel_adjacencies_to_igraph()´][frscore::submodel_adjacencies_to_igraph()]
 #'   extracts produces an `igraph` graph of the network from
 #'   [`frscore()`][frscore::frscore()] or
