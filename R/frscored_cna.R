@@ -273,9 +273,11 @@ rean_cna <- function(x,
     if (output == "csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)}
     if (output == "asf"){sols[[i]] <- cna::asf(eval.parent(cl))}
     if (output == "msc"){sols[[i]] <- cna::msc(eval.parent(cl))}
-    dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
-                     cnacov = rep(cl$cov, nrow(sols[[i]])))
-    sols[[i]] <- cbind(sols[[i]], dt)
+    # dt <- data.frame(cnacon = rep(cl$con, nrow(sols[[i]])),
+    #                  cnacov = rep(cl$cov, nrow(sols[[i]])))
+    # sols[[i]] <- cbind.data.frame(sols[[i]], dt)
+    sols[[i]]$cnacon <- rep(cl$con, nrow(sols[[i]]))
+    sols[[i]]$cnacov <- rep(cl$cov, nrow(sols[[i]]))
   }
   cat(length(sols),"/", length(sols), "reanalyses completed\n\n")
   return(structure(sols, class = c("rean_cna", "list")))
