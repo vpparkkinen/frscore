@@ -186,7 +186,7 @@ print.frscored_cna <- function(x, verbose = x$verbose, verbout = x$verbout, prin
   cat('Model types: \n \n')
   nr <- nrow(x$rean_models) - 20L
   if (print.all){
-    print(x$rean_models)
+    print(x$rean_models, n = Inf)
   } else {
     print(head(x$rean_models, n = 20L))
     cat('\n')
