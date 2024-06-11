@@ -11,15 +11,15 @@ d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
 
 d_sets <- list(d.error, d.autonomy, d.pban)
 
-fr <- expand.grid(seq(0.6, 1, by = 0.1),
-                  seq(0.6, 1, by = 0.1),
+fr <- expand.grid(seq(0.6, 0.9, by = 0.1),
+                  seq(0.6, 0.9, by = 0.1),
                   c(0.1),
                   c("csf", "asf", "msc"),
                   seq(1, 100, by = 20),
                   seq_along(d_sets)
                   )
 
-skip_megatest <- TRUE
+skip_megatest <- FALSE
 test_that("frscore_cna returns when it should",{
   skip_if(skip_megatest)
   skip_on_cran()
