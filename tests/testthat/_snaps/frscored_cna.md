@@ -18,34 +18,34 @@
        
       Model types: 
        
-         outcome             condition consistency  coverage complexity inus score
-      1  E                       A<->E   0.8750000 0.7777778          1 TRUE    22
-      2  E                     A+B<->E   0.7500000 1.0000000          2 TRUE    21
-      3  E                   A+B*C<->E   0.9000000 1.0000000          3 TRUE    19
-      4  E             A*c+A*D+B*C<->E   1.0000000 1.0000000          6 TRUE    18
-      5  E                 A*c+B*C<->E   1.0000000 0.8888889          4 TRUE    16
-      6  E                 A*D+B*C<->E   1.0000000 0.7777778          4 TRUE    14
-      7  E             A*B+A*D+B*C<->E   1.0000000 0.8888889          6 TRUE    10
-      8  E             A*B+A*c+A*D<->E   1.0000000 0.7777778          6 TRUE     5
-      9  A,E         (E<->A)*(A+B<->E)   0.7500000 0.8750000          3 TRUE     4
-      10 A                       E<->A   0.7777778 0.8750000          1 TRUE     4
-      11 A,E       (E<->A)*(A+C*D<->E)   0.7777778 0.8750000          4 TRUE     2
-      12 A,E     (c*E+D*E<->A)*(A<->E)   0.8571429 0.7500000          5 TRUE     2
-      13 A,E       (E<->A)*(B+C*D<->E)   0.7000000 0.7777778          4 TRUE     1
+         outcome condition             consistency coverage complexity inus score
+      1  E                       A<->E       0.875    0.778          1 TRUE    22
+      2  E                     A+B<->E       0.750    1.000          2 TRUE    21
+      3  E                   A+B*C<->E       0.900    1.000          3 TRUE    19
+      4  E             A*c+A*D+B*C<->E       1.000    1.000          6 TRUE    18
+      5  E                 A*c+B*C<->E       1.000    0.889          4 TRUE    16
+      6  E                 A*D+B*C<->E       1.000    0.778          4 TRUE    14
+      7  E             A*B+A*D+B*C<->E       1.000    0.889          6 TRUE    10
+      8  E             A*B+A*c+A*D<->E       1.000    0.778          6 TRUE     5
+      9  A,E         (E<->A)*(A+B<->E)       0.750    0.875          3 TRUE     4
+      10 A                       E<->A       0.778    0.875          1 TRUE     4
+      11 A,E       (E<->A)*(A+C*D<->E)       0.778    0.875          4 TRUE     2
+      12 A,E     (c*E+D*E<->A)*(A<->E)       0.857    0.750          5 TRUE     2
+      13 A,E       (E<->A)*(B+C*D<->E)       0.700    0.778          4 TRUE     1
          tokens norm.score
-      1       1 1.00000000
-      2       2 0.95454545
-      3       3 0.86363636
-      4       4 0.81818182
-      5       4 0.72727273
-      6       2 0.63636364
-      7       2 0.45454545
-      8       2 0.22727273
-      9       1 0.18181818
-      10      1 0.18181818
-      11      1 0.09090909
-      12      1 0.09090909
-      13      1 0.04545455
+      1       1     1.0000
+      2       2     0.9545
+      3       3     0.8636
+      4       4     0.8182
+      5       4     0.7273
+      6       2     0.6364
+      7       2     0.4545
+      8       2     0.2273
+      9       1     0.1818
+      10      1     0.1818
+      11      1     0.0909
+      12      1     0.0909
+      13      1     0.0455
       
 
 ---
@@ -68,34 +68,34 @@
        
       Model types: 
        
-         outcome             condition consistency  coverage complexity inus score
-      1  E                       A<->E   0.8750000 0.7777778          1 TRUE    22
-      2  E                     A+B<->E   0.7500000 1.0000000          2 TRUE    21
-      3  E                   A+B*C<->E   0.9000000 1.0000000          3 TRUE    19
-      4  E             A*c+A*D+B*C<->E   1.0000000 1.0000000          6 TRUE    18
-      5  E                 A*c+B*C<->E   1.0000000 0.8888889          4 TRUE    16
-      6  E                 A*D+B*C<->E   1.0000000 0.7777778          4 TRUE    14
-      7  E             A*B+A*D+B*C<->E   1.0000000 0.8888889          6 TRUE    10
-      8  E             A*B+A*c+A*D<->E   1.0000000 0.7777778          6 TRUE     5
-      9  A,E         (E<->A)*(A+B<->E)   0.7500000 0.8750000          3 TRUE     4
-      10 A                       E<->A   0.7777778 0.8750000          1 TRUE     4
-      11 A,E       (E<->A)*(A+C*D<->E)   0.7777778 0.8750000          4 TRUE     2
-      12 A,E     (c*E+D*E<->A)*(A<->E)   0.8571429 0.7500000          5 TRUE     2
-      13 A,E       (E<->A)*(B+C*D<->E)   0.7000000 0.7777778          4 TRUE     1
+         outcome condition             consistency coverage complexity inus score
+      1  E                       A<->E       0.875    0.778          1 TRUE    22
+      2  E                     A+B<->E       0.750    1.000          2 TRUE    21
+      3  E                   A+B*C<->E       0.900    1.000          3 TRUE    19
+      4  E             A*c+A*D+B*C<->E       1.000    1.000          6 TRUE    18
+      5  E                 A*c+B*C<->E       1.000    0.889          4 TRUE    16
+      6  E                 A*D+B*C<->E       1.000    0.778          4 TRUE    14
+      7  E             A*B+A*D+B*C<->E       1.000    0.889          6 TRUE    10
+      8  E             A*B+A*c+A*D<->E       1.000    0.778          6 TRUE     5
+      9  A,E         (E<->A)*(A+B<->E)       0.750    0.875          3 TRUE     4
+      10 A                       E<->A       0.778    0.875          1 TRUE     4
+      11 A,E       (E<->A)*(A+C*D<->E)       0.778    0.875          4 TRUE     2
+      12 A,E     (c*E+D*E<->A)*(A<->E)       0.857    0.750          5 TRUE     2
+      13 A,E       (E<->A)*(B+C*D<->E)       0.700    0.778          4 TRUE     1
          tokens norm.score
-      1       1 0.70967742
-      2       2 0.67741935
-      3       3 0.61290323
-      4       4 0.58064516
-      5       4 0.51612903
-      6       2 0.45161290
-      7       2 0.32258065
-      8       2 0.16129032
-      9       1 0.12903226
-      10      1 0.12903226
-      11      1 0.06451613
-      12      1 0.06451613
-      13      1 0.03225806
+      1       1     0.7097
+      2       2     0.6774
+      3       3     0.6129
+      4       4     0.5806
+      5       4     0.5161
+      6       2     0.4516
+      7       2     0.3226
+      8       2     0.1613
+      9       1     0.1290
+      10      1     0.1290
+      11      1     0.0645
+      12      1     0.0645
+      13      1     0.0323
       
 
 ---
@@ -118,20 +118,20 @@
        
       Model types: 
        
-         outcome             condition consistency  coverage complexity inus score
-      1  E                       A<->E   0.8750000 0.7777778          1 TRUE    22
-      2  E                     A+B<->E   0.7500000 1.0000000          2 TRUE    21
-      3  E                   A+B*C<->E   0.9000000 1.0000000          3 TRUE    19
-      4  E             A*c+A*D+B*C<->E   1.0000000 1.0000000          6 TRUE    18
-      5  E                 A*c+B*C<->E   1.0000000 0.8888889          4 TRUE    16
-      6  E                 A*D+B*C<->E   1.0000000 0.7777778          4 TRUE    14
-      7  E             A*B+A*D+B*C<->E   1.0000000 0.8888889          6 TRUE    10
-      8  E             A*B+A*c+A*D<->E   1.0000000 0.7777778          6 TRUE     5
-      9  A,E         (E<->A)*(A+B<->E)   0.7500000 0.8750000          3 TRUE     4
-      10 A                       E<->A   0.7777778 0.8750000          1 TRUE     4
-      11 A,E       (E<->A)*(A+C*D<->E)   0.7777778 0.8750000          4 TRUE     2
-      12 A,E     (c*E+D*E<->A)*(A<->E)   0.8571429 0.7500000          5 TRUE     2
-      13 A,E       (E<->A)*(B+C*D<->E)   0.7000000 0.7777778          4 TRUE     1
+         outcome condition             consistency coverage complexity inus score
+      1  E                       A<->E       0.875    0.778          1 TRUE    22
+      2  E                     A+B<->E       0.750    1.000          2 TRUE    21
+      3  E                   A+B*C<->E       0.900    1.000          3 TRUE    19
+      4  E             A*c+A*D+B*C<->E       1.000    1.000          6 TRUE    18
+      5  E                 A*c+B*C<->E       1.000    0.889          4 TRUE    16
+      6  E                 A*D+B*C<->E       1.000    0.778          4 TRUE    14
+      7  E             A*B+A*D+B*C<->E       1.000    0.889          6 TRUE    10
+      8  E             A*B+A*c+A*D<->E       1.000    0.778          6 TRUE     5
+      9  A,E         (E<->A)*(A+B<->E)       0.750    0.875          3 TRUE     4
+      10 A                       E<->A       0.778    0.875          1 TRUE     4
+      11 A,E       (E<->A)*(A+C*D<->E)       0.778    0.875          4 TRUE     2
+      12 A,E     (c*E+D*E<->A)*(A<->E)       0.857    0.750          5 TRUE     2
+      13 A,E       (E<->A)*(B+C*D<->E)       0.700    0.778          4 TRUE     1
          tokens
       1       1
       2       2
@@ -168,34 +168,34 @@
        
       Model types: 
        
-         outcome             condition consistency  coverage complexity inus score
-      1  E                       A<->E   0.8750000 0.7777778          1 TRUE    22
-      2  E                     A+B<->E   0.7500000 1.0000000          2 TRUE    21
-      3  E                   A+B*C<->E   0.9000000 1.0000000          3 TRUE    19
-      4  E             A*c+A*D+B*C<->E   1.0000000 1.0000000          6 TRUE    18
-      5  E                 A*c+B*C<->E   1.0000000 0.8888889          4 TRUE    16
-      6  E                 A*D+B*C<->E   1.0000000 0.7777778          4 TRUE    14
-      7  E             A*B+A*D+B*C<->E   1.0000000 0.8888889          6 TRUE    10
-      8  E             A*B+A*c+A*D<->E   1.0000000 0.7777778          6 TRUE     5
-      9  A,E         (E<->A)*(A+B<->E)   0.7500000 0.8750000          3 TRUE     4
-      10 A                       E<->A   0.7777778 0.8750000          1 TRUE     4
-      11 A,E       (E<->A)*(A+C*D<->E)   0.7777778 0.8750000          4 TRUE     2
-      12 A,E     (c*E+D*E<->A)*(A<->E)   0.8571429 0.7500000          5 TRUE     2
-      13 A,E       (E<->A)*(B+C*D<->E)   0.7000000 0.7777778          4 TRUE     1
+         outcome condition             consistency coverage complexity inus score
+      1  E                       A<->E       0.875    0.778          1 TRUE    22
+      2  E                     A+B<->E       0.750    1.000          2 TRUE    21
+      3  E                   A+B*C<->E       0.900    1.000          3 TRUE    19
+      4  E             A*c+A*D+B*C<->E       1.000    1.000          6 TRUE    18
+      5  E                 A*c+B*C<->E       1.000    0.889          4 TRUE    16
+      6  E                 A*D+B*C<->E       1.000    0.778          4 TRUE    14
+      7  E             A*B+A*D+B*C<->E       1.000    0.889          6 TRUE    10
+      8  E             A*B+A*c+A*D<->E       1.000    0.778          6 TRUE     5
+      9  A,E         (E<->A)*(A+B<->E)       0.750    0.875          3 TRUE     4
+      10 A                       E<->A       0.778    0.875          1 TRUE     4
+      11 A,E       (E<->A)*(A+C*D<->E)       0.778    0.875          4 TRUE     2
+      12 A,E     (c*E+D*E<->A)*(A<->E)       0.857    0.750          5 TRUE     2
+      13 A,E       (E<->A)*(B+C*D<->E)       0.700    0.778          4 TRUE     1
          tokens norm.score
-      1       1 1.00000000
-      2       2 0.95454545
-      3       3 0.86363636
-      4       4 0.81818182
-      5       4 0.72727273
-      6       2 0.63636364
-      7       2 0.45454545
-      8       2 0.22727273
-      9       1 0.18181818
-      10      1 0.18181818
-      11      1 0.09090909
-      12      1 0.09090909
-      13      1 0.04545455
+      1       1     1.0000
+      2       2     0.9545
+      3       3     0.8636
+      4       4     0.8182
+      5       4     0.7273
+      6       2     0.6364
+      7       2     0.4545
+      8       2     0.2273
+      9       1     0.1818
+      10      1     0.1818
+      11      1     0.0909
+      12      1     0.0909
+      13      1     0.0455
       
       
       Score composition: 
@@ -333,7 +333,7 @@
        
       Model types: 
        
-                  outcome
+         outcome         
       1  PB=1            
       2  T=0,T=2,V=0     
       3  PB=1,T=2        
@@ -354,7 +354,7 @@
       18 T=0,T=2,V=0     
       19 T=0,T=2,V=0     
       20 PB=1,T=0,T=2,V=0
-                                                                          condition
+         condition                                                                 
       1                                                              C=1+T=2<->PB=1
       2                           (C=0*F=0+C=1*F=0<->T=0)*(PB=1<->T=2)*(PB=1<->V=0)
       3                                        (C=1+C=2+F=2<->PB=1)*(F=1+F=2<->T=2)
@@ -375,27 +375,27 @@
       18                         (C=1*F=0+C=0*PB=0<->T=0)*(PB=1<->T=2)*(PB=1<->V=0)
       19                      (C=1*F=0+F=0*PB=0<->T=0)*(F=1+F=2<->T=2)*(PB=1<->V=0)
       20  (C=1+C=2+F=2<->PB=1)*(C=0*F=0+C=1*F=0<->T=0)*(F=1+F=2<->T=2)*(PB=1<->V=0)
-         consistency  coverage complexity inus score tokens norm.score
-      1    0.9500000 0.9047619          2 TRUE    18      2  1.0000000
-      2    0.7380952 0.9393939          6 TRUE     8      2  0.4444444
-      3    0.8048780 0.9285714          5 TRUE     8      2  0.4444444
-      4    0.8048780 0.9047619          4 TRUE     8      2  0.4444444
-      5    0.9318182 0.9761905          2 TRUE     8      2  0.4444444
-      6    0.7380952 0.9393939          6 TRUE     6      2  0.3333333
-      7    0.7380952 0.9047619          9 TRUE     6      2  0.3333333
-      8    0.7380952 0.9047619          8 TRUE     6      2  0.3333333
-      9    0.7380952 0.9047619          9 TRUE     6      2  0.3333333
-      10   0.7380952 0.9047619          8 TRUE     6      2  0.3333333
-      11   0.7380952 0.9047619          8 TRUE     6      2  0.3333333
-      12   1.0000000 0.9047619          6 TRUE     6      2  0.3333333
-      13   0.9333333 1.0000000          3 TRUE     6      2  0.3333333
-      14   0.9500000 0.9047619          2 TRUE     6      2  0.3333333
-      15   0.7380952 0.9285714         10 TRUE     5      2  0.2777778
-      16   0.8048780 0.9285714          4 TRUE     5      2  0.2777778
-      17   0.9722222 0.8333333          3 TRUE     5      1  0.2777778
-      18   0.7380952 0.9393939          6 TRUE     4      2  0.2222222
-      19   0.7380952 0.9393939          7 TRUE     4      1  0.2222222
-      20   0.7380952 0.9285714         10 TRUE     4      2  0.2222222
+         consistency coverage complexity inus score tokens norm.score
+      1        0.950    0.905          2 TRUE    18      2      1.000
+      2        0.738    0.939          6 TRUE     8      2      0.444
+      3        0.805    0.929          5 TRUE     8      2      0.444
+      4        0.805    0.905          4 TRUE     8      2      0.444
+      5        0.932    0.976          2 TRUE     8      2      0.444
+      6        0.738    0.939          6 TRUE     6      2      0.333
+      7        0.738    0.905          9 TRUE     6      2      0.333
+      8        0.738    0.905          8 TRUE     6      2      0.333
+      9        0.738    0.905          9 TRUE     6      2      0.333
+      10       0.738    0.905          8 TRUE     6      2      0.333
+      11       0.738    0.905          8 TRUE     6      2      0.333
+      12       1.000    0.905          6 TRUE     6      2      0.333
+      13       0.933    1.000          3 TRUE     6      2      0.333
+      14       0.950    0.905          2 TRUE     6      2      0.333
+      15       0.738    0.929         10 TRUE     5      2      0.278
+      16       0.805    0.929          4 TRUE     5      2      0.278
+      17       0.972    0.833          3 TRUE     5      1      0.278
+      18       0.738    0.939          6 TRUE     4      2      0.222
+      19       0.738    0.939          7 TRUE     4      1      0.222
+      20       0.738    0.929         10 TRUE     4      2      0.222
       
       ...there were 30 more scored model types, use 'print.all = TRUE' to print all 
 
@@ -420,48 +420,48 @@
        
       Model types: 
        
-         outcome               condition consistency coverage complexity inus score
-      1  JSR                     R<->JSR   0.7910000    0.791          1 TRUE    55
-      2  JSR                   C+R<->JSR   0.7218494    0.968          2 TRUE    40
-      3  JSR                     L<->JSR   0.7933333    0.714          1 TRUE    32
-      4  JSR                   L+R<->JSR   0.7094543    0.923          2 TRUE    26
-      5  JSR                   C+L<->JSR   0.7325175    0.838          2 TRUE    16
-      6  JSR               C*L+R*p<->JSR   0.8308227    0.717          4 TRUE    10
-      7  JSR       C*L+C*R+L*R+R*p<->JSR   0.8153693    0.817          8 TRUE     7
-      8  JSR       C*L+C*R+L*R+R*v<->JSR   0.8005698    0.843          8 TRUE     7
-      9  JSR           C*L+C*R+L*R<->JSR   0.8413242    0.737          6 TRUE     7
-      10 JSR       C*L+C*V+R*p+R*V<->JSR   0.8048780    0.858          8 TRUE     7
-      11 JSR       C*L+L*R+R*p+R*v<->JSR   0.8117409    0.802          8 TRUE     7
-      12 JSR               C*L+R*v<->JSR   0.8148148    0.726          4 TRUE     7
-      13 JSR         S*L+c*R+C*r*v<->JSR   0.8276923    0.807          7 TRUE     7
-      14 JSR               S*R+C*L<->JSR   0.8232469    0.857          4 TRUE     7
-      15 JSR           C*L+C*V+L*R<->JSR   0.8326446    0.806          6 TRUE     6
-      16 JSR       C*L+L*R+L*v+R*p<->JSR   0.8040201    0.800          8 TRUE     6
-      17 JSR       C*L+L*R+R*p+R*V<->JSR   0.8390093    0.813          8 TRUE     6
-      18 JSR     C*L+L*R+R*p+s*C*r<->JSR   0.8165503    0.819          9 TRUE     6
-      19 JSR     C*L+L*R+R*v+s*C*r<->JSR   0.8017078    0.845          9 TRUE     6
-      20 JSR               C*L+c*R<->JSR   0.8237052    0.827          4 TRUE     6
+         outcome condition               consistency coverage complexity inus score
+      1  JSR                     R<->JSR       0.791    0.791          1 TRUE    55
+      2  JSR                   C+R<->JSR       0.722    0.968          2 TRUE    40
+      3  JSR                     L<->JSR       0.793    0.714          1 TRUE    32
+      4  JSR                   L+R<->JSR       0.709    0.923          2 TRUE    26
+      5  JSR                   C+L<->JSR       0.733    0.838          2 TRUE    16
+      6  JSR               C*L+R*p<->JSR       0.831    0.717          4 TRUE    10
+      7  JSR       C*L+C*R+L*R+R*p<->JSR       0.815    0.817          8 TRUE     7
+      8  JSR       C*L+C*R+L*R+R*v<->JSR       0.801    0.843          8 TRUE     7
+      9  JSR           C*L+C*R+L*R<->JSR       0.841    0.737          6 TRUE     7
+      10 JSR       C*L+C*V+R*p+R*V<->JSR       0.805    0.858          8 TRUE     7
+      11 JSR       C*L+L*R+R*p+R*v<->JSR       0.812    0.802          8 TRUE     7
+      12 JSR               C*L+R*v<->JSR       0.815    0.726          4 TRUE     7
+      13 JSR         S*L+c*R+C*r*v<->JSR       0.828    0.807          7 TRUE     7
+      14 JSR               S*R+C*L<->JSR       0.823    0.857          4 TRUE     7
+      15 JSR           C*L+C*V+L*R<->JSR       0.833    0.806          6 TRUE     6
+      16 JSR       C*L+L*R+L*v+R*p<->JSR       0.804    0.800          8 TRUE     6
+      17 JSR       C*L+L*R+R*p+R*V<->JSR       0.839    0.813          8 TRUE     6
+      18 JSR     C*L+L*R+R*p+s*C*r<->JSR       0.817    0.819          9 TRUE     6
+      19 JSR     C*L+L*R+R*v+s*C*r<->JSR       0.802    0.845          9 TRUE     6
+      20 JSR               C*L+c*R<->JSR       0.824    0.827          4 TRUE     6
          tokens norm.score
-      1       1  1.0000000
-      2       1  0.7272727
-      3       1  0.5818182
-      4       1  0.4727273
-      5       1  0.2909091
-      6       1  0.1818182
-      7       1  0.1272727
-      8       1  0.1272727
-      9       1  0.1272727
-      10      1  0.1272727
-      11      1  0.1272727
-      12      1  0.1272727
-      13      2  0.1272727
-      14      2  0.1272727
-      15      1  0.1090909
-      16      1  0.1090909
-      17      1  0.1090909
-      18      1  0.1090909
-      19      1  0.1090909
-      20      2  0.1090909
+      1       1      1.000
+      2       1      0.727
+      3       1      0.582
+      4       1      0.473
+      5       1      0.291
+      6       1      0.182
+      7       1      0.127
+      8       1      0.127
+      9       1      0.127
+      10      1      0.127
+      11      1      0.127
+      12      1      0.127
+      13      2      0.127
+      14      2      0.127
+      15      1      0.109
+      16      1      0.109
+      17      1      0.109
+      18      1      0.109
+      19      1      0.109
+      20      2      0.109
       
       ...there were 30 more scored model types, use 'print.all = TRUE' to print all 
 

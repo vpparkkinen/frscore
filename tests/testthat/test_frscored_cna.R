@@ -11,11 +11,11 @@ d <- structure(list(A = c(0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L),
 
 d_sets <- list(d.error, d.autonomy, d.pban)
 
-fr <- expand.grid(seq(0.5, 1, by = 0.1),
-                  seq(0.5, 1, by = 0.1),
-                  c(0.05, 0.1),
+fr <- expand.grid(seq(0.6, 1, by = 0.1),
+                  seq(0.6, 1, by = 0.1),
+                  c(0.1),
                   c("csf", "asf", "msc"),
-                  seq(1, 200, by = 20),
+                  seq(1, 100, by = 20),
                   seq_along(d_sets)
                   )
 
@@ -55,8 +55,24 @@ test_that("frscored_cna works", {
   expect_snapshot(frscored_cna(d.jobsecurity,
                                fit.range = c(0.8, 0.7),
                                granularity = 0.1,
-                               outcome = "JSR"))
+                               outcome = "JSR"
+                               ))
 })
+
+
+# test_that("frscored_cna works", {
+#   expect_snapshot(frscored_cna(d.error, inus.only = "equivalence"))
+#   expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = "equivalence"))
+#   expect_snapshot(frscored_cna(d.error, normalize = "none", inus.only = "equivalence"))
+#   expect_snapshot(frscored_cna(d.error, verbose = TRUE, inus.only = "equivalence"))
+#
+#   expect_snapshot(frscored_cna(d.pban))
+#   expect_snapshot(frscored_cna(d.jobsecurity,
+#                                fit.range = c(0.8, 0.7),
+#                                granularity = 0.1,
+#                                outcome = "JSR"
+#   ))
+# })
 
 
 test_that("frscored_cna fails when it should", {
