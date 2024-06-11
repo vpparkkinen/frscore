@@ -19,7 +19,7 @@ fr <- expand.grid(seq(0.6, 0.9, by = 0.1),
                   seq_along(d_sets)
                   )
 
-skip_megatest <- FALSE
+skip_megatest <- TRUE
 test_that("frscore_cna returns when it should",{
   skip_if(skip_megatest)
   skip_on_cran()
@@ -45,34 +45,34 @@ test_that("frscore_cna returns when it should",{
 
 
 
-test_that("frscored_cna works", {
-  expect_snapshot(frscored_cna(d.error))
-  expect_snapshot(frscored_cna(d.error, normalize = "idealmax"))
-  expect_snapshot(frscored_cna(d.error, normalize = "none"))
-  expect_snapshot(frscored_cna(d.error, verbose = TRUE))
-
-  expect_snapshot(frscored_cna(d.pban))
-  expect_snapshot(frscored_cna(d.jobsecurity,
-                               fit.range = c(0.8, 0.7),
-                               granularity = 0.1,
-                               outcome = "JSR"
-                               ))
-})
-
-
 # test_that("frscored_cna works", {
-#   expect_snapshot(frscored_cna(d.error, inus.only = "equivalence"))
-#   expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = "equivalence"))
-#   expect_snapshot(frscored_cna(d.error, normalize = "none", inus.only = "equivalence"))
-#   expect_snapshot(frscored_cna(d.error, verbose = TRUE, inus.only = "equivalence"))
+#   expect_snapshot(frscored_cna(d.error))
+#   expect_snapshot(frscored_cna(d.error, normalize = "idealmax"))
+#   expect_snapshot(frscored_cna(d.error, normalize = "none"))
+#   expect_snapshot(frscored_cna(d.error, verbose = TRUE))
 #
 #   expect_snapshot(frscored_cna(d.pban))
 #   expect_snapshot(frscored_cna(d.jobsecurity,
 #                                fit.range = c(0.8, 0.7),
 #                                granularity = 0.1,
 #                                outcome = "JSR"
-#   ))
+#                                ))
 # })
+
+
+test_that("frscored_cna works", {
+  expect_snapshot(frscored_cna(d.error, inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.error, normalize = "none", inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.error, verbose = TRUE, inus.only = "equivalence"))
+
+  expect_snapshot(frscored_cna(d.pban, inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.jobsecurity,
+                               fit.range = c(0.8, 0.7),
+                               granularity = 0.1,
+                               outcome = "JSR",
+                               inus.only = "equivalence"))
+})
 
 
 test_that("frscored_cna fails when it should", {

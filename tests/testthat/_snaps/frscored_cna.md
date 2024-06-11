@@ -1,7 +1,7 @@
 # frscored_cna works
 
     Code
-      frscored_cna(d.error)
+      frscored_cna(d.error, inus.only = "equivalence")
     Output
       0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
@@ -51,7 +51,7 @@
 ---
 
     Code
-      frscored_cna(d.error, normalize = "idealmax")
+      frscored_cna(d.error, normalize = "idealmax", inus.only = "equivalence")
     Output
       0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
@@ -101,7 +101,7 @@
 ---
 
     Code
-      frscored_cna(d.error, normalize = "none")
+      frscored_cna(d.error, normalize = "none", inus.only = "equivalence")
     Output
       0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
@@ -151,7 +151,7 @@
 ---
 
     Code
-      frscored_cna(d.error, verbose = TRUE)
+      frscored_cna(d.error, verbose = TRUE, inus.only = "equivalence")
     Output
       0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
@@ -306,7 +306,7 @@
 ---
 
     Code
-      frscored_cna(d.pban)
+      frscored_cna(d.pban, inus.only = "equivalence")
     Output
       0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
     Condition
@@ -403,7 +403,7 @@
 
     Code
       frscored_cna(d.jobsecurity, fit.range = c(0.8, 0.7), granularity = 0.1,
-      outcome = "JSR")
+      outcome = "JSR", inus.only = "equivalence")
     Output
       0 / 4 reanalyses completed 1 / 4 reanalyses completed 2 / 4 reanalyses completed 3 / 4 reanalyses completed 4 / 4 reanalyses completed
       

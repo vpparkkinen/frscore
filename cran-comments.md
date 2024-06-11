@@ -1,3 +1,5 @@
+A patch release to fix issues due to changes in upstream package `cna`.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 0 notes
