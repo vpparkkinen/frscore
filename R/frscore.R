@@ -497,7 +497,7 @@ print.frscore <- function(x,
   cat("Model types: \n")
   cat("\n")
   if(print.all){
-    print(x$models)
+    print(x$models, n = Inf)
   } else {
     print(head(x$models, n = 20L))
     cat("\n")
