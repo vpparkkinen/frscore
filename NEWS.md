@@ -9,9 +9,14 @@
   the proportion of other models to which each token model relates to as
   a sub- or supermodel. 
 
+# frscore 0.4.1
+
+- A patch release that fixes an issue caused by
+changes in `cna` package.
+
 # frscore 0.4.0
 
-- `rean_cna()`, `frscore()`, and `frscored_cna()` display progress tickers.
+- `rean_cna()` and `frscore()` display progress tickers.
 
 - `frscore()` and `frscored_cna()` are no longer sensitive to locale (due to
 collation differences) when
