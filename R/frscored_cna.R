@@ -14,9 +14,6 @@
 #' @param output Character vector determining whether csf's or asf's are
 #'   extracted from the results of the analyses; "csf" (default) extracts
 #'   csfs, "asf" asfs.
-#' @param scoretype Character vector specifying the scoring method: "full"
-#'   (default, scoring is based on counting sub- and supermodels), "supermodel"
-#'   (count supermodels) "submodel" (count submodels).
 #' @param normalize Character vector that determines the method used in
 #'   normalizing the scores. "truemax" normalizes by the actual highest score
 #'   such that the highest scoring solution types get score 1. "idealmax"
@@ -62,7 +59,6 @@ frscored_cna <- function(x,
                          fit.range = c(1, 0.7),
                          granularity = 0.1,
                          output = c("csf", "asf", "msc"),
-                         scoretype = c("full", "supermodel", "submodel"),
                          normalize = c("truemax", "idealmax", "none"),
                          verbose = FALSE,
                          maxsols = 50,
@@ -78,13 +74,12 @@ frscored_cna <- function(x,
     }
   cl <- match.call()
   dots <- list(...)
-  if(match.arg(scoretype) != "full"){
-    lifecycle::deprecate_warn("0.3.1",
+  if("scoretype" %in% names(dots)){
+    lifecycle::deprecate_stop("0.3.1",
                               what = "frscored_cna(scoretype)",
-                              details = "The `scoretype` argument is on its way to be removed.
-                              It is not recommended to restrict the scoring to sub- or
-                              supermodel relations only, as the scores will then not reflect
-                              the intended meaning of fit-robustness.
+                              details = "
+                              Scoring is based on counting both sub- and submodel relations,
+                              as if `scoretype = \"full\"`.
                               Information about the score composition of the models
                               can always be found by inspecting the $verbout -element
                               of the output of `frscore()` and `frscored_cna()`.")
@@ -95,7 +90,7 @@ frscored_cna <- function(x,
   cl$fit.range <- cl$granularity <- cl$normalize <-
     cl$verbose <- cl$scoretype <-
     cl$test.model <- cl$print.all <-
-    cl$scoretype <- cl$maxsols <- cl$comp.method <- NULL
+    cl$maxsols <- cl$comp.method <- NULL
   cl[[1]] <- as.name("rean_cna")
   if ("ncsf" %in% names(dots)){
     cl$ncsf <- dots$ncsf
@@ -109,11 +104,10 @@ frscored_cna <- function(x,
   rescombtemp <- rescomb
   rescomb <- rescomb[,-c(which(names(rescomb) %in% c("cnacon", "cnacov")))]
   rescomb$condition <- gsub("\\),\\(", "\\)*\\(", rescomb$condition)
-  scoretype <- match.arg(scoretype)
   normalize <- match.arg(normalize)
   if (is.null(test.model)){
     scored <- frscore(rescomb$condition, normalize = normalize,
-                      verbose = verbose, scoretype = scoretype,
+                      verbose = verbose,
                       maxsols = maxsols, comp.method = comp.method,
                       dat = x)
     if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
@@ -121,7 +115,7 @@ frscored_cna <- function(x,
   } else {
     if(any(sapply(rescomb$condition, function(x) cna::identical.model(x, test.model)))){
       scored <- frscore(rescomb$condition, normalize = normalize,
-                        verbose = verbose, scoretype = scoretype,
+                        verbose = verbose,
                         maxsols = maxsols, comp.method = comp.method,
                         dat = x)
       if(is.null(scored)){warning('no solutions found in reanalysis series, perhaps consider wider fit range \n \n')
@@ -156,7 +150,6 @@ frscored_cna <- function(x,
                         print.all = print.all,
                         fit.range = fit.range,
                         granularity = granularity,
-                        scoretype = scoretype,
                         normal = normalize,
                         rean.results = rescombtemp,
                         maxsols = scored$maxsols,
@@ -171,7 +164,7 @@ frscored_cna <- function(x,
 #' @export
 print.frscored_cna <- function(x, verbose = x$verbose, verbout = x$verbout, print.all = x$print.all, maxsols = x$maxsols, ...){
   cat('FR-scored reanalysis series with fit range', x$fit.range[1], 'to', x$fit.range[2], 'with granularity', x$granularity, '\n')
-  cat('Score type:', x$scoretype, '||', 'score normalization:', x$normal, '\n')
+  cat('Score normalization:', x$normal, '\n')
   if(maxsols$maxsols == "ignored"){
     cat("no submodel checks were needed, argument 'maxsols' ignored \n")
   } else {
