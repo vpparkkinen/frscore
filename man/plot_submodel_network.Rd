@@ -48,17 +48,26 @@ additional information about fr-scores over and above the undirected
 network. By default, the network color-codes clusters of model types based
 on edge-betweenness, calculated with
 \code{\link[igraph:cluster_edge_betweenness]{cluster_edge_betweenness()}} from the
-package \code{igraph}. The clusters are always base on undirected
-edge-betweenness, to reflect the fact that only the presence of
+package \code{igraph}. The clusters are always based on undirected
+edge-betweenness to reflect the fact that only the presence of
 submodel-relations, not their direction, is relevant for fr-scores. The
 clusters can be turned off by setting \code{show_clusters = FALSE}. The
 network plot uses \code{igraph} layout by default, this can be changed to
 \code{visNetwork} default by setting \code{igraphlayout = FALSE}. The
 visualization can be customized by passing other \code{visNetwork()} arguments
-in \code{...}, and with other functions from the \code{visNetwork} package. For other
-types of plots of the submodel network, and for more flexibility,
+in \code{...}, and by using other functions from the \code{visNetwork} package (see
+examples). The purpose of \code{plot_submodel_network()} is to provide a
+convenient way of visualizing submodel relations calculated by the
+\code{frscore} functions, at the expense of limited flexibility. For further
+analysis of the submodel network and more visualization options,
 \link[=submodel_adjacencies_to_igraph]{´submodel_adjacencies_to_igraph()´}
-extracts produces an \code{igraph} graph of the network from
-\code{\link[=frscore]{frscore()}} or
+produces an \code{igraph} graph of submodel relations from an adjacency matrix
+included in \code{\link[=frscore]{frscore()}} and
 \code{\link[=frscored_cna]{frscored_cna()}} output.
+}
+\examples{
+r <- frscored_cna(d.error)
+plot_submodel_network(r)
+
+
 }

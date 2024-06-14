@@ -27,7 +27,7 @@
 #'   network. By default, the network color-codes clusters of model types based
 #'   on edge-betweenness, calculated with
 #'   [`cluster_edge_betweenness()`][igraph::cluster_edge_betweenness()] from the
-#'   package `igraph`. The clusters are always base on undirected
+#'   package `igraph`. The clusters are always based on undirected
 #'   edge-betweenness to reflect the fact that only the presence of
 #'   submodel-relations, not their direction, is relevant for fr-scores. The
 #'   clusters can be turned off by setting \code{show_clusters = FALSE}. The
@@ -35,18 +35,21 @@
 #'   `visNetwork` default by setting \code{igraphlayout = FALSE}. The
 #'   visualization can be customized by passing other `visNetwork()` arguments
 #'   in `...`, and by using other functions from the `visNetwork` package (see
-#'   examples). For other types of plots of the submodel network, and for more
-#'   flexibility,
+#'   examples). The purpose of `plot_submodel_network()` is to provide a
+#'   convenient way of visualizing submodel relations calculated by the
+#'   `frscore` functions, at the expense of limited flexibility. For further
+#'   analysis of the submodel network and more visualization options,
 #'   [´submodel_adjacencies_to_igraph()´][frscore::submodel_adjacencies_to_igraph()]
-#'   extracts produces an `igraph` graph of the network from
-#'   [`frscore()`][frscore::frscore()] or
+#'   produces an `igraph` graph of submodel relations from an adjacency matrix
+#'   included in [`frscore()`][frscore::frscore()] and
 #'   [`frscored_cna()`][frscore::frscored_cna()] output.
 #'
 #'
 #'
 #' @return A \code{visNetwork} object.
 #'
-#' @examples
+#' @examples r <- frscored_cna(d.error)
+#' plot_submodel_network(r)
 #'
 #'
 #' @export
@@ -73,17 +76,28 @@ plot_submodel_network <- function(x,
   return(vn)
 }
 
-#' Generate igraph from submodel adjacencies
+#' Generate igraph from submodel adjacencies.
 #'
 #' @param x An object of class \code{"frscore"} or \code{"frscored_cna"}.
 #'
 #' @return An \code{igraph} graph.
 #' @export
 #'
+#' @details
+#' [`frscore()`][frscore::frscore()] and [`frscored_cna()`][frscore::frscored_cna()]
+#' output includes an adjacency matrix of submodel relations among
+#' the scored model types. `submodel_adjacencies_to_igraph()` is a convenience
+#' function that extracts the adjacency matrix and produces an `igraph` graph
+#' from it.
+#'
+#'
 #' @examples
+#' r <- frscored_cna(d.error)
+#' sg <- submodel_adjacencies_to_igraph(r)
+#' sg
 submodel_adjacencies_to_igraph <- function(x){
   stopifnot(inherits(x, c("frscored_cna", "frscore")))
-  return(graph_from_adjacency_matrix(x$submodel_adjacencies))
+  return(igraph::graph_from_adjacency_matrix(x$submodel_adjacencies))
 }
 
 
