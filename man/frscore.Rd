@@ -20,12 +20,6 @@ frscore(
 for the factors featured in the models included in \code{sols}. Only needed when the models in
 \code{sols} are multi-valued, otherwise ignored.}
 
-\item{scoretype}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}  String specifying the scoring method: \code{"full"}
-(default; scoring is based on counting sub- and supermodel relations), \code{"supermodel"}
-(count supermodels only), \code{"submodel"} (count
-submodels only). Allowed for backward compatibility only, due to be dropped
-in next version.}
-
 \item{normalize}{String that determines the method used in
 normalizing the scores. \code{"truemax"} (default) normalizes by the highest score among the elements of \code{sols},
 such that the highest scoring solution types get score 1. \code{"idealmax"}
