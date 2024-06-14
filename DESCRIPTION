@@ -25,7 +25,9 @@ Imports:
     Rfast,
     magrittr,
     rlang,
-    withr
+    withr,
+    visNetwork,
+    igraph
 Depends: 
     R (>= 3.5),
     cna (>= 3.5.1),
