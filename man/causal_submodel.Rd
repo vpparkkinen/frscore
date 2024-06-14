@@ -85,7 +85,7 @@ relation of direct causation that determines what is causally "upstream" and
 "downstream" of what. The exogenous factors \verb{\{A,B,D\}} are top-level upstream
 causes in \code{(A+B<->C)*(C+D<->E)}, as they are not caused by any other
 factor included in the model. Endogenous factors \code{C} and \code{E} are downstream
-of of \verb{\{A,B\}} by one and two levels respectively, and \code{E} is one level
+of \verb{\{A,B\}} by one and two levels respectively, and \code{E} is one level
 downstream of \code{D}. The chain model agrees with the direct cause model on the
 causal ordering of \verb{\{A,B,E\}} -- \code{A} and \code{B} are upstream of \code{E} and not
 causes of each other -- but also includes an additional cause of \code{E}, \code{C},
