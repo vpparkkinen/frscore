@@ -126,6 +126,7 @@ frscored_cna <- function(x,
   }
 
   sc <- scored[[1]]
+  sc$w_rel.score <- sc$rel.score * ((max(fit.range) - min(fit.range)) * (1-granularity))
   names(sc)[names(sc) == "model"] <- "condition"
   rescomb$condition <- as.character(rescomb$condition)
   rescombXscored <- dplyr::right_join(rescomb, sc, by="condition") %>%

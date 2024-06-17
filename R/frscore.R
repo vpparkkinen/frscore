@@ -151,8 +151,9 @@ frscore <- function(sols,
 
   }
   out <- out[order(out$score, decreasing = T),]
-  # relscore <- (out$score - (out$tokens - 1)) / (sum(out$tokens) - 1)
-  # out$rel.score <- if (anyNA(relscore)) 0L else relscore
+  relscore <- (out$score - (out$tokens - 1)) / (sum(out$tokens) - 1)
+  out$rel.score <- if (anyNA(relscore)) 0L else relscore
+  out$w_rel.score <- NA
   rownames(out) <- 1:nrow(out)
 
   scsums <- scsums[sapply(out$model, function(x) which(x == names(scsums)))]
