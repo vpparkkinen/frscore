@@ -4,9 +4,6 @@
 #'   solutions
 #'
 #' @param sols Character vector that contains the solutions to be scored.
-#' @param scoretype Character vector specifying the scoring method: "full"
-#'   (default, scoring is based on counting sub- and supermodels), "supermodel"
-#'   (count supermodels) "submodel" (count submodels).
 #' @param normalize Character vector that determines the method used in
 #'   normalizing the scores. "truemax" normalizes by the actual highest score
 #'   such that the highest scoring solution types get score 1. "idealmax"
