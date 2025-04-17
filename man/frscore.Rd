@@ -5,7 +5,6 @@
 frscore(
   sols,
   dat = NULL,
-  scoretype = c("full", "supermodel", "submodel"),
   normalize = c("truemax", "idealmax", "none"),
   maxsols = 50,
   verbose = FALSE,
@@ -69,24 +68,6 @@ were inferred from, and this is what is done automatically when
 \code{frscore()} is called within \code{frscored_cna()}. When the models in \code{sols}
 are binary, \code{dat} should be left to its default value \code{NULL},
 and will in any case be ignored.
-
-The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.1, and will be dropped
-in the next version.
-Giving it a non-default value
-is allowed so that older code can be run without errors, but doing this is otherwise discouraged.
-When set to its default value \code{"full"},
-the score of each \code{sols[i]} is calculated by counting the (either syntactic or
-causal) sub- and supermodel relations \code{sols[i]} has to the other elements
-of \code{sols}. Setting scoretype to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on,
-respectively, supermodel and submodel relations only. Whether causal or syntactic submodel relations
-are counted depends on the value of \code{comp.method}: \code{"causal_submodel"} (default)
-counts causal submodel relations using \code{\link[frscore:causal_submodel]{causal_submodel()}},
-\code{"is.submodel"} counts syntactic submodel relations using \code{\link[cna:is.submodel]{cna::is.submodel()}}.
-In future versions of \code{frscore}, fit-robustness
-scores will always be calculated as with \code{scoretype = "full"}, and
-changing this will not be possible. If additional information about the numbers of
-sub- vs. supermodel relations a particular model has to other models is needed, this
-can be acquired by inspecting the \code{"verbout"} element of the output of \code{frscore()}.
 
 The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained
 maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal

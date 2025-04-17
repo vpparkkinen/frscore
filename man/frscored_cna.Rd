@@ -7,7 +7,6 @@ frscored_cna(
   fit.range = c(1, 0.7),
   granularity = 0.1,
   output = c("csf", "asf", "msc"),
-  scoretype = c("full", "supermodel", "submodel"),
   normalize = c("truemax", "idealmax", "none"),
   verbose = FALSE,
   maxsols = 50,
@@ -86,22 +85,6 @@ fit-robustness scores of the resulting solutions/models
 \details{
 \code{frscored_cna()} is a wrapper function that sequentially executes \code{\link[frscore:rean_cna]{rean_cna()}} and \code{\link[frscore:frscore]{frscore()}}, meaning it performs both computational phases of fit-robustness scoring as introduced in Parkkinen and Baumgartner (2021). In the first phase, the function conducts a reanalysis series on the input data \code{x} at all combinatorially possible combinations of fit thresholds that can be generated from the interval given by \code{fit.range} at increments given by \code{granularity} and collects all solutions/models in a set \strong{M}. In the second phase, it calculates the fit-robustness scores of the atomic (asf) and/or complex (csf) solution formulas in \strong{M}.
 The argument \code{output} allows for controlling whether csf or only asf are built, the latter normally being  faster but less complete.
-
-The argument \code{scoretype} is deprecated as of \code{frscore} 0.3.1, and will be dropped
-from future versions of the package.
-Giving it a non-default value
-is allowed so that older code can be run without errors, but doing this is otherwise discouraged.
-The permissible values of \code{scoretype} have the following effects.
-When set to its default value \code{"full"}, the score of each solution/model \strong{m} in \strong{M} is calculated by counting
-the number of the (either causal or syntactic) sub- and supermodel relations \strong{m} has to the other elements of \strong{M}. Whether causal or syntactic submodel relations
-are counted depends on the value of \code{comp.method}: \code{"causal_submodel"} (default)
-counts causal submodel relations using \code{\link[frscore:causal_submodel]{causal_submodel()}},
-\code{"is.submodel"} counts syntactic submodel relations using \code{\link[cna:is.submodel]{cna::is.submodel()}}.
-Setting \code{scoretype} to \code{"supermodel"} or \code{"submodel"} forces the scoring to be based on, respectively, supermodel and submodel relations only. In future versions of \code{frscore}, fit-robustness
-scores will always be calculated as with \code{scoretype = "full"}, and
-changing this will not be possible. If additional information about the numbers of
-sub- vs. supermodel relations a particular model has to other models is needed, this
-can be acquired by inspecting the \code{"verbout"} element of the output of \code{frscored_cna()}.
 
 The fit-robustness scores can be normalized in two ways. In the default setting \code{normalize = "truemax"}, the score of each \code{sols[i]} is divided by the maximum score obtained by an element of \code{sols}. In case of \code{normalize = "idealmax"}, the score is normalized not by an actually obtained
 maximum but by an idealized maximum, which is calculated by assuming that all solutions of equal
