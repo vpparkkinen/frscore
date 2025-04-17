@@ -222,8 +222,8 @@ procedure, \code{causal_submodel()} is an approximation of a strictly
 speaking valid check for causal submodel relations. Since the syntactic
 manipulations and especially the minimization of the resulting expressions
 is so costly, \code{causal_submodel()} relies on the
-\code{\link[cna:rreduce]{rreduce()}} function from the \code{\link[cna:cna-package]{cna}}
-package for minimization. \code{\link[cna:rreduce]{rreduce()}} randomly chooses a
+\code{\link[cna:cna-internals]{rreduce()}} function from the \code{\link[cna:cna-package]{cna}}
+package for minimization. \code{\link[cna:cna-internals]{rreduce()}} randomly chooses a
 single reduction path to produce only one minimal form of an expression
 whenever more than one exists, i.e. when the expression is ambiguous in its
 causal claims. In the case of ambiguous models, the output of
