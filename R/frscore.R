@@ -13,7 +13,7 @@
 #'   normalizes by a theoretical maximum score calculated by assuming that
 #'   all solutions of equal complexity are identical, and for every solution
 #'   of a given complexity, all solutions with lower complexity are its
-#'   submodels.
+#' submodels.
 #' @param maxsols Integer determining the maximum number of unique solution
 #'   types found in \code{sols} to be included in the scoring.
 #' @param verbose Logical; if \code{TRUE}, calculate and print additional
