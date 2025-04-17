@@ -21,9 +21,9 @@ fr <- expand.grid(seq(0.6, 0.9, by = 0.1),
 
 skip_megatest <- TRUE
 test_that("frscore_cna returns when it should",{
-  skip_if(skip_megatest)
-  skip_on_cran()
-  skip_on_ci()
+skip_if(skip_megatest)
+skip_on_cran()
+skip_on_ci()
   for (i in 1:nrow(fr)) {
     expect_no_error(suppressWarnings(
       frscored_cna(d_sets[[fr[i, 6]]],
@@ -61,20 +61,45 @@ test_that("frscore_cna returns when it should",{
 
 
 test_that("frscored_cna works", {
-  expect_snapshot(frscored_cna(d.error, inus.only = "equivalence"))
-  expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = "equivalence"))
-  expect_snapshot(frscored_cna(d.error, normalize = "none", inus.only = "equivalence"))
-  expect_snapshot(frscored_cna(d.error, verbose = TRUE, inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.error))
+  expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = TRUE))
+  expect_snapshot(frscored_cna(d.error, normalize = "none", inus.only = TRUE))
+  expect_snapshot(frscored_cna(d.error, verbose = TRUE, inus.only = TRUE))
 
-  expect_snapshot(frscored_cna(d.pban, inus.only = "equivalence"))
+  expect_snapshot(frscored_cna(d.pban))
   expect_snapshot(frscored_cna(d.jobsecurity,
                                fit.range = c(0.8, 0.7),
                                granularity = 0.1,
-                               outcome = "JSR",
-                               inus.only = "equivalence"))
+                               outcome = "JSR"))
 })
 
 
+
+ccm_table <- expand.grid(c(1,3,5,7), c(2,4,6,8))
+
+rtf <- \() sample(c(T,F), 1)
+
+
+
+test_that("frscored_cna applies cna params via cnaControl without failing", {
+  for(i in 1:nrow(ccm_table)){
+    ctrlargs <- list(inus.only = rtf(),
+                     inus.def = sample(c("implication", "equivalence"),1),
+                     rm.const.factors = rtf(),
+                     rm.dup.factors = rtf(),
+                     only.minimal.msc = rtf(),
+                     only.minimal.asf = rtf())
+    expect_no_error(
+      suppressWarnings(frscored_cna(d.error,
+                                 measures = c(ccm_table[i,1], ccm_table[i,2]),
+                                 control = do.call(cnaControl, ctrlargs)),
+                       )
+    )
+  }
+
+
+})
+
 test_that("frscored_cna fails when it should", {
-  expect_error(frscored_cna(d, test.model = "(A<->D)"))
+  expect_error(suppressWarnings(frscored_cna(d, test.model = "(A<->D)")))
 })
