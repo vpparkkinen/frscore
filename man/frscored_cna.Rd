@@ -126,7 +126,7 @@ frscored_cna(d.error, fit.range = c(1, 0.75), granularity = 0.05,
 
 # Fuzzy-set data from Emmenegger (2011)
 \donttest{frscored_cna(d.jobsecurity, type = "fs", fit.range = c(0.9, 0.6), granularity = 0.05,
-                  scoretype = "submodel", ordering = list("JSR"), strict = TRUE)}
+                  ordering = list("JSR"), strict = TRUE)}
 
 # Artificial data
 \donttest{dat <- data.frame(
