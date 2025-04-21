@@ -72,7 +72,10 @@ plot_submodel_network <- function(x,
   #vn <- visNetwork(nodes = vg$nodes, edges = vg$edges)
   vn <- do.call(visNetwork::visNetwork,
                 c(list(nodes = vg$nodes, edges = vg$edges), list(...)))
-  if (igraphlayout) vn <- visNetwork::visIgraphLayout(vn)
+  if (igraphlayout) {
+    vn <- visNetwork::visIgraphLayout(vn, layout = "layout_with_fr")
+    vn <- visNetwork::visOptions(vn, nodesIdSelection = T, clickToUse = F)
+  }
   return(vn)
 }
 
