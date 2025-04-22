@@ -51,7 +51,9 @@
 #' @examples r <- frscored_cna(d.error)
 #' plot_submodel_network(r)
 #'
-#'
+#' # customize or override general options
+#' v <- visOptions(r, highlightNearest = T)
+#' v
 #' @export
 plot_submodel_network <- function(x,
                              show_clusters = TRUE,
@@ -64,17 +66,19 @@ plot_submodel_network <- function(x,
   gmode <- if(directed) "directed" else "max"
   s_graph <- igraph::graph_from_adjacency_matrix(adj,mode = gmode)
   vg <- visNetwork::toVisNetworkData(s_graph)
+  vg$nodes$title <- as.character(vg$nodes$id)
   if(show_clusters){
     clust <- igraph::cluster_edge_betweenness(s_graph, directed = FALSE)
     vg$nodes$group <- as.character(clust$membership)
   }
   if(directed) vg$edges$arrows <- "from"
-  #vn <- visNetwork(nodes = vg$nodes, edges = vg$edges)
   vn <- do.call(visNetwork::visNetwork,
                 c(list(nodes = vg$nodes, edges = vg$edges), list(...)))
+  utitle <- as.character(vn$nodes$id)
   if (igraphlayout) {
     vn <- visNetwork::visIgraphLayout(vn, layout = "layout_with_fr")
-    vn <- visNetwork::visOptions(vn, nodesIdSelection = T, clickToUse = F)
+    vn <- visNetwork::visOptions(vn,
+                                 nodesIdSelection = T)
   }
   return(vn)
 }

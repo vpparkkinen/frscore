@@ -69,5 +69,7 @@ included in \code{\link[=frscore]{frscore()}} and
 r <- frscored_cna(d.error)
 plot_submodel_network(r)
 
-
+# customize or override general options
+v <- visOptions(r, highlightNearest = T)
+v
 }
