@@ -49,10 +49,10 @@
 #' @return A \code{visNetwork} object.
 #'
 #' @examples r <- frscored_cna(d.error)
-#' plot_submodel_network(r)
-#'
+#' v <- plot_submodel_network(r)
+#' v
 #' # customize or override general options
-#' v <- visOptions(r, highlightNearest = T)
+#' v <- visNetwork::visOptions(v, highlightNearest = TRUE)
 #' v
 #' @export
 plot_submodel_network <- function(x,

@@ -5,6 +5,8 @@
   
 - argument `scoretype` is removed from `frscore()` and `frscored_cna()`.
 
+- minor internal changes for compatibility with `cna` v.4.0.0
+
 # frscore 0.4.1
 
 - A patch release that fixes an issue caused by
