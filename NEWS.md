@@ -5,6 +5,8 @@
   
 - argument `scoretype` is removed from `frscore()` and `frscored_cna()`.
 
+- `rean_cna()` and `frscored_cna()` gain a new argument `quiet`.
+
 - minor internal changes for compatibility with `cna` v.4.0.0
 
 # frscore 0.4.1
