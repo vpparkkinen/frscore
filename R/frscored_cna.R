@@ -66,6 +66,7 @@ frscored_cna <- function(x,
                          print.all = FALSE,
                          comp.method = c("causal_submodel", "is.submodel"),
                          n.init = 1000,
+                         quiet = TRUE,
                          ...){
   withr::local_collate("C")
   call <- match.call()
@@ -235,6 +236,7 @@ rean_cna <- function(x,
                      ncsf = deprecated(),
                      output = c("csf", "asf", "msc"),
                      n.init = 1000,
+                     quiet = TRUE,
                      ...){
   withr::local_collate("C")
   if(!inherits(x, c("configTable", "data.frame","truthTab"))){
@@ -250,7 +252,7 @@ rean_cna <- function(x,
     abort("cna arguments 'con', 'cov', 'con.msc' not meaningful")
   }
   output <- match.arg(output)
-  cl$attempt <- cl$asf <- cl$ncsf <- cl$csf <- cl$output <- cl$n.init <- NULL
+  cl$attempt <- cl$asf <- cl$ncsf <- cl$csf <- cl$output <- cl$n.init <- cl$quiet <- NULL
   cl[[1]] <- as.name("cna")
   cl$what <- if(output == "asf"){"a"} else {"c"}
   if(output == "msc"){cl$suff.only <- TRUE}
@@ -263,7 +265,17 @@ rean_cna <- function(x,
     cat(i-1,"/", length(sols), "reanalyses completed \r")
     cl$con <- ccargs[i,"lowfirst"]
     cl$cov <- ccargs[i, "lowsec"]
-    if (output == "csf"){sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)}
+    if (output == "csf"){
+      if(quiet){
+        sols[[i]] <- suppressWarnings(
+          suppressMessages(
+            cna::csf(eval.parent(cl), n.init = n.init)
+            )
+          )
+      } else {
+        sols[[i]] <- cna::csf(eval.parent(cl), n.init = n.init)
+      }
+    }
     if (output == "asf"){sols[[i]] <- cna::asf(eval.parent(cl))}
     if (output == "msc"){sols[[i]] <- cna::msc(eval.parent(cl))}
     sols[[i]]$cnacon <- rep(cl$con, nrow(sols[[i]]))

@@ -14,6 +14,7 @@ frscored_cna(
   print.all = FALSE,
   comp.method = c("causal_submodel", "is.submodel"),
   n.init = 1000,
+  quiet = TRUE,
   ...
 )
 }
@@ -61,6 +62,9 @@ causal submodel relations using \code{causal_submodel()},
 \item{n.init}{Integer that determines the maximum number of csfs built in
 the analyses, see \code{\link[cna:csf]{cna::csf()}}. Only applied when \code{output = "csf"}.}
 
+\item{quiet}{Logical. When \code{TRUE}, messages and warnings from
+\code{cna} functions are suppressed when executing a reanalysis series.}
+
 \item{...}{Any arguments to be passed to \code{\link[cna:cna]{cna()}} except \code{con}, \code{cov} or
 \code{con.msc}. The effect of argument \code{what} is overriden
 by \code{output}.}
@@ -101,6 +105,12 @@ If the size of the consistency and coverage range scanned in the reanalysis seri
 
 If the user is interested in the robustness of one specific candidate model, that model can be given to \code{frscored_cna()} by the argument \code{test.model}. The result for that model will then be printed separately, provided the model is found in the
 reanalysis series, if not, the function stops.
+
+As executing a reanalysis series involves repeated calls to various \code{cna}
+functions, numerous warnings about the value of \code{n.init}, and messages
+about \code{asf} being returned separately, may be generated. The argument
+\code{quiet} is used to suppress or display these warnings/messages:
+the default \code{quiet = TRUE} suppresses all such warnings and messages.
 }
 \seealso{\code{\link[frscore:frscore]{frscore()}}, \code{\link[frscore:rean_cna]{rean_cna()}},
 \code{\link[frscore:causal_submodel]{causal_submodel()}}, \code{\link[cna:is.submodel]{cna::is.submodel()}}
