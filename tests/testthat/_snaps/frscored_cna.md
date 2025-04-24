@@ -3,15 +3,7 @@
     Code
       frscored_cna(d.error)
     Output
-      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
       processing 12 unique model types,
       maxsols set to 50, excluding 0 model types from scoring
@@ -49,15 +41,7 @@
     Code
       frscored_cna(d.error, normalize = "idealmax", inus.only = TRUE)
     Output
-      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
       processing 12 unique model types,
       maxsols set to 50, excluding 0 model types from scoring
@@ -95,15 +79,7 @@
     Code
       frscored_cna(d.error, normalize = "none", inus.only = TRUE)
     Output
-      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
       processing 12 unique model types,
       maxsols set to 50, excluding 0 model types from scoring
@@ -141,15 +117,7 @@
     Code
       frscored_cna(d.error, verbose = TRUE, inus.only = TRUE)
     Output
-      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      15 / 16 reanalyses completed 16 / 16 reanalyses completed
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
       processing 12 unique model types,
       maxsols set to 50, excluding 0 model types from scoring
@@ -280,21 +248,7 @@
     Code
       frscored_cna(d.pban)
     Output
-      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 
-    Message
-      The asfs could not be combined to csfs. They are returned separately.
-    Output
-      4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 
-    Condition
-      Warning in `cna::csf()`:
-      Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
-    Output
-      12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 
-    Condition
-      Warning in `cna::csf()`:
-      Not all csf solutions have been recorded. csf() with a higher value of n.init might find more solutions.
-    Output
-      16 / 16 reanalyses completed
+      0 / 16 reanalyses completed 1 / 16 reanalyses completed 2 / 16 reanalyses completed 3 / 16 reanalyses completed 4 / 16 reanalyses completed 5 / 16 reanalyses completed 6 / 16 reanalyses completed 7 / 16 reanalyses completed 8 / 16 reanalyses completed 9 / 16 reanalyses completed 10 / 16 reanalyses completed 11 / 16 reanalyses completed 12 / 16 reanalyses completed 13 / 16 reanalyses completed 14 / 16 reanalyses completed 15 / 16 reanalyses completed 16 / 16 reanalyses completed
       
       processing 264 unique model types,
       maxsols set to 50, excluding 214 model types from scoring

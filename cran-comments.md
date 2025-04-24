@@ -1,4 +1,5 @@
-A patch release to fix issues due to changes in upstream package `cna`.
+A minor release to add visualization options and ensure
+compatibility with upstream package `cna`.
 
 ## R CMD check results
 
@@ -6,11 +7,11 @@ A patch release to fix issues due to changes in upstream package `cna`.
 
 ## Test environments 
 
-* MacOS 14.5, R 4.4.0
-* Windows Server 2022 10.0.20348, R 4.4.0 
-* Ubuntu 22.04.4 LTS, R 4.3.3 
-* Ubuntu 22.04.4 LTS, R devel
-* Ubuntu 22.04.4 LTS, R 4.4.0
+* MacOS 14.7.4, R 4.5.0
+* Windows Server 2022 10.0.20348, R 4.5.0 
+* Ubuntu 24.04.2 LTS, R 4.4.3 
+* Ubuntu 24.04.2 LTS, R devel
+* Ubuntu 24.04.2 LTS, R 4.5.0
 
 ## Reverse dependencies
 
