@@ -1,5 +1,6 @@
-A minor release to add visualization options and ensure
-compatibility with upstream package `cna`.
+Patch to fix a discrepancy between latest version 
+number mentioned in NEWS and the actual version number in DESCRIPTION.
+A pure human error that does not affect the actual package at all.
 
 ## R CMD check results
 
