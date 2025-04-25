@@ -1,4 +1,4 @@
-# frscore 0.4.2
+# frscore 0.5.0
 
 - new functions `submodel_adjacencies_to_igraph()` and `plot_submodel_network()`  
   for representing submodel relations as graphs, and for plotting them as networks.
