@@ -353,6 +353,7 @@ tmat_scoring <- function(mf, maxsols, compscoring, dat){
                       score = preout,
                       tokens = mf$Freq,
                       stringsAsFactors = FALSE)
+    tmat[is.na(tmat)] <- 0L
   }
   return(list(out, scsums, tmat))
 }
