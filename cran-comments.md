@@ -9,11 +9,11 @@ Description in DESCRIPTION edited to avoid starting with "Functions for..."
 
 ## Test environments 
 
-* MacOS 14.7.4, R 4.5.0
-* Windows Server 2022 10.0.20348, R 4.5.0 
-* Ubuntu 24.04.2 LTS, R 4.4.3 
+* MacOS 14.7.6, R 4.5.1
+* Windows Server 2022, R 4.5.1 
+* Ubuntu 24.04.2 LTS, R 4.5.1 
 * Ubuntu 24.04.2 LTS, R devel
-* Ubuntu 24.04.2 LTS, R 4.5.0
+* Ubuntu 24.04.2 LTS, R 4.4.3
 
 ## Reverse dependencies
 
