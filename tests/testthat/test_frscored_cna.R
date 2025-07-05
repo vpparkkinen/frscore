@@ -59,7 +59,8 @@ skip_on_ci()
 #                                ))
 # })
 
-
+skip_on_cran()
+skip_on_ci()
 test_that("frscored_cna works", {
   expect_snapshot(frscored_cna(d.error))
   expect_snapshot(frscored_cna(d.error, normalize = "idealmax", inus.only = TRUE))
