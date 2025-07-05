@@ -1,4 +1,7 @@
-# frscore (development version)
+# frscore 0.5.2
+
+- a patch to accommodate changes to `igraph`'s handling of 
+  `NA`s [#1821](https://github.com/igraph/rigraph/pull/1828). 
 
 # frscore 0.5.1
 
