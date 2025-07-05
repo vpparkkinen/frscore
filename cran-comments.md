@@ -1,6 +1,7 @@
-Patch to fix a discrepancy between latest version 
-number mentioned in NEWS and the actual version number in DESCRIPTION.
-A pure human error that does not affect the actual package at all.
+## Reason for submission
+
+A patch release to prevent upcoming changes to `igraph` from breaking `frscore`.
+Description in DESCRIPTION edited to avoid starting with "Functions for..."
 
 ## R CMD check results
 
