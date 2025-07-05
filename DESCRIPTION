@@ -10,9 +10,9 @@ Authors@R: c(
                      email = "michael.baumgartner@uib.no"),
     person("Mathias", "Ambuehl", role = c("aut", "cph"))
     )
-Description: Functions for automatically performing 
+Description: Automatically perform 
              a reanalysis series
-             on a data set using CNA, and for calculating the fit-robustness
+             on a data set using CNA, and calculate the fit-robustness
              of the resulting models, as described in 
              Parkkinen and Baumgartner (2021) <doi:10.1177/0049124120986200>.
 License: AGPL (>= 3)
