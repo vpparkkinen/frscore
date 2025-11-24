@@ -1,3 +1,5 @@
+# frscore (development version)
+
 # frscore 0.5.2
 
 - a patch to accommodate changes to `igraph`'s handling of 
