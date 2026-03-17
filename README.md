@@ -36,20 +36,29 @@ install.packages("frscore")
 ```r
 library(frscore)
 
+# run a reanalysis series on a data set simulated from an
+# arbitrary target, and calculate fr-scores.
 frsc <- frscored_cna(selectCases("A+B+F*g<->R"))
 frsc
 
+# visualize results from above
+plot_submodel_network(frsc)
+
+
+# just run a reanalysis series
 rean_cna(ct2df(selectCases("A+B+F*g<->R")), attempt = seq(1, 0.7, -0.1))
 
+# frscore a preexisting collection of models
 res <- rean_cna(selectCases("A+B+F*g<->R"), attempt = seq(1, 0.7, -0.1))
 res <- do.call(rbind, res)
 fr <- frscore(res[,2])
 fr
 
+# causal submodel vs. vanilla cna submodel 
 target <- "(A+B<->C)*(C+D<->E)"
 candidate <- "A+B<->E"
-causal_submodel(candidate, target)
-
+causal_submodel(candidate, target) 
+is.submodel(candidate, target)
 
 
 ```
